@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Projets des Membres · CIAA FSAN Nador</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/projects.css">
+</head>
+<body>
+  <!-- Header de Navigation -->
+  <header>
+    <nav class="wrap" aria-label="Navigation principale">
+      <a class="brand" href="index.html">
+        CIAA
+        <span class="badge-fsan">FSAN</span>
+      </a>
+      <div class="links">
+        <a href="index.html#accueil">Accueil</a>
+        <a href="index.html#apropos">À propos</a>
+        <a href="projects.html" class="active">Projets</a>
+        <a href="apprendre.html">Apprendre</a>
+        <a id="login-link" class="cta" href="login.html" hidden>Connexion</a>
+        <a id="signup-link" class="cta" href="signup.html" hidden>Inscription</a>
+        <button id="logout-btn" class="cta" type="button" hidden>Déconnexion</button>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <!-- Entête Projets -->
+    <div class="projects-hero">
+      <div class="wrap">
+        <span class="badge">Innovation &amp; Réalisations Étudiantes</span>
+        <h1>Vitrine des Projets IA du Club</h1>
+        <p>Explorez les applications, prototypes et mémoires de recherche conçus par les étudiants des Masters SDSI et MIATE de la Faculté des Sciences Appliquées de Nador.</p>
+        <div class="projects-hero-actions">
+          <a class="btn primary" href="addproject.html">+ Proposer un projet</a>
+          <a class="btn ghost" style="color:#fff;border-color:rgba(255,255,255,0.6)" href="apprendre.html">Voir les cours associés &rarr;</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Barre d'outils : Recherche et Filtres -->
+    <section class="projects-toolbar">
+      <div class="wrap">
+        <div class="toolbar-layout">
+          <!-- Champ de recherche -->
+          <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input id="search-input" type="search" placeholder="Rechercher par titre, techno, mot-clé..." aria-label="Recherche de projets">
+          </div>
+
+          <!-- Filtres par tags -->
+          <div class="filter-pills" role="group" aria-label="Filtrer les projets">
+            <button class="filter-btn active" data-filter="all" type="button">Tous</button>
+            <button class="filter-btn" data-filter="vision" type="button">Vision par Ordinateur</button>
+            <button class="filter-btn" data-filter="nlp" type="button">NLP &amp; LLMs</button>
+            <button class="filter-btn" data-filter="ml" type="button">Machine Learning</button>
+            <button class="filter-btn" data-filter="iot" type="button">IoT &amp; Systèmes</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Galerie des Projets -->
+    <section class="projects-gallery-section">
+      <div class="wrap">
+        <div id="projects-gallery" class="gallery-grid">
+          <!-- Chargé dynamiquement par js/projects.js -->
+        </div>
+
+        <!-- Bannière d'appel à soumission -->
+        <div style="margin-top:60px;background:linear-gradient(135deg,#0B2447,#1B6B82);border-radius:20px;padding:36px;color:#fff;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:20px">
+          <div>
+            <h2 style="color:#fff;font-size:1.6rem;margin-bottom:8px">Vous êtes étudiant en Master à la FSAN ?</h2>
+            <p style="margin:0;color:#cbe2f0;max-width:54ch">Partagez votre projet de fin de semestre, mini-projet ou contribution open-source avec toute la communauté du CIAA.</p>
+          </div>
+          <a class="btn primary" style="background:#1CC8D8;color:#0B2447;font-weight:700" href="addproject.html">Soumettre mon projet &rarr;</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="wrap">
+      <span>© 2026 CIAA · Club d'Intelligence Artificielle et ses Applications</span>
+      <span>Faculté des Sciences Appliquées de Nador (FSAN)</span>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/dist/umd/supabase.min.js"></script>
+  <script src="js/projects.js"></script>
+</body>
+</html>

@@ -1,212 +1,164 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>CIAA – Club d'Intelligence Artificielle et ses Applications · FSAN Nador</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-<style>
-:root{
-  --navy:#0B2447; --teal:#1B6B82; --cyan:#1CC8D8; --blue:#2F5FE3;
-  --bg:#FFFFFF; --surface:#FFFFFF; --text:#0B2447; --muted:#4B6178; --line:#D6E6EE;
-  --grad:linear-gradient(135deg,#1B6B82,#1CC8D8 60%,#2F5FE3);
-  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
-}
-*{box-sizing:border-box}
-html{scroll-behavior:smooth;scroll-padding-top:calc(72px + env(safe-area-inset-top,0px))}
-body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,sans-serif;line-height:1.65}
-h1,h2,h3{font-family:Sora,Inter,sans-serif;margin:0;line-height:1.15}
-a{color:inherit}
-:focus-visible{outline:3px solid var(--cyan);outline-offset:3px}
-.wrap{max-width:1100px;margin:0 auto;padding:0 22px}
-header{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
-body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:10}
-nav{display:flex;align-items:center;justify-content:space-between;height:64px;gap:16px}
-.brand{font-family:Sora;font-weight:800;font-size:1.5rem;letter-spacing:.02em;text-decoration:none}
-.links{display:flex;gap:22px;align-items:center;overflow-x:auto}
-.links a,.links button{text-decoration:none;font-weight:500;font-size:.95rem;color:var(--muted);white-space:nowrap}
-.links a:hover,.links button:hover{color:var(--text)}
-.links .cta{background:var(--navy);color:#fff;padding:8px 16px;border-radius:999px}
-.links button.cta{border:0;font-family:inherit;cursor:pointer}
-.hero{padding:84px 0 72px;position:relative;overflow:hidden}
-.hero::after{content:"";position:absolute;right:-140px;top:-60px;width:520px;height:520px;border-radius:50%;border:70px solid transparent;border-top-color:var(--cyan);border-right-color:var(--blue);opacity:.25;transform:rotate(20deg);pointer-events:none}
-.hero h1{font-size:clamp(4rem,14vw,9rem);font-weight:800;letter-spacing:-.02em}
-.hero .sub{font-family:Sora;font-weight:600;font-size:clamp(1.2rem,3vw,1.8rem);color:var(--teal);margin:6px 0 0}
-.hero .where{color:var(--muted);margin:4px 0 28px;border-left:3px solid var(--blue);padding-left:12px}
-.hero p.lead{max-width:60ch;font-size:1.1rem}
-.btns{display:flex;flex-wrap:wrap;gap:12px;margin-top:26px}
-.btn{display:inline-block;padding:13px 24px;border-radius:999px;font-weight:600;text-decoration:none;border:2px solid transparent}
-.btn.primary{background:var(--grad);color:#fff}
-.btn.ghost{border-color:var(--teal);color:var(--teal)}
-section{padding:68px 0}
-section h2{font-size:clamp(1.8rem,4vw,2.5rem);margin-bottom:10px}
-section h2::after{content:"";display:block;width:64px;height:5px;border-radius:3px;background:var(--grad);margin-top:12px}
-.intro{color:var(--muted);max-width:62ch;margin:16px 0 34px}
-.masters{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px}
-.master{background:var(--surface);border:1px solid var(--line);border-left:6px solid var(--teal);border-radius:14px;padding:22px}
-.master:nth-child(2){border-left-color:var(--blue)}
-.master b{font-family:Sora;font-size:1.5rem;display:block}
-.objectif{margin-top:34px;background:linear-gradient(135deg,#1B6B82,#2F5FE3);color:#fff;border-radius:18px;padding:30px}
-.objectif h3{font-size:1.3rem;margin-bottom:14px}
-.tags{display:flex;flex-wrap:wrap;gap:10px}
-.tags span{padding:7px 16px;border-radius:999px;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.6);color:#fff;font-weight:500}
-.grid{display:grid;grid-template-columns:1fr;gap:22px}
-.person{background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden;display:flex;flex-direction:row;width:100%}
-.avatar{flex:0 0 200px;min-height:170px;background:var(--grad);display:grid;place-items:center;font-family:Sora;font-weight:800;font-size:3rem;color:#fff}
-.person .body{padding:24px 30px;flex:1;align-self:center;min-width:0}
-.person p{max-width:none}
-.person h3{font-size:1.1rem}
-.role{color:var(--teal);font-weight:600;font-size:.95rem;margin:2px 0 8px}
-.person p{margin:0;color:var(--muted);font-size:.93rem}
-.person a{display:inline-block;margin-top:10px;font-weight:600;font-size:.9rem;color:var(--blue)}
-.alt{background:var(--surface);border-block:1px solid var(--line)}
-.projects{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:22px}
-.project{background:var(--bg);border:1px solid var(--line);border-radius:16px;overflow:hidden;display:flex;flex-direction:column}
-.thumb{height:160px;background:linear-gradient(135deg,var(--navy),var(--teal) 55%,var(--cyan));display:grid;place-items:center;color:#fff;font-family:Sora;font-weight:600;font-size:1.1rem}
-.project .body{padding:20px;display:flex;flex-direction:column;gap:10px;flex:1}
-.project h3{font-size:1.2rem}
-.project p{margin:0;color:var(--muted)}
-.project .tags span{background:transparent;color:var(--teal);border-color:var(--line);font-size:.8rem;padding:3px 12px}
-.project .team{font-size:.88rem;color:var(--muted);margin-top:auto}
-.learn{background:linear-gradient(135deg,#1B6B82,#2F5FE3);color:#fff;border-radius:22px;padding:48px 34px;position:relative;overflow:hidden}
-.learn::after{content:"";position:absolute;right:-90px;bottom:-110px;width:320px;height:320px;border-radius:50%;border:44px solid transparent;border-top-color:var(--cyan);border-left-color:var(--blue);opacity:.5}
-.learn h2::after{background:#fff}
-.learn p{max-width:56ch;color:#fff;position:relative;z-index:1}
-.learn .btn{background:#fff;color:#0B2447;position:relative;z-index:1}
-footer{padding:34px 0 44px;color:var(--muted);font-size:.92rem;border-top:1px solid var(--line)}
-footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px}
-.hero .in{animation:rise .8s ease both}
-@keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
-@media (prefers-reduced-motion:reduce){.hero .in{animation:none}html{scroll-behavior:auto}}
-@media (max-width:720px){.links a:not(.cta){display:none}}
-@media (max-width:560px){.avatar{flex:0 0 110px;font-size:2rem}.person .body{padding:16px 18px}}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>CIAA – Club d'Intelligence Artificielle et ses Applications · FSAN Nador</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-<header>
-  <nav class="wrap" aria-label="Navigation principale">
-    <a class="brand" href="#accueil">CIAA</a>
-    <div class="links">
-      <a href="#apropos">À propos</a>
-      <a href="#projets">Projets</a>
-      <a href="#apprendre">Apprendre</a>
-      <a id="login-link" class="cta" href="login.html" hidden>Connexion</a>
-      <a id="signup-link" class="cta" href="signup.html" hidden>Inscription</a>
-      <button id="logout-btn" class="cta" type="button" hidden>Déconnexion</button>
-    </div>
-  </nav>
-</header>
+  <header>
+    <nav class="wrap" aria-label="Navigation principale">
+      <a class="brand" href="index.html#accueil">
+        CIAA
+        <span class="badge-fsan">FSAN</span>
+      </a>
+      <div class="links">
+        <a href="index.html#apropos">À propos</a>
+        <a href="projects.html">Projets</a>
+        <a href="apprendre.html">Apprendre</a>
+        <a id="login-link" class="cta" href="login.html" hidden>Connexion</a>
+        <a id="signup-link" class="cta" href="signup.html" hidden>Inscription</a>
+        <button id="logout-btn" class="cta" type="button" hidden>Déconnexion</button>
+      </div>
+    </nav>
+  </header>
 
-<main>
-<div class="hero" id="accueil">
-  <div class="wrap in">
-    <h1>CIAA</h1>
-    <p class="sub">Club d'Intelligence Artificielle et ses Applications</p>
-    <p class="where">Faculté des Sciences Appliquées de Nador (FSAN)</p>
-    <p class="lead">Bienvenue dans l'espace d'échange et d'innovation du club CIAA. Ici, les étudiants partagent leurs ressources, suivent l'actualité de l'IA et construisent des projets ensemble.</p>
-    <div class="btns">
-      <a class="btn ghost" href="#projets">Voir nos projets</a>
-      <a class="btn ghost" href="#apprendre">Accéder aux cours</a>
-    </div>
-  </div>
-</div>
-
-<section id="apropos">
-  <div class="wrap">
-    <h2>À propos du club</h2>
-    <p class="intro">Ce groupe rassemble les étudiants des Masters suivants :</p>
-    <div class="masters">
-      <div class="master"><b>SDSI</b>Sciences des Données et Systèmes Intelligents</div>
-      <div class="master"><b>MIATE</b>Intelligence Artificielle & Technologies Émergentes</div>
-    </div>
-    <div class="objectif">
-      <h3>Nos objectifs</h3>
-      <p style="margin:0 0 16px;color:#fff">Partage de ressources, veille scientifique et technologique :</p>
-      <div class="tags"><span>Machine Learning</span><span>Deep Learning</span><span>LLMs</span><span>Computer Vision</span></div>
-    </div>
-  </div>
-</section>
-
-<section id="bureau" class="alt">
-  <div class="wrap">
-    <h2>Le bureau du club</h2>
-    <p class="intro">Les étudiants qui organisent et animent les activités du CIAA.</p>
-    <div class="grid">
-      <!-- MODÈLE : copiez ce bloc <article> pour ajouter un membre. Remplacez les initiales par <img src="photo.jpg" alt="Nom"> si vous avez une photo. -->
-      <article class="person">
-        <div class="avatar" aria-hidden="true">PN</div>
-        <div class="body">
-          <h3>Prénom Nom</h3>
-          <div class="role">Président(e)</div>
-          <p>Étudiant(e) en Master SDSI. Passionné(e) par le Deep Learning et la vision par ordinateur.</p>
-          <a href="https://www.linkedin.com/" target="_blank" rel="noopener">LinkedIn</a>
+  <main>
+    <div class="hero" id="accueil">
+      <div class="wrap in">
+        <h1>CIAA</h1>
+        <p class="sub">Club d'Intelligence Artificielle et ses Applications</p>
+        <p class="where">Faculté des Sciences Appliquées de Nador (FSAN)</p>
+        <p class="lead">Bienvenue dans l'espace d'échange et d'innovation du club CIAA. Ici, les étudiants partagent leurs ressources, suivent l'actualité de l'IA et construisent des projets ensemble.</p>
+        <div class="btns">
+          <a class="btn primary" href="projects.html">Voir nos projets</a>
+          <a class="btn ghost" href="apprendre.html">Accéder aux cours & Drive</a>
         </div>
-      </article>
+      </div>
     </div>
-  </div>
-</section>
 
-<section id="encadrants">
-  <div class="wrap">
-    <h2>Nos professeurs encadrants</h2>
-    <p class="intro">Les enseignants qui guident le club et accompagnent ses projets.</p>
-    <div class="grid">
-      <!-- MODÈLE : copiez ce bloc <article> pour ajouter un encadrant. -->
-      <article class="person">
-        <div class="avatar" aria-hidden="true">Pr</div>
-        <div class="body">
-          <h3>Pr. Prénom Nom</h3>
-          <div class="role">Professeur encadrant · FSAN</div>
-          <p>Spécialités : apprentissage automatique, traitement du langage naturel. Responsable du Master MIATE.</p>
-          <a href="mailto:prenom.nom@exemple.ma">prenom.nom@exemple.ma</a>
+    <section id="apropos">
+      <div class="wrap">
+        <h2>À propos du club</h2>
+        <p class="intro">Ce groupe rassemble les étudiants des Masters suivants :</p>
+        <div class="masters">
+          <div class="master">
+            <b>SDSI</b>
+            <span>Sciences des Données et Systèmes Intelligents</span>
+          </div>
+          <div class="master">
+            <b>MIATE</b>
+            <span>Intelligence Artificielle & Technologies Émergentes</span>
+          </div>
         </div>
-      </article>
-    </div>
-  </div>
-</section>
-
-<section id="projets" class="alt">
-  <div class="wrap">
-    <h2>Nos projets</h2>
-    <p class="intro">Les réalisations des membres du club, de l'idée au prototype.</p>
-    <div class="projects">
-      <!-- MODÈLE : copiez ce bloc <article> pour ajouter un projet. -->
-      <article class="project" style="display: none;">
-        <!-- <div class="thumb">Image du projet</div> -->
-        <img id="image" class="thumb"></img>
-        <div class="body">
-          <h3 id="titre">Titre du projet</h3>
-          <p id="description">Décrivez en deux ou trois phrases le problème résolu, la méthode utilisée et les résultats obtenus.</p>
-          <div class="tags"><span>Python</span><span>Deep Learning</span><span>Computer Vision</span></div>
-          <div class="team" aria-label="Équipe"></div>
-          <a id="source_code" target="_blank" rel="noopener" style="font-weight:600;color:var(--blue)">Voir le code sur GitHub</a>
+        <div class="objectif">
+          <h3>Nos objectifs</h3>
+          <p style="margin:0 0 16px;color:#fff">Partage de ressources, veille scientifique et technologique :</p>
+          <div class="tags">
+            <span>Machine Learning</span>
+            <span>Deep Learning</span>
+            <span>LLMs</span>
+            <span>Computer Vision</span>
+            <span>Data Science</span>
+            <span>NLP</span>
+          </div>
         </div>
-      </article>
-    </div>
-  </div>
-</section>
+      </div>
+    </section>
 
-<section id="apprendre">
-  <div class="wrap">
-    <div class="learn">
-      <h2>Apprendre l'IA</h2>
-      <p>Retrouvez les cours, supports et ressources du club dans notre Google Drive : machine learning, deep learning, LLMs, vision par ordinateur et plus encore.</p>
-      <!-- Remplacez le lien ci-dessous par l'adresse de votre dossier Google Drive -->
-      <a class="btn" href="https://drive.google.com/drive/folders/VOTRE_ID_DE_DOSSIER" target="_blank" rel="noopener">Ouvrir le Google Drive</a>
-    </div>
-  </div>
-</section>
-</main>
+    <section id="bureau" class="alt">
+      <div class="wrap">
+        <h2>Le bureau du club</h2>
+        <p class="intro">Les étudiants qui organisent et animent les activités du CIAA.</p>
+        <div class="grid">
+          <!-- MODÈLE : membre du bureau -->
+          <article class="person">
+            <div class="avatar" aria-hidden="true">PN</div>
+            <div class="body">
+              <h3>Prénom Nom</h3>
+              <div class="role">Président(e)</div>
+              <p>Étudiant(e) en Master SDSI. Passionné(e) par le Deep Learning et la vision par ordinateur.</p>
+              <a href="https://www.linkedin.com/" target="_blank" rel="noopener">LinkedIn</a>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
 
-<footer>
-  <div class="wrap">
-    <span>© 2026 CIAA · Club d'Intelligence Artificielle et ses Applications</span>
-    <span>Faculté des Sciences Appliquées de Nador (FSAN)</span>
-  </div>
-</footer>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/dist/umd/supabase.min.js"></script>
-<script src="index.js"></script>
+    <section id="encadrants">
+      <div class="wrap">
+        <h2>Nos professeurs encadrants</h2>
+        <p class="intro">Les enseignants qui guident le club et accompagnent ses projets.</p>
+        <div class="grid">
+          <!-- MODÈLE : encadrant -->
+          <article class="person">
+            <div class="avatar" aria-hidden="true">Pr</div>
+            <div class="body">
+              <h3>Pr. Prénom Nom</h3>
+              <div class="role">Professeur encadrant · FSAN</div>
+              <p>Spécialités : apprentissage automatique, traitement du langage naturel. Responsable du Master MIATE.</p>
+              <a href="mailto:prenom.nom@exemple.ma">prenom.nom@exemple.ma</a>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="projets" class="alt">
+      <div class="wrap">
+        <div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:12px;margin-bottom:12px">
+          <div>
+            <h2>Nos projets</h2>
+            <p class="intro" style="margin-bottom:0">Les réalisations des membres du club, de l'idée au prototype.</p>
+          </div>
+          <a class="btn ghost" href="projects.html" style="font-size:0.9rem;padding:8px 18px">Voir tous les projets &rarr;</a>
+        </div>
+        <div class="projects">
+          <!-- Template de projet pour l'affichage dynamique -->
+          <article class="project" style="display: none;">
+            <img id="image" class="thumb" alt="Projet">
+            <div class="body">
+              <h3 id="titre">Titre du projet</h3>
+              <p id="description">Description succincte du problème résolu et de la méthodologie appliquée.</p>
+              <div class="tags">
+                <span>Python</span>
+                <span>Deep Learning</span>
+                <span>Computer Vision</span>
+              </div>
+              <div class="team" aria-label="Équipe"></div>
+              <a id="source_code" target="_blank" rel="noopener" style="font-weight:600;color:var(--blue)">Voir le code sur GitHub</a>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="apprendre">
+      <div class="wrap">
+        <div class="learn">
+          <h2>Apprendre l'IA & Ressources</h2>
+          <p>Découvrez notre plateforme d'apprentissage complète inspirée de Coursera avec des cours vidéo, tutoriels et les dossiers Google Drive dédiés aux Masters SDSI & MIATE.</p>
+          <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:18px">
+            <a class="btn" href="apprendre.html">Ouvrir la plateforme d'apprentissage &rarr;</a>
+            <a class="btn" href="apprendre.html#drive-section" style="background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.5)">Accéder aux Drives Masters</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <span>© 2026 CIAA · Club d'Intelligence Artificielle et ses Applications</span>
+      <span>Faculté des Sciences Appliquées de Nador (FSAN)</span>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/dist/umd/supabase.min.js"></script>
+  <script src="js/index.js"></script>
 </body>
 </html>

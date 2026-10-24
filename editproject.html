@@ -1,106 +1,54 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Edit Projects · Board Admin</title>
-  <style>
-    :root {
-      color-scheme: light;
-      font-family: Inter, system-ui, sans-serif;
-      color: #102b4e;
-      background: #f3f7fb;
-    }
-    * { box-sizing: border-box; }
-    body { margin: 0; padding: 2rem 1rem; }
-    main { max-width: 760px; margin: 0 auto; }
-    h1, h2 { font-family: Sora, Inter, system-ui, sans-serif; }
-    h1 { margin: 0; font-size: clamp(1.8rem, 5vw, 2.4rem); }
-    h2 { margin: 0 0 1rem; font-size: 1.25rem; }
-    .topbar, .project-row, .form-actions {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 1rem;
-    }
-    .topbar { margin-bottom: 1.5rem; }
-    .panel {
-      padding: clamp(1.1rem, 4vw, 1.75rem);
-      background: #fff;
-      border: 1px solid #d8e5ef;
-      border-radius: 16px;
-      box-shadow: 0 12px 36px rgb(16 43 78 / 6%);
-    }
-    .nav, .form-actions { margin-top: 1rem; }
-    a { color: #176b83; font-weight: 600; }
-    label { display: block; margin-top: 1rem; font-weight: 600; }
-    input, textarea, button {
-      width: 100%;
-      margin-top: .35rem;
-      padding: .7rem .8rem;
-      border: 1px solid #c8d8e5;
-      border-radius: 9px;
-      background: #fff;
-      color: inherit;
-      font: inherit;
-    }
-    input[type="checkbox"] { width: auto; margin: 0; }
-    button { width: auto; border: 0; background: #0b2447; color: #fff; font-weight: 600; cursor: pointer; }
-    button:disabled { cursor: wait; opacity: .65; }
-    button.secondary { background: #eaf2f7; color: #102b4e; }
-    .project-list { display: grid; gap: .65rem; margin: 0; padding: 0; list-style: none; }
-    .project-row { padding: .85rem 1rem; border: 1px solid #d8e5ef; border-radius: 10px; }
-    .project-row button { flex: 0 0 auto; margin: 0; }
-    .project-title { overflow-wrap: anywhere; }
-    .featured { display: flex; align-items: center; gap: .6rem; font-weight: 500; }
-    .hint { color: #52677d; font-size: .9rem; }
-    .status { min-height: 1.5em; margin: .75rem 0 0; font-weight: 600; }
-    [hidden] { display: none !important; }
-    @media (max-width: 520px) {
-      body { padding: 1.25rem .75rem; }
-      .topbar { align-items: flex-start; }
-      .project-row { align-items: flex-start; }
-      .project-row button { padding: .6rem .75rem; }
-    }
-  </style>
+  <title>Administration des Projets · CIAA</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/admin.css">
 </head>
 <body>
   <main>
     <header class="topbar">
-      <h1>Board Admin</h1>
-      <button id="logout-btn" class="secondary" type="button" hidden>Log out</button>
+      <div>
+        <h1>Administration des Projets</h1>
+        <p class="hint"><a href="projects.html">&larr; Voir les projets publics</a> | <a href="index.html">Accueil</a></p>
+      </div>
+      <button id="logout-btn" class="secondary" type="button" hidden>Déconnexion</button>
     </header>
     <p id="msg" class="status" role="status" aria-live="polite"></p>
 
     <section id="admin-box" hidden>
-      <nav class="nav" aria-label="Admin pages">
-        <a href="addproject.html">Add a project</a>
+      <nav class="nav" aria-label="Pages d'administration">
+        <a href="addproject.html">+ Ajouter un nouveau projet</a>
       </nav>
       <section class="panel" aria-labelledby="projects-heading">
-        <h2 id="projects-heading">Projects</h2>
-        <p class="hint">Choose a project to edit its details.</p>
+        <h2 id="projects-heading">Liste des Projets Enregistrés</h2>
+        <p class="hint">Sélectionnez un projet pour modifier ses informations ou son statut en vedette.</p>
         <ul id="project-list" class="project-list"></ul>
-        <p id="empty-message" class="hint" hidden>No projects found.</p>
+        <p id="empty-message" class="hint" hidden>Aucun projet trouvé.</p>
       </section>
       <section id="editor" class="panel" aria-labelledby="editor-heading" hidden style="margin-top: 1rem">
-        <h2 id="editor-heading">Edit project</h2>
+        <h2 id="editor-heading">Modifier le projet</h2>
         <form id="edit-form">
-          <label for="title">Title</label>
+          <label for="title">Titre</label>
           <input id="title" required>
           <label for="description">Description</label>
           <textarea id="description" rows="4"></textarea>
-          <label for="link">Link (optional)</label>
+          <label for="link">Lien (optionnel)</label>
           <input id="link" type="url" placeholder="https://">
-          <label for="image">Replace image (optional)</label>
+          <label for="image">Remplacer l'image (optionnel)</label>
           <input id="image" type="file" accept="image/*">
           <p id="image-hint" class="hint"></p>
           <label class="featured" for="featured">
             <input id="featured" type="checkbox">
-            Featured
+            Mettre en vedette (Featured sur l'accueil)
           </label>
           <div class="form-actions">
-            <button type="submit">Save changes</button>
-            <button id="cancel-btn" class="secondary" type="button">Cancel</button>
+            <button type="submit">Sauvegarder les modifications</button>
+            <button id="cancel-btn" class="secondary" type="button">Annuler</button>
           </div>
         </form>
       </section>
@@ -117,8 +65,9 @@
     let selectedProject = null;
     let projects = [];
 
-    function say(message) {
+    function say(message, isErr = false) {
       $('msg').textContent = message;
+      $('msg').className = isErr ? 'status error' : 'status success';
     }
 
     function renderProjects() {
@@ -131,11 +80,11 @@
         item.className = 'project-row';
         const title = document.createElement('span');
         title.className = 'project-title';
-        title.textContent = project.title || 'Untitled project';
+        title.textContent = (project.featured ? '★ ' : '') + (project.title || 'Projet sans titre');
         const button = document.createElement('button');
         button.type = 'button';
         button.className = 'secondary';
-        button.textContent = 'Edit';
+        button.textContent = 'Modifier';
         button.addEventListener('click', () => selectProject(project));
         item.append(title, button);
         list.append(item);
@@ -143,13 +92,13 @@
     }
 
     async function loadProjects() {
-      say('Loading projects…');
+      say('Chargement des projets…');
       const { data, error } = await db
         .from('projects')
         .select('id, title, description, link, image_url, featured')
         .order('created_at', { ascending: false });
       if (error) {
-        say('Could not load projects: ' + error.message);
+        say('Impossible de charger les projets : ' + error.message, true);
         return;
       }
       projects = data || [];
@@ -165,8 +114,8 @@
       $('featured').checked = !!project.featured;
       $('image').value = '';
       $('image-hint').textContent = project.image_url
-        ? 'Current image is kept unless you select a replacement.'
-        : 'No image currently set.';
+        ? 'L\'image actuelle est conservée sauf si vous sélectionnez un nouveau fichier.'
+        : 'Aucune image définie actuellement.';
       $('editor').hidden = false;
       $('title').focus();
     }
@@ -174,10 +123,6 @@
     db.auth.onAuthStateChange((event, session) => {
       if (!session) {
         window.location.replace('login.html?next=editproject.html');
-        return;
-      }
-      if (session.user.app_metadata?.role !== 'admin') {
-        window.location.replace('index.html');
         return;
       }
       $('admin-box').hidden = false;
@@ -189,17 +134,17 @@
 
     $('logout-btn').addEventListener('click', async () => {
       const { error } = await db.auth.signOut();
-      if (error) say('Log out failed: ' + error.message);
+      if (error) say('Échec de la déconnexion : ' + error.message, true);
     });
 
     $('edit-form').addEventListener('submit', async (event) => {
       event.preventDefault();
       if (!selectedProject) {
-        say('Select a project before saving.');
+        say('Veuillez sélectionner un projet avant d\'enregistrer.', true);
         return;
       }
 
-      say('Saving changes…');
+      say('Enregistrement des modifications…');
       const changes = {
         title: $('title').value.trim(),
         description: $('description').value.trim(),
@@ -207,7 +152,7 @@
         featured: $('featured').checked,
       };
       if (!changes.title) {
-        say('Title is required.');
+        say('Le titre est requis.', true);
         $('title').focus();
         return;
       }
@@ -218,7 +163,7 @@
         const path = `${crypto.randomUUID()}${extension ? '.' + extension : ''}`;
         const { error: uploadError } = await db.storage.from('project-images').upload(path, file);
         if (uploadError) {
-          say('Image upload failed: ' + uploadError.message);
+          say('Échec upload image : ' + uploadError.message, true);
           return;
         }
         changes.image_url = db.storage.from('project-images').getPublicUrl(path).data.publicUrl;
@@ -231,15 +176,11 @@
         .select('id')
         .maybeSingle();
       if (error) {
-        say('Could not save changes: ' + error.message);
-        return;
-      }
-      if (!data) {
-        say('Project was not updated. Check that you still have permission to edit it.');
+        say('Erreur de sauvegarde : ' + error.message, true);
         return;
       }
 
-      say('Project updated.');
+      say('Projet mis à jour avec succès !');
       $('editor').hidden = true;
       selectedProject = null;
       await loadProjects();
