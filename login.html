@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b2447">
+  <title>Log in · CIAA</title>
+  <style>
+    :root {
+      font-family: Inter, system-ui, sans-serif;
+      color: #0b2447;
+      background: #f3f7fb;
+      font-synthesis: none;
+    }
+    * { box-sizing: border-box; }
+    body {
+      display: grid;
+      min-height: 100vh;
+      margin: 0;
+      padding: 1.25rem;
+      place-items: center;
+      background:
+        radial-gradient(ellipse at 80% 5%, rgb(28 200 216 / 13%), transparent 35rem),
+        #f3f7fb;
+    }
+    main { width: min(100%, 430px); }
+    .brand { margin-bottom: 1.5rem; text-align: center; }
+    .brand-mark {
+      display: inline-grid;
+      width: 3rem;
+      height: 3rem;
+      margin-bottom: .75rem;
+      place-items: center;
+      border-radius: 1rem;
+      background: linear-gradient(135deg, #1b6b82, #1cc8d8 60%, #2f5fe3);
+      color: #fff;
+      font-weight: 800;
+      letter-spacing: .04em;
+    }
+    h1, h2 { margin: 0; font-family: Sora, Inter, system-ui, sans-serif; }
+    h1 { font-size: 1.65rem; }
+    .brand p { margin: .45rem 0 0; color: #52677d; }
+    .card {
+      padding: clamp(1.25rem, 6vw, 2rem);
+      border: 1px solid #d8e5ef;
+      border-radius: 18px;
+      background: #fff;
+      box-shadow: 0 18px 55px rgb(11 36 71 / 9%);
+    }
+    h2 { font-size: 1.25rem; }
+    .intro { margin: .45rem 0 1.25rem; color: #52677d; font-size: .95rem; }
+    label { display: block; margin-top: 1rem; font-size: .92rem; font-weight: 600; }
+    input {
+      display: block;
+      width: 100%;
+      margin-top: .4rem;
+      padding: .8rem .85rem;
+      border: 1px solid #c8d8e5;
+      border-radius: 9px;
+      background: #fff;
+      color: inherit;
+      font: inherit;
+    }
+    input:focus-visible, button:focus-visible, a:focus-visible {
+      outline: 3px solid #1cc8d8;
+      outline-offset: 3px;
+    }
+    button {
+      width: 100%;
+      margin-top: 1.35rem;
+      padding: .85rem 1rem;
+      border: 0;
+      border-radius: 999px;
+      background: #0b2447;
+      color: #fff;
+      font: inherit;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .15s ease, transform .15s ease;
+    }
+    button:hover:not(:disabled) { background: #1b6b82; transform: translateY(-1px); }
+    button:disabled { cursor: wait; opacity: .7; }
+    .status { min-height: 1.5em; margin: .85rem 0 0; color: #a32d2d; font-size: .9rem; }
+    .status[data-kind="info"] { color: #52677d; }
+    .back { margin: 1.2rem 0 0; text-align: center; }
+    .back a { color: #176b83; font-size: .9rem; font-weight: 600; text-decoration: none; }
+    .back a:hover { text-decoration: underline; }
+    .signup { margin: 1rem 0 0; text-align: center; }
+    .signup a { color: #176b83; font-size: .9rem; font-weight: 600; text-decoration: none; }
+    .signup a:hover { text-decoration: underline; }
+    [hidden] { display: none !important; }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header class="brand">
+      <span class="brand-mark" aria-hidden="true">CIAA</span>
+      <h1>CIAA</h1>
+      <p>Sign in to your CIAA account.</p>
+    </header>
+    <section class="card" aria-labelledby="login-heading">
+      <h2 id="login-heading">Welcome back</h2>
+      <p class="intro">Log in with your email address and password to continue.</p>
+      <form id="login-form">
+        <label for="email">Email address</label>
+        <input id="email" name="email" type="email" autocomplete="username" required autofocus>
+        <label for="password">Password</label>
+        <input id="password" name="password" type="password" autocomplete="current-password" required>
+        <button id="login-btn" type="submit">Log in</button>
+        <p id="status" class="status" role="status" aria-live="polite"></p>
+      </form>
+    </section>
+    <p class="signup"><a href="signup.html">Need an account? Sign up</a></p>
+    <p class="back"><a href="index.html">Back to CIAA website</a></p>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/dist/umd/supabase.min.js"></script>
+  <script>
+    const SUPABASE_URL = 'https://dwtizibjpkdtcceiggxf.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_MeOXYq_SwsXx-IkyPhGqqQ_jGlxMeS5';
+    const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const $ = (id) => document.getElementById(id);
+    const destination = new URLSearchParams(window.location.search).get('next') || 'index.html';
+    let submitting = false;
+
+    function showStatus(message, kind = 'error') {
+      $('status').textContent = message;
+      $('status').dataset.kind = kind;
+    }
+
+    function continueAfterLogin() {
+      window.location.replace(destination);
+    }
+
+    db.auth.onAuthStateChange((event, session) => {
+      if (session && (event === 'INITIAL_SESSION' || event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED')) {
+        continueAfterLogin();
+      }
+    });
+
+    $('login-form').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      if (submitting) return;
+
+      submitting = true;
+      $('login-btn').disabled = true;
+      showStatus('Signing in…', 'info');
+
+      const { error } = await db.auth.signInWithPassword({
+        email: $('email').value.trim(),
+        password: $('password').value,
+      });
+
+      submitting = false;
+      $('login-btn').disabled = false;
+      if (error) {
+        showStatus('Login failed: ' + error.message);
+        $('password').focus();
+      }
+    });
+  </script>
+</body>
+</html>

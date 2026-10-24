@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Edit Projects · Board Admin</title>
+  <style>
+    :root {
+      color-scheme: light;
+      font-family: Inter, system-ui, sans-serif;
+      color: #102b4e;
+      background: #f3f7fb;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 2rem 1rem; }
+    main { max-width: 760px; margin: 0 auto; }
+    h1, h2 { font-family: Sora, Inter, system-ui, sans-serif; }
+    h1 { margin: 0; font-size: clamp(1.8rem, 5vw, 2.4rem); }
+    h2 { margin: 0 0 1rem; font-size: 1.25rem; }
+    .topbar, .project-row, .form-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    .topbar { margin-bottom: 1.5rem; }
+    .panel {
+      padding: clamp(1.1rem, 4vw, 1.75rem);
+      background: #fff;
+      border: 1px solid #d8e5ef;
+      border-radius: 16px;
+      box-shadow: 0 12px 36px rgb(16 43 78 / 6%);
+    }
+    .nav, .form-actions { margin-top: 1rem; }
+    a { color: #176b83; font-weight: 600; }
+    label { display: block; margin-top: 1rem; font-weight: 600; }
+    input, textarea, button {
+      width: 100%;
+      margin-top: .35rem;
+      padding: .7rem .8rem;
+      border: 1px solid #c8d8e5;
+      border-radius: 9px;
+      background: #fff;
+      color: inherit;
+      font: inherit;
+    }
+    input[type="checkbox"] { width: auto; margin: 0; }
+    button { width: auto; border: 0; background: #0b2447; color: #fff; font-weight: 600; cursor: pointer; }
+    button:disabled { cursor: wait; opacity: .65; }
+    button.secondary { background: #eaf2f7; color: #102b4e; }
+    .project-list { display: grid; gap: .65rem; margin: 0; padding: 0; list-style: none; }
+    .project-row { padding: .85rem 1rem; border: 1px solid #d8e5ef; border-radius: 10px; }
+    .project-row button { flex: 0 0 auto; margin: 0; }
+    .project-title { overflow-wrap: anywhere; }
+    .featured { display: flex; align-items: center; gap: .6rem; font-weight: 500; }
+    .hint { color: #52677d; font-size: .9rem; }
+    .status { min-height: 1.5em; margin: .75rem 0 0; font-weight: 600; }
+    [hidden] { display: none !important; }
+    @media (max-width: 520px) {
+      body { padding: 1.25rem .75rem; }
+      .topbar { align-items: flex-start; }
+      .project-row { align-items: flex-start; }
+      .project-row button { padding: .6rem .75rem; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header class="topbar">
+      <h1>Board Admin</h1>
+      <button id="logout-btn" class="secondary" type="button" hidden>Log out</button>
+    </header>
+    <p id="msg" class="status" role="status" aria-live="polite"></p>
+
+    <section id="admin-box" hidden>
+      <nav class="nav" aria-label="Admin pages">
+        <a href="addproject.html">Add a project</a>
+      </nav>
+      <section class="panel" aria-labelledby="projects-heading">
+        <h2 id="projects-heading">Projects</h2>
+        <p class="hint">Choose a project to edit its details.</p>
+        <ul id="project-list" class="project-list"></ul>
+        <p id="empty-message" class="hint" hidden>No projects found.</p>
+      </section>
+      <section id="editor" class="panel" aria-labelledby="editor-heading" hidden style="margin-top: 1rem">
+        <h2 id="editor-heading">Edit project</h2>
+        <form id="edit-form">
+          <label for="title">Title</label>
+          <input id="title" required>
+          <label for="description">Description</label>
+          <textarea id="description" rows="4"></textarea>
+          <label for="link">Link (optional)</label>
+          <input id="link" type="url" placeholder="https://">
+          <label for="image">Replace image (optional)</label>
+          <input id="image" type="file" accept="image/*">
+          <p id="image-hint" class="hint"></p>
+          <label class="featured" for="featured">
+            <input id="featured" type="checkbox">
+            Featured
+          </label>
+          <div class="form-actions">
+            <button type="submit">Save changes</button>
+            <button id="cancel-btn" class="secondary" type="button">Cancel</button>
+          </div>
+        </form>
+      </section>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/dist/umd/supabase.min.js"></script>
+  <script>
+    const SUPABASE_URL = 'https://dwtizibjpkdtcceiggxf.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_MeOXYq_SwsXx-IkyPhGqqQ_jGlxMeS5';
+    const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const $ = (id) => document.getElementById(id);
+
+    let selectedProject = null;
+    let projects = [];
+
+    function say(message) {
+      $('msg').textContent = message;
+    }
+
+    function renderProjects() {
+      const list = $('project-list');
+      list.replaceChildren();
+      $('empty-message').hidden = projects.length > 0;
+
+      for (const project of projects) {
+        const item = document.createElement('li');
+        item.className = 'project-row';
+        const title = document.createElement('span');
+        title.className = 'project-title';
+        title.textContent = project.title || 'Untitled project';
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'secondary';
+        button.textContent = 'Edit';
+        button.addEventListener('click', () => selectProject(project));
+        item.append(title, button);
+        list.append(item);
+      }
+    }
+
+    async function loadProjects() {
+      say('Loading projects…');
+      const { data, error } = await db
+        .from('projects')
+        .select('id, title, description, link, image_url, featured')
+        .order('created_at', { ascending: false });
+      if (error) {
+        say('Could not load projects: ' + error.message);
+        return;
+      }
+      projects = data || [];
+      renderProjects();
+      say('');
+    }
+
+    function selectProject(project) {
+      selectedProject = project;
+      $('title').value = project.title || '';
+      $('description').value = project.description || '';
+      $('link').value = project.link || '';
+      $('featured').checked = !!project.featured;
+      $('image').value = '';
+      $('image-hint').textContent = project.image_url
+        ? 'Current image is kept unless you select a replacement.'
+        : 'No image currently set.';
+      $('editor').hidden = false;
+      $('title').focus();
+    }
+
+    db.auth.onAuthStateChange((event, session) => {
+      if (!session) {
+        window.location.replace('login.html?next=editproject.html');
+        return;
+      }
+      if (session.user.app_metadata?.role !== 'admin') {
+        window.location.replace('index.html');
+        return;
+      }
+      $('admin-box').hidden = false;
+      $('logout-btn').hidden = false;
+      if (event === 'INITIAL_SESSION' || event === 'SIGNED_IN') {
+        window.setTimeout(() => { void loadProjects(); }, 0);
+      }
+    });
+
+    $('logout-btn').addEventListener('click', async () => {
+      const { error } = await db.auth.signOut();
+      if (error) say('Log out failed: ' + error.message);
+    });
+
+    $('edit-form').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      if (!selectedProject) {
+        say('Select a project before saving.');
+        return;
+      }
+
+      say('Saving changes…');
+      const changes = {
+        title: $('title').value.trim(),
+        description: $('description').value.trim(),
+        link: $('link').value.trim() || null,
+        featured: $('featured').checked,
+      };
+      if (!changes.title) {
+        say('Title is required.');
+        $('title').focus();
+        return;
+      }
+
+      const file = $('image').files[0];
+      if (file) {
+        const extension = file.name.match(/\.([a-z0-9]{1,10})$/i)?.[1];
+        const path = `${crypto.randomUUID()}${extension ? '.' + extension : ''}`;
+        const { error: uploadError } = await db.storage.from('project-images').upload(path, file);
+        if (uploadError) {
+          say('Image upload failed: ' + uploadError.message);
+          return;
+        }
+        changes.image_url = db.storage.from('project-images').getPublicUrl(path).data.publicUrl;
+      }
+
+      const { data, error } = await db
+        .from('projects')
+        .update(changes)
+        .eq('id', selectedProject.id)
+        .select('id')
+        .maybeSingle();
+      if (error) {
+        say('Could not save changes: ' + error.message);
+        return;
+      }
+      if (!data) {
+        say('Project was not updated. Check that you still have permission to edit it.');
+        return;
+      }
+
+      say('Project updated.');
+      $('editor').hidden = true;
+      selectedProject = null;
+      await loadProjects();
+    });
+
+    $('cancel-btn').addEventListener('click', () => {
+      selectedProject = null;
+      $('editor').hidden = true;
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b2447">
+  <title>Sign up</title>
+  <style>
+    :root {
+      font-family: Inter, system-ui, sans-serif;
+      color: #0b2447;
+      background: #f3f7fb;
+      font-synthesis: none;
+    }
+    * { box-sizing: border-box; }
+    body {
+      display: grid;
+      min-height: 100vh;
+      margin: 0;
+      padding: 1.25rem;
+      place-items: center;
+      background:
+        radial-gradient(ellipse at 80% 5%, rgb(28 200 216 / 13%), transparent 35rem),
+        #f3f7fb;
+    }
+    main { width: min(100%, 430px); }
+    .brand { margin-bottom: 1.5rem; text-align: center; }
+    .brand-mark {
+      display: inline-grid;
+      width: 3rem;
+      height: 3rem;
+      margin-bottom: .75rem;
+      place-items: center;
+      border-radius: 1rem;
+      background: linear-gradient(135deg, #1b6b82, #1cc8d8 60%, #2f5fe3);
+      color: #fff;
+      font-weight: 800;
+      letter-spacing: .04em;
+    }
+    h1, h2 { margin: 0; font-family: Sora, Inter, system-ui, sans-serif; }
+    h1 { font-size: 1.65rem; }
+    .brand p { margin: .45rem 0 0; color: #52677d; }
+    .card {
+      padding: clamp(1.25rem, 6vw, 2rem);
+      border: 1px solid #d8e5ef;
+      border-radius: 18px;
+      background: #fff;
+      box-shadow: 0 18px 55px rgb(11 36 71 / 9%);
+    }
+    h2 { font-size: 1.25rem; }
+    .intro { margin: .45rem 0 1.25rem; color: #52677d; font-size: .95rem; }
+    label { display: block; margin-top: 1rem; font-size: .92rem; font-weight: 600; }
+    input {
+      display: block;
+      width: 100%;
+      margin-top: .4rem;
+      padding: .8rem .85rem;
+      border: 1px solid #c8d8e5;
+      border-radius: 9px;
+      background: #fff;
+      color: inherit;
+      font: inherit;
+    }
+    .hint { margin: .35rem 0 0; color: #52677d; font-size: .82rem; font-weight: 400; }
+    input:focus-visible, button:focus-visible, a:focus-visible {
+      outline: 3px solid #1cc8d8;
+      outline-offset: 3px;
+    }
+    button {
+      width: 100%;
+      margin-top: 1.35rem;
+      padding: .85rem 1rem;
+      border: 0;
+      border-radius: 999px;
+      background: #0b2447;
+      color: #fff;
+      font: inherit;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .15s ease, transform .15s ease;
+    }
+    button:hover:not(:disabled) { background: #1b6b82; transform: translateY(-1px); }
+    button:disabled { cursor: wait; opacity: .7; }
+    .status { min-height: 1.5em; margin: .85rem 0 0; color: #a32d2d; font-size: .9rem; }
+    .status[data-kind="info"] { color: #52677d; }
+    .status[data-kind="success"] { color: #176b43; }
+    .back { margin: 1.2rem 0 0; text-align: center; }
+    .back a { color: #176b83; font-size: .9rem; font-weight: 600; text-decoration: none; }
+    .back a:hover { text-decoration: underline; }
+    [hidden] { display: none !important; }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header class="brand">
+      <span class="brand-mark" aria-hidden="true">CIAA</span>
+      <h1>Sign Up</h1>
+      <p>Create an account.</p>
+    </header>
+    <section class="card" aria-labelledby="signup-heading">
+      <h2 id="signup-heading">Create your account</h2>
+      <p class="intro">Sign up with your email address and a password.</p>
+      <form id="signup-form">
+        <label for="prenom">First name (prénom)</label>
+        <input id="prenom" name="prenom" type="text" autocomplete="given-name" maxlength="60" required autofocus>
+        <label for="nom">Last name (nom)</label>
+        <input id="nom" name="nom" type="text" autocomplete="family-name" maxlength="60" required>
+        <label for="linkedin">LinkedIn username (optional)</label>
+        <input id="linkedin" name="linkedin" type="text" autocomplete="off" maxlength="120" placeholder="jane-doe-123">
+        <p class="hint">The part after linkedin.com/in/ . You can also paste your profile URL.</p>
+        <label for="email">Email address</label>
+        <input id="email" name="email" type="email" autocomplete="email" required>
+        <label for="password">Password</label>
+        <input id="password" name="password" type="password" autocomplete="new-password" minlength="8" required>
+        <label for="confirm-password">Confirm password</label>
+        <input id="confirm-password" name="confirm-password" type="password" autocomplete="new-password" minlength="8" required>
+        <button id="signup-btn" type="submit">Create account</button>
+        <p id="status" class="status" role="status" aria-live="polite"></p>
+      </form>
+    </section>
+    <p class="back"><a href="user_login.html">Already have an account? Log in</a></p>
+    <p class="back"><a href="index.html">Back to CIAA website</a></p>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/dist/umd/supabase.min.js"></script>
+  <script>
+    const SUPABASE_URL = 'https://dwtizibjpkdtcceiggxf.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_MeOXYq_SwsXx-IkyPhGqqQ_jGlxMeS5';
+    const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const $ = (id) => document.getElementById(id);
+    let submitting = false;
+
+    function showStatus(message, kind = 'error') {
+      $('status').textContent = message;
+      $('status').dataset.kind = kind;
+    }
+
+    $('signup-form').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      if (submitting) return;
+
+      if ($('password').value !== $('confirm-password').value) {
+        showStatus('Passwords do not match.');
+        $('confirm-password').focus();
+        return;
+      }
+
+      // Accept a bare username or a pasted profile URL
+      const linkedin = $('linkedin').value.trim()
+        .replace(/^https?:\/\/([a-z]+\.)?linkedin\.com\/in\//i, '')
+        .replace(/[\/?#].*$/, '');
+      if (linkedin && !/^[A-Za-z0-9_%-]{3,100}$/.test(linkedin)) {
+        showStatus('LinkedIn username looks invalid. Use only the part after linkedin.com/in/.');
+        $('linkedin').focus();
+        return;
+      }
+
+      submitting = true;
+      $('signup-btn').disabled = true;
+      showStatus('Creating your account…', 'info');
+
+      const { data, error } = await db.auth.signUp({
+        email: $('email').value.trim(),
+        password: $('password').value,
+        // Saved as the account's metadata; the database trigger copies it into the users table
+        options: { data: {
+          nom: $('nom').value.trim(),
+          prenom: $('prenom').value.trim(),
+          linkedin_username: linkedin || null,
+        } },
+      });
+
+      submitting = false;
+      $('signup-btn').disabled = false;
+      if (error) {
+        showStatus('Sign-up failed: ' + error.message);
+        return;
+      }
+
+      showStatus(
+        data.session
+          ? 'Account created. You can now log in.'
+          : 'Account created. Check your email to confirm your account.',
+        'success'
+      );
+      $('signup-form').reset();
+    });
+  </script>
+</body>
+</html>
