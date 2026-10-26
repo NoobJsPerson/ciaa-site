@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>À propos du Club CIAA · Réseaux Sociaux &amp; Bureau · FSAN Nador</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/apropos.css">
+</head>
+<body>
+  <!-- Header de Navigation -->
+  <header>
+    <nav class="wrap" aria-label="Navigation principale">
+      <a class="brand" href="index.html">
+        <img src="logo.png" alt="Club IAA - Faculté des Sciences Appliquées Nador" class="brand-logo">
+      </a>
+      <div class="links">
+        <a href="index.html">Accueil</a>
+        <a href="projects.html">Projets</a>
+        <a href="apprendre.html">Apprendre</a>
+        <a href="annonces.html">Annonces &amp; Sujets</a>
+        <a href="apropos.html" class="active">À propos du club</a>
+        <span class="backend-status-pill offline" title="État de la connexion Supabase"><span class="dot"></span> <strong>Supabase indisponible</strong></span>
+        <a id="profile-link" href="profile.html" hidden>Mon Profil</a>
+        <a id="dash-link" href="dashboard.html" class="cta" style="background:var(--teal)" hidden>Dashboard</a>
+        <a id="login-link" class="cta" href="login.html">Connexion</a>
+        <a id="signup-link" class="cta" href="signup.html">Inscription</a>
+        <button id="logout-btn" class="cta" type="button" hidden>Déconnexion</button>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <!-- Entête de la page individuelle À propos -->
+    <div class="apropos-hero">
+      <div class="wrap">
+        <span class="badge">Présentation Officielle · FSAN Nador</span>
+        <h1>À propos du Club CIAA</h1>
+        <p>Le <strong>Club d'Intelligence Artificielle et ses Applications (CIAA)</strong> est l'association étudiante scientifique et technologique de la Faculté des Sciences Appliquées de Nador, fédérant les talents des Masters SDSI et MIATE.</p>
+        <div class="apropos-hero-actions">
+          <a class="btn primary" href="#reseaux">🔗 Liens LinkedIn &amp; Réseaux Sociaux</a>
+          <a class="btn ghost" style="color:#fff;border-color:rgba(255,255,255,0.6)" href="#equipe">👥 Le Bureau du Club</a>
+          <a class="btn ghost" style="color:#fff;border-color:rgba(255,255,255,0.6)" href="#contact">📍 Contact &amp; Localisation</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 1 : MISSION, VISION & OBJECTIFS -->
+    <section class="mission-section">
+      <div class="wrap">
+        <div class="mission-grid">
+          <div class="mission-text">
+            <span class="badge" style="background:#eaf4fb;color:var(--teal);border:1px solid #c9e2f2">Notre Raison d'Être</span>
+            <h2>Innover, Collaborer et Bâtir le Futur de l'IA à Nador</h2>
+            <p id="dyn-club-description">Fondé sous l'impulsion des étudiants et des professeurs de la Faculté des Sciences Appliquées de Nador (Université Mohammed Premier), le club CIAA a pour mission de créer un écosystème dynamique d'apprentissage, d'expérimentation et de recherche appliquée en intelligence artificielle.</p>
+            <p id="dyn-club-mission">Le club constitue une passerelle entre la formation académique de haut niveau dispensée dans les Masters et les exigences pratiques du monde professionnel et de la recherche scientifique internationale.</p>
+            <div class="tags" style="margin-top:16px">
+              <span style="background:var(--navy);color:#fff">Apprentissage Collectif</span>
+              <span style="background:#eaf3f8;color:var(--teal);border:1px solid #d2e4ee">Projets Open-Source</span>
+              <span style="background:#eaf3f8;color:var(--blue);border:1px solid #d2e4ee">Hackathons &amp; Ateliers</span>
+            </div>
+          </div>
+
+          <div class="stats-grid">
+            <div class="stat-card">
+              <span class="stat-number">2</span>
+              <span class="stat-label">Masters d'Excellence (SDSI &amp; MIATE)</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-number">+100</span>
+              <span class="stat-label">Étudiants &amp; Chercheurs Membres</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-number">+15</span>
+              <span class="stat-label">Projets IA Développés &amp; Déployés</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-number">100%</span>
+              <span class="stat-label">Partage Ouvert &amp; Ressources Libres</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2 : RÉSEAUX SOCIAUX & LIENS LINKEDIN OFFICIELS -->
+    <section id="reseaux" class="socials-section">
+      <div class="wrap">
+        <div class="section-head">
+          <span class="section-badge">Rejoignez Notre Communauté en Ligne</span>
+          <h2>Réseaux Sociaux &amp; Canaux Officiels du CIAA</h2>
+          <p class="intro">Suivez nos actualités, consultez nos dépôts de code open-source, regardez nos tutoriels vidéo et échangez avec l'ensemble des étudiants.</p>
+        </div>
+
+        <div class="socials-grid">
+          <!-- LinkedIn Officiel -->
+          <a id="social-link-linkedin" class="social-card" href="https://www.linkedin.com/company/ciaa-fsan" target="_blank" rel="noopener noreferrer">
+            <div class="social-icon-wrapper linkedin">
+              in
+            </div>
+            <div class="social-content">
+              <h3>
+                LinkedIn Officiel
+                <span class="arrow">&rarr;</span>
+              </h3>
+              <p>Actualités du club, annonces professionnelles, partenariats académiques et événements officiels.</p>
+              <span class="social-handle">@ciaa-fsan</span>
+            </div>
+          </a>
+
+          <!-- GitHub Organisation -->
+          <a id="social-link-github" class="social-card" href="https://github.com/ciaa-fsan" target="_blank" rel="noopener noreferrer">
+            <div class="social-icon-wrapper github">
+              GH
+            </div>
+            <div class="social-content">
+              <h3>
+                GitHub Organisation
+                <span class="arrow">&rarr;</span>
+              </h3>
+              <p>Dépôts de code source, modèles PyTorch, notebooks Google Colab et templates ouverts à tous.</p>
+              <span class="social-handle">github.com/ciaa-fsan</span>
+            </div>
+          </a>
+
+          <!-- YouTube E-Learning -->
+          <a id="social-link-youtube" class="social-card" href="https://www.youtube.com/@CIAA-FSAN" target="_blank" rel="noopener noreferrer">
+            <div class="social-icon-wrapper youtube">
+              ▶
+            </div>
+            <div class="social-content">
+              <h3>
+                Chaîne YouTube
+                <span class="arrow">&rarr;</span>
+              </h3>
+              <p>Capsules vidéo de formation, rediffusions des ateliers pratiques et démonstrations de projets.</p>
+              <span class="social-handle">@CIAA-FSAN</span>
+            </div>
+          </a>
+
+          <!-- Discord / Communauté étudiante -->
+          <a id="social-link-discord" class="social-card" href="https://discord.gg/ciaa-fsan" target="_blank" rel="noopener noreferrer">
+            <div class="social-icon-wrapper discord">
+              💬
+            </div>
+            <div class="social-content">
+              <h3>
+                Serveur Discord Étudiants
+                <span class="arrow">&rarr;</span>
+              </h3>
+              <p>Entraide sur les devoirs, canaux dédiés aux modules SDSI/MIATE, veille technologique et chat vocal.</p>
+              <span class="social-handle">Communauté CIAA FSAN</span>
+            </div>
+          </a>
+
+          <!-- Instagram -->
+          <a id="social-link-instagram" class="social-card" href="https://www.instagram.com/ciaa.fsan" target="_blank" rel="noopener noreferrer">
+            <div class="social-icon-wrapper instagram">
+              📸
+            </div>
+            <div class="social-content">
+              <h3>
+                Instagram
+                <span class="arrow">&rarr;</span>
+              </h3>
+              <p>Photos des ateliers, coulisses des hackathons, stories d'événements et vie du campus.</p>
+              <span class="social-handle">@ciaa.fsan</span>
+            </div>
+          </a>
+
+          <!-- Email Officiel -->
+          <a id="social-link-email" class="social-card" href="mailto:contact.ciaa.fsan@gmail.com">
+            <div class="social-icon-wrapper email">
+              ✉️
+            </div>
+            <div class="social-content">
+              <h3>
+                Courriel de Contact
+                <span class="arrow">&rarr;</span>
+              </h3>
+              <p>Pour toute demande officielle, partenariat entreprise, question académique ou adhésion.</p>
+              <span class="social-handle">contact.ciaa.fsan@gmail.com</span>
+            </div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3 : LE BUREAU DU CLUB (AVEC PROFILS LINKEDIN PERSONNELS) -->
+    <section id="equipe" class="team-section">
+      <div class="wrap">
+        <div class="section-head">
+          <span class="section-badge">Gouvernance Étudiante</span>
+          <h2>Le Bureau du Club</h2>
+          <p class="intro">Les étudiants qui pilotent les activités, animent les formations et gèrent les projets du CIAA.</p>
+        </div>
+
+        <div class="team-grid" id="dyn-bureau-grid">
+          <!-- Rempli dynamiquement par js/apropos.js depuis CIAA_STORE -->
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 4 : LES PROFESSEURS ENCADRANTS FSAN -->
+    <section id="encadrants" class="faculty-section">
+      <div class="wrap">
+        <div class="section-head">
+          <span class="section-badge">Encadrement Pédagogique &amp; Scientifique</span>
+          <h2>Nos Professeurs Encadrants</h2>
+          <p class="intro">Les enseignants-chercheurs de la FSAN qui supervisent le club, guident nos projets de recherche et valident nos programmes.</p>
+        </div>
+
+        <div class="faculty-grid" id="dyn-faculty-grid">
+          <!-- Rempli dynamiquement par js/apropos.js depuis CIAA_STORE -->
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 5 : LOCALISATION & FORMULAIRE DE CONTACT -->
+    <section id="contact" class="contact-section">
+      <div class="wrap">
+        <div class="section-head">
+          <span class="section-badge">Nous Rencontrer &amp; Échanger</span>
+          <h2>Localisation &amp; Contact</h2>
+          <p class="intro">Vous êtes étudiant, enseignant ou entreprise souhaitant collaborer avec le CIAA ? Écrivez-nous ou venez nous rencontrer sur le campus.</p>
+        </div>
+
+        <div class="contact-layout">
+          <!-- Coordonnées et localisation -->
+          <div class="contact-info-box">
+            <div class="contact-item">
+              <div class="contact-item-icon">📍</div>
+              <div class="contact-item-text">
+                <h4>Adresse du Club</h4>
+                <p id="dyn-club-address">Faculté des Sciences Appliquées de Nador (FSAN)<br>Université Mohammed Premier (UMP)<br>B.P. 300, Selouane 62702, Nador, Maroc</p>
+              </div>
+            </div>
+
+            <div class="contact-item">
+              <div class="contact-item-icon">📧</div>
+              <div class="contact-item-text">
+                <h4>Courriel Officiel</h4>
+                <p><a id="dyn-club-email" href="mailto:contact.ciaa.fsan@gmail.com">contact.ciaa.fsan@gmail.com</a></p>
+              </div>
+            </div>
+
+            <div class="contact-item">
+              <div class="contact-item-icon">🎓</div>
+              <div class="contact-item-text">
+                <h4>Établissement de Rattachement</h4>
+                <p id="dyn-club-faculty">Faculté des Sciences Appliquées de Nador (FSAN) · <a href="http://fsan.ump.ma" target="_blank" rel="noopener noreferrer">fsan.ump.ma &rarr;</a></p>
+              </div>
+            </div>
+
+            <div class="contact-item">
+              <div class="contact-item-icon">🤝</div>
+              <div class="contact-item-text">
+                <h4>Adhésion au Club</h4>
+                <p>L'adhésion est gratuite pour tous les étudiants inscrits à la FSAN (prioritairement Masters SDSI, MIATE et licences associées).</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Formulaire de contact direct -->
+          <div class="contact-form-box">
+            <h3>Envoyer un Message au Bureau</h3>
+            <p class="sub">Remplissez ce formulaire et un membre du bureau vous répondra sous 24 à 48 heures.</p>
+            
+            <form id="club-contact-form">
+              <div class="form-field">
+                <label for="contact-nom">Nom complet *</label>
+                <input id="contact-nom" required placeholder="Ex: Karim Mansouri">
+              </div>
+
+              <div class="form-field">
+                <label for="contact-email">Adresse Email *</label>
+                <input id="contact-email" type="email" required placeholder="nom@exemple.com ou etudiant@ump.ac.ma">
+              </div>
+
+              <div class="form-field">
+                <label for="contact-sujet">Objet du message *</label>
+                <input id="contact-sujet" required placeholder="Ex: Proposition de partenariat / Question sur le club">
+              </div>
+
+              <div class="form-field">
+                <label for="contact-message">Message *</label>
+                <textarea id="contact-message" rows="4" required placeholder="Écrivez votre message ici..."></textarea>
+              </div>
+
+              <button class="btn primary" type="submit" style="width:100%">
+                Envoyer le message &rarr;
+              </button>
+              <p id="contact-status-msg" class="form-status-feedback" role="status" aria-live="polite"></p>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="wrap">
+      <span>© 2026 CIAA · Club d'Intelligence Artificielle et ses Applications</span>
+      <span>Faculté des Sciences Appliquées de Nador (FSAN)</span>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/dist/umd/supabase.min.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/dialog.js"></script>
+  <script src="js/apropos.js"></script>
+</body>
+</html>

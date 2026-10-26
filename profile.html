@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Mon Profil Membre · CIAA FSAN</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/profile.css">
+</head>
+<body>
+  <!-- Barre de navigation -->
+  <header>
+    <nav class="wrap" aria-label="Navigation principale">
+      <a class="brand" href="index.html">
+        <img src="logo.png" alt="Club IAA - Faculté des Sciences Appliquées Nador" class="brand-logo">
+      </a>
+      <div class="links">
+        <a href="index.html">Accueil</a>
+        <a href="projects.html">Projets</a>
+        <a href="apprendre.html">Apprendre</a>
+        <a href="annonces.html">Annonces &amp; Sujets</a>
+        <a href="apropos.html">À propos du club</a>
+        <a href="profile.html" class="active">Mon Profil</a>
+        <!-- <span class="backend-status-pill offline" title="État de la connexion Supabase"><span class="dot"></span> <strong>Supabase indisponible</strong></span> -->
+        <a id="dash-link" href="dashboard.html" class="cta btn-nav-dash" hidden>Dashboard Admin</a>
+        <button id="profile-logout-btn" class="cta btn-nav-logout" type="button">Déconnexion</button>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <!-- Entête Profil -->
+    <div class="profile-hero">
+      <div class="wrap">
+        <div class="profile-header-card">
+          <div id="profile-avatar-large" class="profile-avatar-large">US</div>
+          <div class="profile-header-details">
+            <h1 id="profile-display-name">Étudiant CIAA</h1>
+            <p id="profile-display-email">etudiant@ump.ac.ma</p>
+            <div class="profile-badge-row">
+              <span id="profile-display-master" class="status-pill profile-pill-master">Master SDSI</span>
+              <span id="profile-display-role" class="status-pill profile-pill-role">Membre</span>
+              <button id="btn-hero-logout" class="btn-profile-logout" type="button">🚪 Déconnexion</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bannière d'état de validation du compte -->
+        <div id="profile-status-banner" class="status-account-banner pending" role="status" aria-live="polite">
+          ⏳ Votre candidature est en cours de traitement jusqu'à validation dans le dashboard par l'administrateur.
+        </div>
+      </div>
+    </div>
+
+    <!-- Contenu du profil -->
+    <section class="profile-content-section">
+      <div class="wrap">
+        <div class="profile-layout">
+          <!-- Colonne 1 : Mes informations personnelles (Affichage & Modification) -->
+          <div class="profile-box">
+            <div class="profile-box-header-flex">
+              <h2>Informations Personnelles</h2>
+              <span id="badge-profile-status" class="status-pill">Membre</span>
+            </div>
+            <p class="intro-sub">Consultez et gérez vos coordonnées, votre filière et vos compétences pour les projets du club.</p>
+
+            <!-- 1. Affichage propre en lecture seule des informations -->
+            <div id="profile-info-display-wrap" class="profile-info-display-wrap">
+              <div class="profile-info-display-grid">
+                <div class="profile-info-row">
+                  <span class="profile-info-label">Prénom &amp; Nom</span>
+                  <span id="disp-prenom-nom" class="profile-info-value">—</span>
+                </div>
+
+                <div class="profile-info-row">
+                  <span class="profile-info-label">Email Académique</span>
+                  <span id="disp-email" class="profile-info-value">—</span>
+                </div>
+
+                <div class="profile-info-row">
+                  <span class="profile-info-label">Filière / Master</span>
+                  <span id="disp-master" class="profile-info-value">—</span>
+                </div>
+
+                <div class="profile-info-row">
+                  <span class="profile-info-label">Profil LinkedIn</span>
+                  <span id="disp-linkedin" class="profile-info-value">—</span>
+                </div>
+              </div>
+
+              <div class="profile-info-bio">
+                <span class="profile-info-label">Bio &amp; Compétences Techniques</span>
+                <p id="disp-bio" class="profile-info-value">Non renseigné pour l'instant.</p>
+              </div>
+
+              <button id="btn-toggle-edit-profile" class="btn-toggle-edit-profile" type="button">
+                ✏️ Modifier mes informations
+              </button>
+            </div>
+
+            <!-- 2. Formulaire complet de modification (activé sur demande) -->
+            <div id="profile-edit-form-wrap" class="profile-edit-form-wrap">
+              <form id="profile-edit-form">
+                <div class="profile-form-row">
+                  <div class="profile-form-group">
+                    <label for="edit-prenom">Prénom *</label>
+                    <input id="edit-prenom" required>
+                  </div>
+                  <div class="profile-form-group">
+                    <label for="edit-nom">Nom *</label>
+                    <input id="edit-nom" required>
+                  </div>
+                </div>
+
+                <div class="profile-form-group">
+                  <label for="edit-email">Adresse Email</label>
+                  <input id="edit-email" type="email" readonly>
+                </div>
+
+                <div class="profile-form-group">
+                  <label for="edit-master">Filière / Master *</label>
+                  <input id="edit-master" required placeholder="Ex: Master SDSI (S3)">
+                </div>
+
+                <div class="profile-form-group">
+                  <label for="edit-linkedin">Identifiant LinkedIn</label>
+                  <input id="edit-linkedin" placeholder="Ex: prenom-nom">
+                </div>
+
+                <div class="profile-form-group">
+                  <label for="edit-bio">Bio &amp; Compétences techniques</label>
+                  <textarea id="edit-bio" rows="3" placeholder="Vos langages, frameworks et domaines d'intérêt en IA (PyTorch, YOLO, LLMs)..."></textarea>
+                </div>
+
+                <div class="profile-form-actions">
+                  <button id="btn-cancel-edit-profile" class="btn ghost" type="button">Annuler</button>
+                  <button class="btn primary btn-save-profile" type="submit">Sauvegarder les modifications</button>
+                </div>
+                <p id="profile-edit-feedback" class="profile-feedback-text" role="status" aria-live="polite"></p>
+              </form>
+            </div>
+          </div>
+
+          <!-- Colonne 2 : Mes Projets Soumis & Sujets Proposés -->
+          <div class="profile-col-stacked">
+            <div class="profile-box">
+              <div class="profile-box-header-flex">
+                <h2>Mes Projets Soumis</h2>
+                <a class="btn ghost" href="addproject.html">+ Nouveau projet</a>
+              </div>
+              <p class="intro-sub">Suivez l'état de review et de publication de vos projets par l'administrateur.</p>
+
+              <div id="my-projects-list">
+                <!-- Rempli dynamiquement par js/profile.js -->
+              </div>
+            </div>
+
+            <div class="profile-box">
+              <div class="profile-box-header-flex">
+                <h2>Mes Propositions de Sujets</h2>
+                <a class="btn ghost" href="propose-sujet.html">+ Proposer (Page Dédiée)</a>
+              </div>
+              <p class="intro-sub">Les idées de projets que vous avez soumises au club pour validation.</p>
+
+              <div id="my-sujets-list">
+                <!-- Rempli dynamiquement par js/profile.js -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Raccourci Administrateur (visible seulement pour l'admin) -->
+          <div id="profile-admin-card" class="admin-callout-card" hidden>
+            <div>
+              <h3>Espace Administrateur CIAA</h3>
+              <p>Vous disposez des droits d'accès au dashboard pour valider les comptes étudiants, modérer les projets, gérer les membres du bureau, les drives et les vidéos.</p>
+            </div>
+            <a class="btn primary admin-card-btn" href="dashboard.html">
+              Accéder au Dashboard Administrateur &rarr;
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="wrap">
+      <span>© 2026 CIAA · Club d'Intelligence Artificielle et ses Applications</span>
+      <span>Faculté des Sciences Appliquées de Nador (FSAN)</span>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/dist/umd/supabase.min.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/dialog.js"></script>
+  <script src="js/profile.js"></script>
+</body>
+</html>

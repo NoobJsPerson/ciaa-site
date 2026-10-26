@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Projets des Membres · CIAA FSAN Nador</title>
+  <title>Tous les Projets IA · Vitrine Complète · CIAA FSAN</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -15,31 +15,34 @@
   <header>
     <nav class="wrap" aria-label="Navigation principale">
       <a class="brand" href="index.html">
-        CIAA
-        <span class="badge-fsan">FSAN</span>
+        <img src="logo.png" alt="Club IAA - Faculté des Sciences Appliquées Nador" class="brand-logo">
       </a>
       <div class="links">
-        <a href="index.html#accueil">Accueil</a>
-        <a href="index.html#apropos">À propos</a>
+        <a href="index.html">Accueil</a>
         <a href="projects.html" class="active">Projets</a>
         <a href="apprendre.html">Apprendre</a>
-        <a id="login-link" class="cta" href="login.html" hidden>Connexion</a>
-        <a id="signup-link" class="cta" href="signup.html" hidden>Inscription</a>
+        <a href="annonces.html">Annonces &amp; Sujets</a>
+        <a href="apropos.html">À propos du club</a>
+        <!-- <span class="backend-status-pill offline" title="État de la connexion Supabase"><span class="dot"></span> <strong>Supabase indisponible</strong></span> -->
+        <a id="profile-link" href="profile.html" hidden>Mon Profil</a>
+        <a id="dash-link" href="dashboard.html" class="cta" style="background:var(--teal)" hidden>Dashboard</a>
+        <a id="login-link" class="cta" href="login.html">Connexion</a>
+        <a id="signup-link" class="cta" href="signup.html">Inscription</a>
         <button id="logout-btn" class="cta" type="button" hidden>Déconnexion</button>
       </div>
     </nav>
   </header>
 
   <main>
-    <!-- Entête Projets -->
+    <!-- Entête de la page individuelle Projets -->
     <div class="projects-hero">
       <div class="wrap">
-        <span class="badge">Innovation &amp; Réalisations Étudiantes</span>
-        <h1>Vitrine des Projets IA du Club</h1>
-        <p>Explorez les applications, prototypes et mémoires de recherche conçus par les étudiants des Masters SDSI et MIATE de la Faculté des Sciences Appliquées de Nador.</p>
+        <span class="badge">Innovation &amp; Projets Étudiants FSAN</span>
+        <h1>Vitrine Complète des Projets IA</h1>
+        <p>Explorez tous les projets, prototypes, mémoires et réalisations conçus par les étudiants et chercheurs des Masters SDSI et MIATE de la Faculté des Sciences Appliquées de Nador.</p>
         <div class="projects-hero-actions">
-          <a class="btn primary" href="addproject.html">+ Proposer un projet</a>
-          <a class="btn ghost" style="color:#fff;border-color:rgba(255,255,255,0.6)" href="apprendre.html">Voir les cours associés &rarr;</a>
+          <a class="btn primary" href="addproject.html">+ Proposer un nouveau projet</a>
+          <a class="btn ghost" style="color:#fff;border-color:rgba(255,255,255,0.6)" href="apprendre.html">Formations &amp; Cours associés &rarr;</a>
         </div>
       </div>
     </div>
@@ -48,42 +51,70 @@
     <section class="projects-toolbar">
       <div class="wrap">
         <div class="toolbar-layout">
-          <!-- Champ de recherche -->
+          <!-- Champ de recherche en direct -->
           <div class="search-box">
             <span class="search-icon">🔍</span>
-            <input id="search-input" type="search" placeholder="Rechercher par titre, techno, mot-clé..." aria-label="Recherche de projets">
+            <input id="search-input" type="search" placeholder="Rechercher par titre, technologie, mot-clé..." aria-label="Recherche de projets">
           </div>
 
-          <!-- Filtres par tags -->
+          <!-- Filtres de catégories -->
           <div class="filter-pills" role="group" aria-label="Filtrer les projets">
-            <button class="filter-btn active" data-filter="all" type="button">Tous</button>
+            <button class="filter-btn active" data-filter="all" type="button">Tous les projets</button>
             <button class="filter-btn" data-filter="vision" type="button">Vision par Ordinateur</button>
             <button class="filter-btn" data-filter="nlp" type="button">NLP &amp; LLMs</button>
             <button class="filter-btn" data-filter="ml" type="button">Machine Learning</button>
-            <button class="filter-btn" data-filter="iot" type="button">IoT &amp; Systèmes</button>
+            <button class="filter-btn" data-filter="iot" type="button">IoT &amp; Embarqué</button>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Galerie des Projets -->
+    <!-- Galerie complète de tous les projets -->
     <section class="projects-gallery-section">
       <div class="wrap">
-        <div id="projects-gallery" class="gallery-grid">
-          <!-- Chargé dynamiquement par js/projects.js -->
+        <div class="projects-count-bar">
+          <span id="projects-count-display">Chargement des projets…</span>
+          <a class="btn ghost" style="font-size:0.85rem;padding:6px 14px" href="addproject.html">+ Proposer un projet</a>
         </div>
 
-        <!-- Bannière d'appel à soumission -->
+        <div id="projects-gallery" class="gallery-grid">
+          <!-- Rempli dynamiquement par js/projects.js -->
+        </div>
+
+        <!-- Appel à contribution -->
         <div style="margin-top:60px;background:linear-gradient(135deg,#0B2447,#1B6B82);border-radius:20px;padding:36px;color:#fff;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:20px">
           <div>
-            <h2 style="color:#fff;font-size:1.6rem;margin-bottom:8px">Vous êtes étudiant en Master à la FSAN ?</h2>
-            <p style="margin:0;color:#cbe2f0;max-width:54ch">Partagez votre projet de fin de semestre, mini-projet ou contribution open-source avec toute la communauté du CIAA.</p>
+            <h2 style="color:#fff;font-size:1.6rem;margin-bottom:8px">Vous avez réalisé un projet ou mini-projet IA ?</h2>
+            <p style="margin:0;color:#cbe2f0;max-width:54ch">Les étudiants des Masters SDSI et MIATE peuvent soumettre leurs réalisations pour les valoriser auprès de la communauté et des recruteurs.</p>
           </div>
           <a class="btn primary" style="background:#1CC8D8;color:#0B2447;font-weight:700" href="addproject.html">Soumettre mon projet &rarr;</a>
         </div>
       </div>
     </section>
   </main>
+
+  <!-- Modale interactive pour consulter les détails complets d'un projet -->
+  <div id="project-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-container">
+      <button id="modal-close-btn" class="modal-close-btn" aria-label="Fermer la modale" type="button">&times;</button>
+      <div class="modal-cover">
+        <img id="modal-img" src="" alt="Aperçu du projet">
+      </div>
+      <div class="modal-body">
+        <h2 id="modal-title">Titre du projet</h2>
+        <div id="modal-tags" class="project-tags" style="margin-bottom:16px"></div>
+        <p id="modal-desc">Description complète du projet...</p>
+        <div class="modal-meta-section">
+          <div style="font-size:0.85rem;color:var(--muted);margin-bottom:6px"><strong>Équipe du projet :</strong></div>
+          <div id="modal-team" style="font-size:0.92rem;color:var(--navy)"></div>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn ghost" onclick="closeProjectModal()">✕ Fermer</button>
+          <a id="modal-github" class="btn primary" href="#" target="_blank" rel="noopener noreferrer">Consulter le code sur GitHub &rarr;</a>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- Footer -->
   <footer>
@@ -94,6 +125,9 @@
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/dist/umd/supabase.min.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/dialog.js"></script>
   <script src="js/projects.js"></script>
 </body>
 </html>

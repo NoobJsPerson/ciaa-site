@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Annonces &amp; Sujets de Projets à Construire · CIAA FSAN</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/annonces.css">
+</head>
+<body>
+  <!-- Header de Navigation -->
+  <header>
+    <nav class="wrap" aria-label="Navigation principale">
+      <a class="brand" href="index.html">
+        <img src="logo.png" alt="Club IAA - Faculté des Sciences Appliquées Nador" class="brand-logo">
+      </a>
+      <div class="links">
+        <a href="index.html">Accueil</a>
+        <a href="projects.html">Projets</a>
+        <a href="apprendre.html">Apprendre</a>
+        <a href="annonces.html" class="active">Annonces &amp; Sujets</a>
+        <a href="apropos.html">À propos du club</a>
+        <!-- <span class="backend-status-pill offline" title="État de la connexion Supabase"><span class="dot"></span> <strong>Supabase indisponible</strong></span> -->
+        <a id="profile-link" href="profile.html" hidden>Mon Profil</a>
+        <a id="dash-link" href="dashboard.html" class="cta" style="background:var(--teal)" hidden>Dashboard</a>
+        <a id="login-link" class="cta" href="login.html">Connexion</a>
+        <a id="signup-link" class="cta" href="signup.html">Inscription</a>
+        <button id="logout-btn" class="cta" type="button" hidden>Déconnexion</button>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <!-- Entête de la page Annonces & Sujets -->
+    <div class="annonces-hero">
+      <div class="wrap">
+        <span class="hero-pill">Actualités du Club &amp; Projets Futurs</span>
+        <h1>Annonces &amp; Sujets de Projets à Construire</h1>
+        <p>Consultez les sujets proposés aux étudiants des Masters SDSI &amp; MIATE et soumettez vos propositions.</p>
+        <div class="annonces-hero-actions">
+          <a class="btn highlight" href="#sujets-section">🚀 Sujets de Projets à Construire (Priorité)</a>
+          <a class="btn ghost" style="color:#fff;border-color:rgba(255,255,255,0.6)" href="propose-sujet.html">💡 Proposer un sujet (Page Dédiée)</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 1 (LE PLUS IMPORTANT) : SUJETS DE PROJETS À CONSTRUIRE -->
+    <section id="sujets-section" class="sujets-section">
+      <div class="wrap">
+        <div class="sujets-header-box">
+          <div>
+            <span class="sujets-badge-important">⭐ Partie Prioritaire · Opportunités Étudiants</span>
+            <h2>Sujets de Projets à Construire</h2>
+            <p class="intro" style="margin-bottom:0">Choisissez un sujet parmi les propositions ci-dessous pour votre projet de semestre, mini-projet ou mémoire R&amp;D. Postulez en équipe pour bénéficier d'un mentorat par le club et les encadrants FSAN.</p>
+          </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <a class="btn primary" href="propose-sujet.html" style="font-size:0.92rem;padding:10px 18px;text-decoration:none">
+              + Proposer un sujet (Page Dédiée)
+            </a>
+            <button class="btn ghost" onclick="openProposeModal()" type="button" style="font-size:0.92rem;padding:10px 16px">
+              Modale Rapide
+            </button>
+          </div>
+        </div>
+
+        <!-- Barre d'outils et de filtres pour les sujets -->
+        <div class="sujets-filter-toolbar">
+          <!-- Recherche de sujets -->
+          <div class="sujets-search-box">
+            <span class="icon">🔍</span>
+            <input id="sujet-search-input" type="search" placeholder="Rechercher par titre, techno, mot-clé..." aria-label="Recherche de sujets de projets">
+          </div>
+
+          <!-- Filtres par thématique -->
+          <div class="sujets-filter-pills" role="group" aria-label="Filtres thématiques">
+            <button class="sujet-pill-btn active" data-cat="all" type="button">Tous les domaines</button>
+            <button class="sujet-pill-btn" data-cat="cv" type="button">Computer Vision</button>
+            <button class="sujet-pill-btn" data-cat="dl" type="button">Deep Learning</button>
+            <button class="sujet-pill-btn" data-cat="data" type="button">Data Science &amp; Big Data</button>
+            <button class="sujet-pill-btn" data-cat="ml" type="button">Machine Learning</button>
+            <button class="sujet-pill-btn" data-cat="nlp" type="button">NLP &amp; LLMs</button>
+          </div>
+        </div>
+
+        <!-- Compteur de sujets -->
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;font-size:0.9rem;color:var(--muted)">
+          <span id="sujets-count-display">Chargement des sujets…</span>
+          <span>Encadrement assuré par le CIAA &amp; Enseignants FSAN</span>
+        </div>
+
+        <!-- Grille des Sujets de Projets -->
+        <div id="sujets-grid-container" class="sujets-grid">
+          <!-- Rempli dynamiquement par js/annonces.js -->
+        </div>
+
+        <!-- Bannière d'encouragement -->
+        <div style="margin-top:45px;background:#ffffff;border:1px solid var(--line);border-radius:16px;padding:26px 30px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap">
+          <div>
+            <h3 style="color:var(--navy);font-size:1.15rem;margin-bottom:6px">Vous avez déjà votre propre idée de projet IA ?</h3>
+            <p style="margin:0;color:var(--muted);font-size:0.92rem;max-width:58ch">Le club CIAA vous aide à trouver des coéquipiers, à valider votre cahier des charges et à accéder aux ressources de calcul.</p>
+          </div>
+          <button class="btn ghost" onclick="openProposeModal()" type="button" style="font-size:0.88rem;padding:9px 18px">
+            Soumettre votre propre idée &rarr;
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MODALE 1 : POSTULER À UN SUJET DE PROJET -->
+  <div id="apply-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="apply-modal-title">
+    <div class="modal-container">
+      <button class="modal-close-btn" onclick="closeAllModals()" aria-label="Fermer la modale" type="button">&times;</button>
+      <div class="modal-header">
+        <h2 id="apply-modal-title">Postuler à ce sujet de projet</h2>
+        <p id="apply-modal-sub">Remplissez ce formulaire pour constituer votre équipe ou postuler individuellement.</p>
+      </div>
+      <form id="apply-form" class="modal-content-form">
+        <div style="display:flex;gap:12px">
+          <div class="form-group" style="flex:1">
+            <label for="candidat-prenom">Prénom *</label>
+            <input id="candidat-prenom" required placeholder="Ex: Karim">
+          </div>
+          <div class="form-group" style="flex:1">
+            <label for="candidat-nom">Nom *</label>
+            <input id="candidat-nom" required placeholder="Ex: Mansouri">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="candidat-email">Email institutionnel UMP / FSAN *</label>
+          <input id="candidat-email" type="email" required placeholder="prenom.nom@ump.ac.ma">
+        </div>
+
+        <div class="form-group">
+          <label for="candidat-master">Master &amp; Semestre actuel *</label>
+          <select id="candidat-master" required>
+            <option value="">Sélectionnez votre cursus...</option>
+            <option value="SDSI-S1">Master SDSI - Semestre 1</option>
+            <option value="SDSI-S3">Master SDSI - Semestre 3</option>
+            <option value="MIATE-S1">Master MIATE - Semestre 1</option>
+            <option value="MIATE-S3">Master MIATE - Semestre 3</option>
+            <option value="Autre-FSAN">Autre filière FSAN / Doctorant</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="candidat-binome">Nom de votre binôme / coéquipier (si vous en avez déjà un)</label>
+          <input id="candidat-binome" placeholder="Ex: Youssef El Amrani (laisser vide si candidature solo)">
+        </div>
+
+        <div class="form-group">
+          <label for="candidat-message">Motivation et compétences pertinentes pour ce sujet *</label>
+          <textarea id="candidat-message" rows="4" required placeholder="Décrivez vos compétences (ex: Python, PyTorch, ROS), vos cours validés et pourquoi ce sujet vous passionne..."></textarea>
+        </div>
+
+        <div style="display:flex;gap:10px;margin-top:12px">
+          <button class="btn ghost" type="button" onclick="closeAllModals()" style="flex:1">✕ Fermer</button>
+          <button class="btn primary" type="submit" style="flex:2">
+            Envoyer ma candidature au bureau du CIAA &rarr;
+          </button>
+        </div>
+        <p id="apply-status-msg" class="modal-status-msg" role="status" aria-live="polite"></p>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODALE 2 : CAHIER DES CHARGES DU SUJET -->
+  <div id="cahier-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="cahier-modal-title">
+    <div class="modal-container">
+      <button class="modal-close-btn" aria-label="Fermer la modale" type="button">&times;</button>
+      <div class="modal-header">
+        <h2 id="cahier-modal-title">Cahier des charges</h2>
+        <p id="cahier-modal-desc">Détails techniques et étapes recommandées de réalisation.</p>
+      </div>
+      <div class="modal-content-form">
+        <div style="margin-bottom:16px">
+          <strong style="color:var(--navy);font-size:0.92rem;display:block;margin-bottom:6px">🎯 Objectif &amp; Livrables :</strong>
+          <p id="cahier-modal-deliverables" style="font-size:0.92rem;color:var(--muted);margin:0;line-height:1.6"></p>
+        </div>
+
+        <div style="margin-bottom:16px">
+          <strong style="color:var(--navy);font-size:0.92rem;display:block;margin-bottom:6px">📋 Plan de travail &amp; Jalons conseillés :</strong>
+          <div id="cahier-modal-details" style="background:#f7fafd;border:1px solid var(--line);border-radius:10px;padding:14px;font-size:0.88rem;color:#3b566e;white-space:pre-line;line-height:1.65"></div>
+        </div>
+
+        <div style="margin-bottom:20px">
+          <strong style="color:var(--navy);font-size:0.92rem;display:block;margin-bottom:8px">🛠️ Technologies &amp; Outils recommandés :</strong>
+          <div id="cahier-modal-techs" style="display:flex;gap:6px;flex-wrap:wrap"></div>
+        </div>
+
+        <div style="display:flex;gap:10px;margin-top:16px">
+          <button class="btn ghost" type="button" onclick="closeAllModals()" style="flex:1">✕ Fermer</button>
+          <button class="btn primary" onclick="closeAllModals();openApplyModal(selectedSujetForModal)" type="button" style="flex:2">
+            Postuler à ce sujet dès maintenant &rarr;
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODALE 3 : PROPOSER UN NOUVEAU SUJET DE PROJET -->
+  <div id="propose-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="propose-modal-title">
+    <div class="modal-container">
+      <button class="modal-close-btn" aria-label="Fermer la modale" type="button">&times;</button>
+      <div class="modal-header">
+        <h2 id="propose-modal-title">Proposer un nouveau sujet de projet</h2>
+        <p>Partagez une idée de projet que vous aimeriez réaliser ou proposer aux autres membres du CIAA.</p>
+      </div>
+      <form id="propose-form" class="modal-content-form">
+        <div class="form-group">
+          <label for="propose-titre">Titre du sujet proposé *</label>
+          <input id="propose-titre" required placeholder="Ex: Reconnaissance d'émotions en temps réel par webcam">
+        </div>
+
+        <div class="form-group">
+          <label for="propose-cat">Thématique principale *</label>
+          <select id="propose-cat" required>
+            <option value="">Sélectionnez un domaine...</option>
+            <option value="ml">Machine Learning</option>
+                <option value="dl">Deep Learning</option>
+                <option value="cv">Computer Vision</option>
+                <option value="nlp">NLP &amp; LLMs</option>
+                <option value="data">Data Science &amp; Big Data</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="propose-master">Master concerné *</label>
+          <select id="propose-master" required>
+            <option value="">Sélectionnez un master...</option>
+            <option value="Master SDSI">Master SDSI</option>
+            <option value="Master MIATE">Master MIATE</option>
+            <option value="SDSI & MIATE">Les deux masters</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="propose-desc">Description de la problématique et des objectifs *</label>
+          <textarea id="propose-desc" rows="4" required placeholder="Quel est le problème à résoudre ? Quel algorithme ou approche suggérez-vous ? Quel est le résultat espéré ?"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="propose-techs">Technologies envisagées</label>
+          <input id="propose-techs" placeholder="Ex: PyTorch, TensorFlow, OpenCV, FastAPI, Docker">
+        </div>
+
+        <div class="form-group">
+          <label for="propose-email">Votre Email (pour vous recontacter) *</label>
+          <input id="propose-email" type="email" required placeholder="votre.email@ump.ac.ma">
+        </div>
+
+        <div style="display:flex;gap:10px;margin-top:12px">
+          <button class="btn ghost" type="button" onclick="closeAllModals()" style="flex:1">✕ Fermer</button>
+          <button class="btn primary" type="submit" style="flex:2">
+            Soumettre la proposition au bureau du CIAA &rarr;
+          </button>
+        </div>
+        <div style="text-align:center;margin-top:12px">
+          <a href="propose-sujet.html" style="font-size:0.85rem;color:var(--teal);text-decoration:underline">
+            ↗ Ou ouvrir le formulaire complet avec upload d'image sur page individuelle
+          </a>
+        </div>
+        <p id="propose-status-msg" class="modal-status-msg" role="status" aria-live="polite"></p>
+      </form>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="wrap">
+      <span>© 2026 CIAA · Club d'Intelligence Artificielle et ses Applications</span>
+      <span>Faculté des Sciences Appliquées de Nador (FSAN)</span>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/dist/umd/supabase.min.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/dialog.js"></script>
+  <script src="js/annonces.js"></script>
+</body>
+</html>

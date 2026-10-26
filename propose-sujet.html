@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Proposer un Sujet de Projet · CIAA FSAN</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+  <main>
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:12px">
+      <button type="button" class="btn-return-back" onclick="if(history.length > 1){history.back()}else{window.location.href='annonces.html'}">&larr; Retour à la page précédente</button>
+      <a href="index.html">
+        <img src="logo.png" alt="Club IAA - FSAN" class="brand-logo">
+      </a>
+    </div>
+
+    <!-- Navigation & Fil d'ariane -->
+    <header class="topbar">
+      <div>
+        <h1>Proposer un Sujet de Projet</h1>
+        <p class="hint">
+          <a id="return-dash-link" href="dashboard.html" hidden>&larr; Retour au Dashboard Admin</a>
+          <span> | </span>
+          <a href="annonces.html">&larr; Page Annonces &amp; Sujets de Projets</a>
+          <span> | </span>
+          <a href="projects.html">Galerie Projets</a>
+          <span> | </span>
+          <a href="index.html">Accueil</a>
+        </p>
+      </div>
+    </header>
+
+    <!-- Bannière Admin -->
+    <div id="admin-banner" class="admin-badge-callout" hidden>
+      <span>👑</span>
+      <span>Session Administrateur active : vous pouvez créer et valider directement ce sujet</span>
+    </div>
+
+    <!-- Formulaire individuel pour proposer un sujet de projet -->
+    <section class="panel" aria-labelledby="propose-heading">
+      <h2 id="propose-heading">Formulaire de Sujet de Projet (Page Individuelle)</h2>
+      <p class="hint">Proposez une problématique ou un défi en Intelligence Artificielle à destination des étudiants des Masters SDSI &amp; MIATE. Les propositions soumises par les membres sont examinées et validées dans le tableau de bord administrateur.</p>
+
+      <form id="propose-sujet-form">
+        <div class="form-grid-2">
+          <div>
+            <label for="sujet-author">Votre Nom &amp; Prénom *</label>
+            <input id="sujet-author" required placeholder="Ex: Salma Benali">
+          </div>
+          <div>
+            <label for="sujet-email">Email universitaire / institutionnel *</label>
+            <input id="sujet-email" type="email" required placeholder="nom.prenom@ump.ac.ma">
+          </div>
+        </div>
+
+        <div class="form-grid-2">
+          <div>
+            <label for="sujet-title">Titre du sujet de projet proposé *</label>
+            <input id="sujet-title" required placeholder="Ex: Système intelligent de tri automatique des déchets par IA">
+          </div>
+          <div>
+            <label for="sujet-cat">Thématique principale *</label>
+            <select id="sujet-cat" required>
+              <option value="vision">Vision par Ordinateur &amp; Drones</option>
+              <option value="nlp">NLP, Transformers &amp; LLMs</option>
+              <option value="robotique">Robotique &amp; IoT Connecté</option>
+              <option value="agriculture">Agriculture Intelligente 4.0</option>
+              <option value="energie">Énergie &amp; Séries Temporelles</option>
+              <option value="sante">Santé, Imagerie &amp; Bio-IA</option>
+              <option value="autre">Autre domaine innovant</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-grid-2">
+          <div>
+            <label for="sujet-master">Master ciblé en priorité *</label>
+            <select id="sujet-master" required>
+              <option value="SDSI &amp; MIATE">Masters SDSI &amp; MIATE (Commun)</option>
+              <option value="SDSI">Master SDSI (Science des Données &amp; SI)</option>
+              <option value="MIATE">Master MIATE (IA &amp; Technologies Émergentes)</option>
+            </select>
+          </div>
+          <div>
+            <label for="sujet-teamsize">Taille recommandée de l'équipe</label>
+            <input id="sujet-teamsize" placeholder="Ex: 2 à 3 étudiants">
+          </div>
+        </div>
+
+        <label for="sujet-desc">Description de la problématique, objectifs et résultats attendus *</label>
+        <textarea id="sujet-desc" rows="4" required placeholder="Expliquez le problème technique à résoudre, la méthodologie envisagée, l'impact espéré et les étapes clés..."></textarea>
+
+        <label for="sujet-techs">Technologies, frameworks et librairies suggérés</label>
+        <input id="sujet-techs" placeholder="Ex: PyTorch, YOLOv8, OpenCV, FastAPI, Docker, ROS2">
+
+        <!-- UPLOAD D'IMAGE DEPUIS L'APPAREIL LOCAL (EXIGÉ: PAS DE LIEN WEB) -->
+        <label for="sujet-image-file">Image explicative / Schéma d'architecture (depuis votre appareil)</label>
+        <div id="sujet-image-dropzone" class="file-upload-zone">
+          <input id="sujet-image-file" type="file" accept="image/*" aria-label="Choisir une image depuis l'appareil">
+          <div class="file-upload-content">
+            <div class="file-upload-icon">📊</div>
+            <div class="file-upload-title">Cliquez pour importer un schéma ou une image depuis votre appareil ou glissez-déposez ici</div>
+            <div class="file-upload-subtitle">Formats supportés : JPG, PNG, WebP, SVG (Import direct local depuis votre PC / mobile)</div>
+          </div>
+        </div>
+
+        <!-- Boîte de prévisualisation de l'image -->
+        <div id="sujet-image-preview-box" class="image-preview-box">
+          <img id="sujet-image-preview-img" class="image-preview-thumbnail" src="" alt="Aperçu du schéma">
+          <div class="image-preview-info">
+            <div id="sujet-image-name" class="image-preview-name">schema.png</div>
+            <div id="sujet-image-size" class="image-preview-size">0 Ko</div>
+          </div>
+          <button id="btn-remove-sujet-image" class="btn-remove-image" type="button">Supprimer l'image</button>
+        </div>
+
+        <!-- Options Administrateur conditionnelles -->
+        <div id="admin-options-box" hidden class="nav">
+          <label class="featured">
+            <input id="admin-direct-approve" type="checkbox" checked>
+            <span>Valider et publier directement sur la page Annonces (Mode Administrateur)</span>
+          </label>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit">
+            <span>💡 Soumettre la proposition de sujet &rarr;</span>
+          </button>
+          <a class="hint" href="annonces.html">Annuler et voir les annonces</a>
+        </div>
+      </form>
+
+      <!-- Message succès -->
+      <div id="sujet-success-box" class="success-card">
+        <div class="success-card-icon">🚀</div>
+        <h3 class="success-card-title">Proposition de sujet envoyée avec succès !</h3>
+        <p id="sujet-success-desc" class="success-card-desc">
+          Votre proposition a été enregistrée.
+        </p>
+        <div class="success-card-actions">
+          <a class="btn-card-link primary" href="annonces.html">Voir la page Annonces &amp; Sujets</a>
+          <a id="sujet-link-dashboard" class="btn-card-link ghost" href="dashboard.html" hidden>Ouvrir le dashboard</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/dist/umd/supabase.min.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/dialog.js"></script>
+  <script src="js/upload-helper.js"></script>
+  <script src="js/propose-sujet.js"></script>
+</body>
+</html>

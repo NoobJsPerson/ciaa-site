@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Administration des Projets · CIAA</title>
+  <title>Modifier un Projet · CIAA FSAN</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -11,41 +11,77 @@
 </head>
 <body>
   <main>
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:12px">
+      <button type="button" class="btn-return-back" onclick="if(history.length > 1){history.back()}else{window.location.href='dashboard.html'}">&larr; Retour à la page précédente</button>
+      <a href="index.html">
+        <img src="logo.png" alt="Club IAA - FSAN" class="brand-logo">
+      </a>
+    </div>
+
     <header class="topbar">
       <div>
-        <h1>Administration des Projets</h1>
-        <p class="hint"><a href="projects.html">&larr; Voir les projets publics</a> | <a href="index.html">Accueil</a></p>
+        <h1>Modification des Projets</h1>
+        <p class="hint">
+          <a href="dashboard.html">&larr; Ouvrir le Dashboard Global</a>
+          <span> | </span>
+          <a href="addproject.html">+ Ajouter un nouveau projet</a>
+          <span> | </span>
+          <a href="projects.html">Galerie publique</a>
+          <span> | </span>
+          <a href="index.html">Accueil</a>
+        </p>
       </div>
       <button id="logout-btn" class="secondary" type="button" hidden>Déconnexion</button>
     </header>
+
     <p id="msg" class="status" role="status" aria-live="polite"></p>
 
     <section id="admin-box" hidden>
-      <nav class="nav" aria-label="Pages d'administration">
-        <a href="addproject.html">+ Ajouter un nouveau projet</a>
-      </nav>
       <section class="panel" aria-labelledby="projects-heading">
         <h2 id="projects-heading">Liste des Projets Enregistrés</h2>
-        <p class="hint">Sélectionnez un projet pour modifier ses informations ou son statut en vedette.</p>
+        <p class="hint">Sélectionnez un projet pour modifier ses informations, son image ou son statut en vedette.</p>
         <ul id="project-list" class="project-list"></ul>
         <p id="empty-message" class="hint" hidden>Aucun projet trouvé.</p>
       </section>
-      <section id="editor" class="panel" aria-labelledby="editor-heading" hidden style="margin-top: 1rem">
+
+      <section id="editor" class="panel nav" aria-labelledby="editor-heading" hidden>
         <h2 id="editor-heading">Modifier le projet</h2>
         <form id="edit-form">
-          <label for="title">Titre</label>
+          <label for="title">Titre du projet *</label>
           <input id="title" required>
-          <label for="description">Description</label>
-          <textarea id="description" rows="4"></textarea>
-          <label for="link">Lien (optionnel)</label>
-          <input id="link" type="url" placeholder="https://">
-          <label for="image">Remplacer l'image (optionnel)</label>
-          <input id="image" type="file" accept="image/*">
+
+          <label for="description">Description complète *</label>
+          <textarea id="description" rows="4" required></textarea>
+
+          <label for="link">Lien du Code Source (GitHub ou Démo)</label>
+          <input id="link" type="url" placeholder="https://github.com/...">
+
+          <!-- Remplacement de l'image via fichier depuis l'appareil -->
+          <label for="image">Remplacer l'image (depuis votre appareil)</label>
+          <div id="edit-image-dropzone" class="file-upload-zone">
+            <input id="image" type="file" accept="image/*" aria-label="Choisir une nouvelle image depuis l'appareil">
+            <div class="file-upload-content">
+              <div class="file-upload-icon">📷</div>
+              <div class="file-upload-title">Cliquez pour choisir un nouveau fichier sur votre appareil ou glissez-déposez ici</div>
+              <div class="file-upload-subtitle">Formats supportés : JPG, PNG, WebP, SVG</div>
+            </div>
+          </div>
+
+          <div id="edit-image-preview-box" class="image-preview-box">
+            <img id="edit-image-preview-img" class="image-preview-thumbnail" src="" alt="Aperçu">
+            <div class="image-preview-info">
+              <div id="edit-image-name" class="image-preview-name">image.png</div>
+              <div id="edit-image-size" class="image-preview-size">0 Ko</div>
+            </div>
+            <button id="btn-remove-edit-image" class="btn-remove-image" type="button">Retirer l'image</button>
+          </div>
           <p id="image-hint" class="hint"></p>
+
           <label class="featured" for="featured">
             <input id="featured" type="checkbox">
-            Mettre en vedette (Featured sur l'accueil)
+            <span>Mettre en vedette (Top 3 Meilleurs Projets sur la page d'accueil)</span>
           </label>
+
           <div class="form-actions">
             <button type="submit">Sauvegarder les modifications</button>
             <button id="cancel-btn" class="secondary" type="button">Annuler</button>
@@ -56,140 +92,10 @@
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/dist/umd/supabase.min.js"></script>
-  <script>
-    const SUPABASE_URL = 'https://dwtizibjpkdtcceiggxf.supabase.co';
-    const SUPABASE_ANON_KEY = 'sb_publishable_MeOXYq_SwsXx-IkyPhGqqQ_jGlxMeS5';
-    const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    const $ = (id) => document.getElementById(id);
-
-    let selectedProject = null;
-    let projects = [];
-
-    function say(message, isErr = false) {
-      $('msg').textContent = message;
-      $('msg').className = isErr ? 'status error' : 'status success';
-    }
-
-    function renderProjects() {
-      const list = $('project-list');
-      list.replaceChildren();
-      $('empty-message').hidden = projects.length > 0;
-
-      for (const project of projects) {
-        const item = document.createElement('li');
-        item.className = 'project-row';
-        const title = document.createElement('span');
-        title.className = 'project-title';
-        title.textContent = (project.featured ? '★ ' : '') + (project.title || 'Projet sans titre');
-        const button = document.createElement('button');
-        button.type = 'button';
-        button.className = 'secondary';
-        button.textContent = 'Modifier';
-        button.addEventListener('click', () => selectProject(project));
-        item.append(title, button);
-        list.append(item);
-      }
-    }
-
-    async function loadProjects() {
-      say('Chargement des projets…');
-      const { data, error } = await db
-        .from('projects')
-        .select('id, title, description, link, image_url, featured')
-        .order('created_at', { ascending: false });
-      if (error) {
-        say('Impossible de charger les projets : ' + error.message, true);
-        return;
-      }
-      projects = data || [];
-      renderProjects();
-      say('');
-    }
-
-    function selectProject(project) {
-      selectedProject = project;
-      $('title').value = project.title || '';
-      $('description').value = project.description || '';
-      $('link').value = project.link || '';
-      $('featured').checked = !!project.featured;
-      $('image').value = '';
-      $('image-hint').textContent = project.image_url
-        ? 'L\'image actuelle est conservée sauf si vous sélectionnez un nouveau fichier.'
-        : 'Aucune image définie actuellement.';
-      $('editor').hidden = false;
-      $('title').focus();
-    }
-
-    db.auth.onAuthStateChange((event, session) => {
-      if (!session) {
-        window.location.replace('login.html?next=editproject.html');
-        return;
-      }
-      $('admin-box').hidden = false;
-      $('logout-btn').hidden = false;
-      if (event === 'INITIAL_SESSION' || event === 'SIGNED_IN') {
-        window.setTimeout(() => { void loadProjects(); }, 0);
-      }
-    });
-
-    $('logout-btn').addEventListener('click', async () => {
-      const { error } = await db.auth.signOut();
-      if (error) say('Échec de la déconnexion : ' + error.message, true);
-    });
-
-    $('edit-form').addEventListener('submit', async (event) => {
-      event.preventDefault();
-      if (!selectedProject) {
-        say('Veuillez sélectionner un projet avant d\'enregistrer.', true);
-        return;
-      }
-
-      say('Enregistrement des modifications…');
-      const changes = {
-        title: $('title').value.trim(),
-        description: $('description').value.trim(),
-        link: $('link').value.trim() || null,
-        featured: $('featured').checked,
-      };
-      if (!changes.title) {
-        say('Le titre est requis.', true);
-        $('title').focus();
-        return;
-      }
-
-      const file = $('image').files[0];
-      if (file) {
-        const extension = file.name.match(/\.([a-z0-9]{1,10})$/i)?.[1];
-        const path = `${crypto.randomUUID()}${extension ? '.' + extension : ''}`;
-        const { error: uploadError } = await db.storage.from('project-images').upload(path, file);
-        if (uploadError) {
-          say('Échec upload image : ' + uploadError.message, true);
-          return;
-        }
-        changes.image_url = db.storage.from('project-images').getPublicUrl(path).data.publicUrl;
-      }
-
-      const { data, error } = await db
-        .from('projects')
-        .update(changes)
-        .eq('id', selectedProject.id)
-        .select('id')
-        .maybeSingle();
-      if (error) {
-        say('Erreur de sauvegarde : ' + error.message, true);
-        return;
-      }
-
-      say('Projet mis à jour avec succès !');
-      $('editor').hidden = true;
-      selectedProject = null;
-      await loadProjects();
-    });
-
-    $('cancel-btn').addEventListener('click', () => {
-      selectedProject = null;
-      $('editor').hidden = true;
-    });
-  </script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/dialog.js"></script>
+  <script src="js/upload-helper.js"></script>
+  <script src="js/editproject.js"></script>
 </body>
 </html>

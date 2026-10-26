@@ -1,82 +1,110 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#0b2447">
-  <title>Connexion · CIAA FSAN</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/auth.css">
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="theme-color" content="#0b2447">
+	<title>Connexion · CIAA FSAN</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link
+		href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;800&family=Inter:wght@400;500;600&display=swap"
+		rel="stylesheet">
+	<link rel="stylesheet" href="css/auth.css">
 </head>
+
 <body>
-  <main>
-    <header class="brand">
-      <span class="brand-mark" aria-hidden="true">CIAA</span>
-      <h1>Club IA &amp; Applications</h1>
-      <p>Connectez-vous à votre compte membre.</p>
-    </header>
-    <section class="card" aria-labelledby="login-heading">
-      <h2 id="login-heading">Bienvenue</h2>
-      <p class="intro">Entrez votre adresse email et votre mot de passe pour continuer.</p>
-      <form id="login-form">
-        <label for="email">Adresse Email</label>
-        <input id="email" name="email" type="email" autocomplete="username" required autofocus placeholder="etudiant@ump.ac.ma">
-        <label for="password">Mot de passe</label>
-        <input id="password" name="password" type="password" autocomplete="current-password" required>
-        <button id="login-btn" type="submit">Se connecter</button>
-        <p id="status" class="status" role="status" aria-live="polite"></p>
-      </form>
-    </section>
-    <p class="signup"><a href="signup.html">Pas encore de compte ? Créer un compte</a></p>
-    <p class="back"><a href="index.html">&larr; Retour au site principal</a></p>
-  </main>
+	<main>
+		<button type="button" class="btn-return-back"
+			onclick="if(history.length > 1){history.back()}else{window.location.href='index.html'}">&larr; Retour à la
+			page précédente</button>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/dist/umd/supabase.min.js"></script>
-  <script>
-    const SUPABASE_URL = 'https://dwtizibjpkdtcceiggxf.supabase.co';
-    const SUPABASE_ANON_KEY = 'sb_publishable_MeOXYq_SwsXx-IkyPhGqqQ_jGlxMeS5';
-    const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    const $ = (id) => document.getElementById(id);
-    const destination = new URLSearchParams(window.location.search).get('next') || 'index.html';
-    let submitting = false;
+		<header class="brand">
+			<a href="index.html">
+				<img src="logo.png" alt="Club IAA - FSAN" class="brand-logo">
+			</a>
+			<p>Connectez-vous à votre compte membre ou administrateur.</p>
+		</header>
 
-    function showStatus(message, kind = 'error') {
-      $('status').textContent = message;
-      $('status').dataset.kind = kind;
-    }
+		<section class="card" aria-labelledby="login-heading">
+			<h2 id="login-heading">Espace Connexion</h2>
+			<p class="intro">Entrez votre email institutionnel pour accéder à votre profil ou au tableau de bord.</p>
 
-    function continueAfterLogin() {
-      window.location.replace(destination);
-    }
+			<form id="login-form">
+				<label for="email">Adresse Email</label>
+				<input id="email" name="email" type="email" autocomplete="username" required autofocus
+					placeholder="etudiant@ump.ac.ma ou admin@ciaa.fsan.ma">
 
-    db.auth.onAuthStateChange((event, session) => {
-      if (session && (event === 'INITIAL_SESSION' || event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED')) {
-        continueAfterLogin();
-      }
-    });
+				<label for="password">Mot de passe</label>
+				<input id="password" name="password" type="password" autocomplete="current-password" required>
 
-    $('login-form').addEventListener('submit', async (event) => {
-      event.preventDefault();
-      if (submitting) return;
+				<button id="login-btn" type="submit">Se connecter</button>
+				<p id="status" class="status" role="status" aria-live="polite"></p>
+			</form>
 
-      submitting = true;
-      $('login-btn').disabled = true;
-      showStatus('Connexion en cours…', 'info');
+		</section>
 
-      const { error } = await db.auth.signInWithPassword({
-        email: $('email').value.trim(),
-        password: $('password').value,
-      });
+		<p class="signup"><a href="signup.html">Pas encore de compte ? Créer un compte</a></p>
+		<p class="back"><a href="index.html">&larr; Retour au site principal</a></p>
+	</main>
 
-      submitting = false;
-      $('login-btn').disabled = false;
-      if (error) {
-        showStatus('Échec de la connexion : ' + error.message, 'error');
-        $('password').focus();
-      }
-    });
-  </script>
+	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/dist/umd/supabase.min.js"></script>
+	<script src="js/store.js"></script>
+	<script src="js/supabase-client.js"></script>
+	<script src="js/dialog.js"></script>
+	<script>
+		const $ = (id) => document.getElementById(id);
+		const destination = new URLSearchParams(window.location.search).get('next') || 'profile.html';
+
+		function showStatus(message, kind = 'error') {
+			$('status').textContent = message;
+			$('status').dataset.kind = kind;
+		}
+
+		$('login-form').addEventListener('submit', async (event) => {
+			event.preventDefault();
+			const email = $('email').value.trim();
+
+			$('login-btn').disabled = true;
+			showStatus('Vérification du compte en cours…', 'info');
+			try {
+				const db = CIAA_BACKEND.getClient();
+				if (!db) throw new Error("Client Supabase indisponible.");
+				const { data, error } = await db.auth.signInWithPassword({
+					email,
+					password: $('password').value
+				});
+				if (error) throw error;
+				const authUser = data.user;
+				const { data: profile, error: profileError } = await db
+					.from('users')
+					.select('*')
+					.eq('id', authUser.id)
+					.maybeSingle();
+				if (profileError) throw profileError;
+				if (!profile) {
+					await db.auth.signOut();
+					throw new Error("Aucun profil CIAA n'est associé à ce compte.");
+				}
+				if (profile.status !== 'approved') {
+					await db.auth.signOut();
+					throw new Error(profile.status === 'pending'
+						? "Votre candidature est en attente de validation."
+						: "Votre candidature n'a pas été retenue. Contactez le bureau du club.");
+				}
+				CIAA_STORE.setCurrentUser(profile);
+				showStatus('Connexion réussie ! Redirection…', 'success');
+				window.setTimeout(() => {
+					window.location.replace(profile.role === "admin" ? "dashboard.html" : destination);
+				}, 600);
+			} catch (error) {
+				showStatus('Échec de la connexion : ' + error.message, 'error');
+			} finally {
+				$('login-btn').disabled = false;
+			}
+		});
+	</script>
 </body>
+
 </html>

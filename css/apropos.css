@@ -1,0 +1,514 @@
+/* Styles de la page individuelle À propos (Présentation, Réseaux Sociaux & Équipe) */
+
+/* Hero Banner À propos */
+.apropos-hero {
+  background: linear-gradient(135deg, #0B2447 0%, #15436b 55%, #1B6B82 100%);
+  color: #fff;
+  padding: 65px 0 55px;
+  position: relative;
+  overflow: hidden;
+}
+
+.apropos-hero::after {
+  content: "";
+  position: absolute;
+  right: -80px;
+  top: -80px;
+  width: 360px;
+  height: 360px;
+  border-radius: 50%;
+  border: 45px solid rgba(28, 200, 216, 0.16);
+  pointer-events: none;
+}
+
+.apropos-hero .badge {
+  display: inline-block;
+  background: rgba(28, 200, 216, 0.2);
+  color: #55e6f5;
+  border: 1px solid rgba(28, 200, 216, 0.4);
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 4px 14px;
+  border-radius: 999px;
+  margin-bottom: 14px;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.apropos-hero h1 {
+  font-size: clamp(2.3rem, 5vw, 3.5rem);
+  font-weight: 800;
+  margin-bottom: 14px;
+  line-height: 1.2;
+}
+
+.apropos-hero p {
+  max-width: 66ch;
+  color: #cde1ef;
+  font-size: 1.12rem;
+  margin-bottom: 24px;
+}
+
+.apropos-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+/* SECTION 1 : MISSION, VISION & VALEURS */
+.mission-section {
+  padding: 70px 0;
+  background: #ffffff;
+  border-bottom: 1px solid var(--line);
+}
+
+.mission-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 40px;
+  align-items: center;
+}
+
+.mission-text h2 {
+  font-size: clamp(1.8rem, 3.5vw, 2.3rem);
+  color: var(--navy);
+  margin-bottom: 16px;
+}
+
+.mission-text p {
+  color: var(--muted);
+  font-size: 1rem;
+  line-height: 1.7;
+  margin-bottom: 16px;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.stat-card {
+  background: #f7fafd;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 22px;
+  text-align: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 24px rgba(11, 36, 71, 0.06);
+}
+
+.stat-number {
+  font-family: Sora, Inter, sans-serif;
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: var(--blue);
+  line-height: 1;
+  margin-bottom: 6px;
+  display: block;
+}
+
+.stat-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--navy);
+}
+
+/* SECTION 2 : RÉSEAUX SOCIAUX & LIENS OFFICIELS (MISE EN AVANT FORTE) */
+.socials-section {
+  padding: 70px 0;
+  background: #f8fbfe;
+  border-bottom: 1px solid var(--line);
+}
+
+.socials-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+  gap: 22px;
+  margin-top: 32px;
+}
+
+.social-card {
+  background: #ffffff;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 24px;
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+  box-shadow: 0 8px 24px rgba(16, 43, 78, 0.04);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  text-decoration: none;
+  color: inherit;
+}
+
+.social-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 36px rgba(16, 43, 78, 0.09);
+  border-color: var(--teal);
+}
+
+.social-icon-wrapper {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+  color: #fff;
+}
+
+.social-icon-wrapper.linkedin {
+  background: linear-gradient(135deg, #0077b5, #00a0dc);
+}
+
+.social-icon-wrapper.youtube {
+  background: linear-gradient(135deg, #ff0000, #ff4d4d);
+}
+
+.social-icon-wrapper.github {
+  background: linear-gradient(135deg, #24292e, #404448);
+}
+
+.social-icon-wrapper.discord {
+  background: linear-gradient(135deg, #5865f2, #7289da);
+}
+
+.social-icon-wrapper.instagram {
+  background: linear-gradient(135deg, #833ab4, #fd1d1d, #fcb045);
+}
+
+.social-icon-wrapper.email {
+  background: linear-gradient(135deg, #0B2447, #1B6B82);
+}
+
+.social-content {
+  flex: 1;
+}
+
+.social-content h3 {
+  font-size: 1.15rem;
+  color: var(--navy);
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.social-content h3 span.arrow {
+  font-size: 1rem;
+  color: var(--teal);
+  transition: transform 0.2s ease;
+}
+
+.social-card:hover .social-content h3 span.arrow {
+  transform: translateX(4px);
+}
+
+.social-content p {
+  margin: 0;
+  font-size: 0.88rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.social-handle {
+  display: inline-block;
+  margin-top: 8px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--blue);
+}
+
+/* SECTION 3 : ÉQUIPE DU BUREAU AVEC PROFILS LINKEDIN */
+.team-section {
+  padding: 70px 0;
+  background: #ffffff;
+  border-bottom: 1px solid var(--line);
+}
+
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 24px;
+  margin-top: 35px;
+}
+
+.member-card {
+  background: #fbfdff;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 24px 20px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 6px 20px rgba(16, 43, 78, 0.03);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.member-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 32px rgba(16, 43, 78, 0.08);
+}
+
+.member-avatar {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: var(--grad);
+  display: grid;
+  place-items: center;
+  font-family: Sora, Inter, sans-serif;
+  font-size: 2rem;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 14px;
+  box-shadow: 0 6px 18px rgba(27, 107, 130, 0.25);
+  border: 3px solid #fff;
+}
+
+.member-card h3 {
+  font-size: 1.12rem;
+  color: var(--navy);
+  margin-bottom: 4px;
+}
+
+.member-role {
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: var(--teal);
+  margin-bottom: 8px;
+}
+
+.member-master {
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+.member-desc {
+  font-size: 0.84rem;
+  color: #4b6178;
+  margin: 6px 0 14px;
+  line-height: 1.45;
+  text-align: center;
+}
+
+.btn-linkedin-profile {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 16px;
+  border-radius: 999px;
+  background: #eaf3f8;
+  color: #0077b5;
+  border: 1px solid #d2e4ee;
+  font-size: 0.84rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.btn-linkedin-profile:hover {
+  background: #0077b5;
+  color: #ffffff;
+  border-color: #0077b5;
+  transform: translateY(-1px);
+}
+
+/* SECTION 4 : PROFESSEURS ENCADRANTS FSAN */
+.faculty-section {
+  padding: 70px 0;
+  background: #f8fbfe;
+  border-bottom: 1px solid var(--line);
+}
+
+.faculty-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 26px;
+  margin-top: 32px;
+}
+
+.faculty-card {
+  background: #ffffff;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 26px;
+  display: flex;
+  gap: 20px;
+  box-shadow: 0 8px 24px rgba(16, 43, 78, 0.04);
+}
+
+.faculty-avatar {
+  width: 74px;
+  height: 74px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #0B2447, #1B6B82);
+  display: grid;
+  place-items: center;
+  color: #fff;
+  font-family: Sora, Inter, sans-serif;
+  font-size: 1.8rem;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.faculty-info h3 {
+  font-size: 1.15rem;
+  color: var(--navy);
+  margin-bottom: 4px;
+}
+
+.faculty-role {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--teal);
+  margin-bottom: 8px;
+}
+
+.faculty-desc {
+  font-size: 0.88rem;
+  color: var(--muted);
+  line-height: 1.5;
+  margin-bottom: 12px;
+}
+
+.faculty-links {
+  display: flex;
+  gap: 12px;
+  font-size: 0.84rem;
+  font-weight: 600;
+}
+
+.faculty-links a {
+  color: var(--blue);
+}
+
+.faculty-links a:hover {
+  text-decoration: underline;
+}
+
+/* SECTION 5 : LOCALISATION & CONTACT */
+.contact-section {
+  padding: 70px 0;
+  background: #ffffff;
+}
+
+.contact-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 36px;
+  margin-top: 30px;
+}
+
+.contact-info-box {
+  background: #fbfdff;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.contact-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.contact-item-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  background: #eef5fb;
+  color: var(--teal);
+  display: grid;
+  place-items: center;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.contact-item-text h4 {
+  font-size: 0.95rem;
+  color: var(--navy);
+  margin-bottom: 4px;
+}
+
+.contact-item-text p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.contact-item-text a {
+  color: var(--blue);
+  font-weight: 600;
+}
+
+.contact-form-box {
+  background: #ffffff;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 0 10px 30px rgba(11, 36, 71, 0.05);
+}
+
+.contact-form-box h3 {
+  font-size: 1.3rem;
+  color: var(--navy);
+  margin-bottom: 8px;
+}
+
+.contact-form-box p.sub {
+  color: var(--muted);
+  font-size: 0.9rem;
+  margin-bottom: 20px;
+}
+
+.form-field {
+  margin-bottom: 16px;
+}
+
+.form-field label {
+  display: block;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--navy);
+  margin-bottom: 6px;
+}
+
+.form-field input,
+.form-field textarea {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  font-family: inherit;
+  font-size: 0.92rem;
+  color: var(--navy);
+  background: #f8fbfe;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.form-field input:focus,
+.form-field textarea:focus {
+  background: #fff;
+  border-color: var(--teal);
+  box-shadow: 0 0 0 3px rgba(27, 107, 130, 0.12);
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .mission-grid, .contact-layout {
+    grid-template-columns: 1fr;
+  }
+}

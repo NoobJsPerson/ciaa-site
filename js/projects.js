@@ -1,139 +1,18 @@
-// Gestion et affichage des projets CIAA (Supabase + Filtres + Recherche)
-
-const SAMPLE_PROJECTS = [
-  {
-    id: "sample-1",
-    title: "Détection d'Anomalies par Vision Artificielle en Temps Réel",
-    description: "Système industriel d'inspection qualité automatisée utilisant YOLOv8 et OpenCV pour repérer les défauts de fabrication sur une ligne de production.",
-    category: "vision",
-    tags: ["YOLOv8", "Computer Vision", "PyTorch", "OpenCV"],
-    link: "https://github.com",
-    image_url: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=800&q=80",
-    featured: true,
-    team: [
-      { name: "Youssef El Amrani", linkedin: "youssef-elamrani" },
-      { name: "Salma Benali", linkedin: "salma-benali" }
-    ]
-  },
-  {
-    id: "sample-2",
-    title: "Modèle LLM pour l'Analyse de Sentiments en Darija & Arabe",
-    description: "Fine-tuning d'un modèle RoBERTa/AraBERT sur des commentaires et avis clients en dialecte marocain (Darija) avec interface Streamlit.",
-    category: "nlp",
-    tags: ["NLP", "HuggingFace", "Transformers", "Darija"],
-    link: "https://github.com",
-    image_url: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80",
-    featured: true,
-    team: [
-      { name: "Karim Mansouri", linkedin: "karim-mansouri" }
-    ]
-  },
-  {
-    id: "sample-3",
-    title: "Segmentation Automatisée de Tumeurs Cérébrales (IRM)",
-    description: "Modèle U-Net 3D entraîné sur le dataset BraTS pour assister les radiologues dans la détection précoce des gliomes cérébraux.",
-    category: "ml",
-    tags: ["Deep Learning", "Santé / IRM", "U-Net", "PyTorch"],
-    link: "https://github.com",
-    image_url: "https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=800&q=80",
-    featured: false,
-    team: [
-      { name: "Fatima Zahra Tahiri", linkedin: "fz-tahiri" },
-      { name: "Omar Chraibi", linkedin: "omar-chraibi" }
-    ]
-  },
-  {
-    id: "sample-4",
-    title: "Station Météo Intelligente & Prédiction Agricole IoT",
-    description: "Capteurs environnementaux connectés en LoRaWAN et algorithmes XGBoost pour prédire les besoins en irrigation dans la région de l'Oriental.",
-    category: "iot",
-    tags: ["IoT", "Edge AI", "XGBoost", "Agriculture 4.0"],
-    link: "https://github.com",
-    image_url: "https://images.unsplash.com/photo-1530595467537-0b5996c41f2d?auto=format&fit=crop&w=800&q=80",
-    featured: false,
-    team: [
-      { name: "Bilal Kaddouri", linkedin: "bilal-kaddouri" }
-    ]
-  }
-];
+// Logique de la page individuelle Projets (Tous les projets, filtres, recherche et modale de détails)
+// Synchronisé avec le Dashboard via CIAA_STORE
 
 let allProjects = [];
 let currentFilter = "all";
 let searchKeyword = "";
 
-const SUPABASE_URL = 'https://dwtizibjpkdtcceiggxf.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_MeOXYq_SwsXx-IkyPhGqqQ_jGlxMeS5';
-
-async function fetchProjectsFromSupabase() {
-  if (typeof supabase === 'undefined') {
-    return SAMPLE_PROJECTS;
-  }
-
-  const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-  // Sync auth links
-  db.auth.onAuthStateChange((_event, session) => {
-    const showAuthLinks = !session;
-    const loginLink = document.querySelector("#login-link");
-    const signupLink = document.querySelector("#signup-link");
-    const logoutBtn = document.querySelector("#logout-btn");
-    if (loginLink) loginLink.hidden = !showAuthLinks;
-    if (signupLink) signupLink.hidden = !showAuthLinks;
-    if (logoutBtn) logoutBtn.hidden = showAuthLinks;
-  });
-
-  const logoutBtn = document.querySelector("#logout-btn");
-  if (logoutBtn) {
-    logoutBtn.addEventListener("click", async () => {
-      await db.auth.signOut();
-      window.location.reload();
-    });
-  }
-
-  try {
-    const { data, error } = await db
-      .from('projects')
-      .select('*, users(nom, prenom, linkedin_username)')
-      .eq('state', 1)
-      .order('created_at', { ascending: false });
-
-    if (error || !data || data.length === 0) {
-      console.info("Utilisation des projets d'exemple (base vide ou indisponible)");
-      return SAMPLE_PROJECTS;
-    }
-
-    // Convert database rows to standardized format
-    const dbProjects = data.map(item => {
-      const users = Array.isArray(item.users) ? item.users : (item.users ? [item.users] : []);
-      const team = users.filter(Boolean).map(u => ({
-        name: [u.prenom, u.nom].filter(Boolean).join(" ").trim(),
-        linkedin: u.linkedin_username?.trim()
-      })).filter(u => u.name);
-
-      return {
-        id: item.id,
-        title: item.title,
-        description: item.description,
-        category: (item.description + " " + item.title).toLowerCase().includes("vision") ? "vision" :
-                  (item.description + " " + item.title).toLowerCase().includes("nlp") ? "nlp" : "ml",
-        tags: ["IA", "Projet CIAA"],
-        link: item.link,
-        image_url: item.image_url,
-        featured: !!item.featured,
-        team
-      };
-    });
-
-    // Merge with sample projects to ensure a full catalog
-    return [...dbProjects, ...SAMPLE_PROJECTS];
-  } catch (err) {
-    console.warn("Erreur Supabase:", err);
-    return SAMPLE_PROJECTS;
-  }
+async function loadAllApprovedProjects() {
+  await CIAA_STORE.ready;
+  return await CIAA_BACKEND.getProjects(1);
 }
 
 function renderGallery() {
   const container = document.getElementById("projects-gallery");
+  const countEl = document.getElementById("projects-count-display");
   if (!container) return;
 
   const filtered = allProjects.filter(p => {
@@ -143,13 +22,17 @@ function renderGallery() {
     return matchesFilter && matchesSearch;
   });
 
+  if (countEl) {
+    countEl.textContent = `${filtered.length} projet(s) validé(s) et publié(s)`;
+  }
+
   container.innerHTML = "";
 
   if (filtered.length === 0) {
     container.innerHTML = `
       <div class="empty-gallery">
-        <h3>Aucun projet trouvé</h3>
-        <p>Essayez d'ajuster vos critères de recherche ou sélectionnez une autre catégorie.</p>
+        <h3>Aucun projet ne correspond à vos critères</h3>
+        <p>Modifiez votre recherche par mot-clé ou sélectionnez une autre catégorie thématique.</p>
         <button class="btn ghost" onclick="resetFilters()">Réinitialiser les filtres</button>
       </div>
     `;
@@ -160,18 +43,13 @@ function renderGallery() {
     const card = document.createElement("article");
     card.className = "project-card";
 
-    // Image ou fallback
     const thumbHtml = p.image_url 
       ? `<img src="${p.image_url}" alt="${p.title}" loading="lazy">` 
       : `<span class="no-image">CIAA</span>`;
 
-    // Featured badge
-    const featuredHtml = p.featured ? `<div class="featured-pill">★ En vedette</div>` : "";
-
-    // Tags
+    const featuredHtml = p.featured ? `<div class="featured-pill">★ Top 3 Accueil</div>` : "";
     const tagsHtml = (p.tags || []).map(t => `<span>${t}</span>`).join("");
 
-    // Équipe
     let teamHtml = "";
     if (p.team && p.team.length > 0) {
       const members = p.team.map(m => {
@@ -183,9 +61,8 @@ function renderGallery() {
       teamHtml = `<div class="project-team"><strong>Équipe :</strong> ${members}</div>`;
     }
 
-    // Code link
-    const linkHtml = p.link 
-      ? `<a class="btn-code" href="${p.link}" target="_blank" rel="noopener noreferrer">Voir le code sur GitHub &rarr;</a>` 
+    const codeHtml = p.link 
+      ? `<a class="btn-code" href="${p.link}" target="_blank" rel="noopener noreferrer">Code &rarr;</a>` 
       : "";
 
     card.innerHTML = `
@@ -201,13 +78,78 @@ function renderGallery() {
         </div>
         ${teamHtml}
         <div class="project-footer">
-          ${linkHtml}
+          <button class="btn-details" type="button">Voir les détails</button>
+          ${codeHtml}
         </div>
       </div>
     `;
 
+    const detailsBtn = card.querySelector(".btn-details");
+    if (detailsBtn) {
+      detailsBtn.addEventListener("click", () => openProjectModal(p));
+    }
+
     container.appendChild(card);
   });
+}
+
+// Gestion de la modale de détails
+function openProjectModal(project) {
+  const modal = document.getElementById("project-modal");
+  if (!modal) return;
+
+  const modalImg = document.getElementById("modal-img");
+  const modalTitle = document.getElementById("modal-title");
+  const modalDesc = document.getElementById("modal-desc");
+  const modalTags = document.getElementById("modal-tags");
+  const modalTeam = document.getElementById("modal-team");
+  const modalGithub = document.getElementById("modal-github");
+
+  if (modalImg) {
+    if (project.image_url) {
+      modalImg.src = project.image_url;
+      modalImg.hidden = false;
+    } else {
+      modalImg.removeAttribute("src");
+      modalImg.hidden = true;
+    }
+  }
+  if (modalTitle) modalTitle.textContent = project.title;
+  if (modalDesc) modalDesc.textContent = project.description;
+  if (modalTags) {
+    modalTags.innerHTML = (project.tags || []).map(t => `<span>${t}</span>`).join("");
+  }
+  if (modalTeam) {
+    if (project.team && project.team.length > 0) {
+      modalTeam.innerHTML = project.team.map(m => `
+        <span style="display:inline-block;margin-right:12px">
+          👤 ${m.name} ${m.linkedin ? `<a href="https://www.linkedin.com/in/${encodeURIComponent(m.linkedin)}" target="_blank" style="color:var(--blue)">[LinkedIn]</a>` : ''}
+        </span>
+      `).join("");
+    } else {
+      modalTeam.textContent = "Aucun membre renseigné.";
+    }
+  }
+
+  if (modalGithub) {
+    if (project.link) {
+      modalGithub.href = project.link;
+      modalGithub.style.display = "inline-flex";
+    } else {
+      modalGithub.style.display = "none";
+    }
+  }
+
+  modal.classList.add("active");
+  document.body.style.overflow = "hidden";
+}
+
+function closeProjectModal() {
+  const modal = document.getElementById("project-modal");
+  if (modal) {
+    modal.classList.remove("active");
+    document.body.style.overflow = "";
+  }
 }
 
 function resetFilters() {
@@ -222,10 +164,24 @@ function resetFilters() {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
-  allProjects = await fetchProjectsFromSupabase();
+  await CIAA_STORE.ready;
+  try {
+    allProjects = await loadAllApprovedProjects();
+  } catch (error) {
+    console.error("[projects.js] Impossible de charger les projets Supabase :", error);
+    const gallery = document.getElementById("projects-gallery");
+    if (gallery) {
+      const message = document.createElement("p");
+      message.setAttribute("role", "alert");
+      message.textContent = `Impossible de charger les projets depuis Supabase : ${error.message}`;
+      gallery.replaceChildren(message);
+    }
+    CIAA_STORE.syncNavigation();
+    return;
+  }
   renderGallery();
 
-  // Filtres
+  // Boutons de filtres
   document.querySelectorAll(".filter-btn").forEach(btn => {
     btn.addEventListener("click", () => {
       document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
@@ -235,7 +191,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   });
 
-  // Recherche
+  // Champ de recherche
   const searchInput = document.getElementById("search-input");
   if (searchInput) {
     searchInput.addEventListener("input", (e) => {
@@ -243,4 +199,19 @@ document.addEventListener("DOMContentLoaded", async () => {
       renderGallery();
     });
   }
+
+  // Fermeture modale
+  const modalClose = document.getElementById("modal-close-btn");
+  const modalOverlay = document.getElementById("project-modal");
+  if (modalClose) modalClose.addEventListener("click", closeProjectModal);
+  if (modalOverlay) {
+    modalOverlay.addEventListener("click", (e) => {
+      if (e.target === modalOverlay) closeProjectModal();
+    });
+  }
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeProjectModal();
+  });
+
+  CIAA_STORE.syncNavigation();
 });

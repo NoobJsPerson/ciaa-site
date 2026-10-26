@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Apprendre l'IA · Plateforme Vidéo & Drives Masters · CIAA FSAN</title>
+  <title>Apprendre l'IA · Cours Vidéo & Drives par Semestre · CIAA FSAN</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -15,16 +15,19 @@
   <header>
     <nav class="wrap" aria-label="Navigation principale">
       <a class="brand" href="index.html">
-        CIAA
-        <span class="badge-fsan">FSAN</span>
+        <img src="logo.png" alt="Club IAA - Faculté des Sciences Appliquées Nador" class="brand-logo">
       </a>
       <div class="links">
-        <a href="index.html#accueil">Accueil</a>
-        <a href="index.html#apropos">À propos</a>
+        <a href="index.html">Accueil</a>
         <a href="projects.html">Projets</a>
         <a href="apprendre.html" class="active">Apprendre</a>
-        <a id="login-link" class="cta" href="login.html" hidden>Connexion</a>
-        <a id="signup-link" class="cta" href="signup.html" hidden>Inscription</a>
+        <a href="annonces.html">Annonces &amp; Sujets</a>
+        <a href="apropos.html">À propos du club</a>
+        <!-- <span class="backend-status-pill offline" title="État de la connexion Supabase"><span class="dot"></span> <strong>Supabase indisponible</strong></span> -->
+        <a id="profile-link" href="profile.html" hidden>Mon Profil</a>
+        <a id="dash-link" href="dashboard.html" class="cta" style="background:var(--teal)" hidden>Dashboard</a>
+        <a id="login-link" class="cta" href="login.html">Connexion</a>
+        <a id="signup-link" class="cta" href="signup.html">Inscription</a>
         <button id="logout-btn" class="cta" type="button" hidden>Déconnexion</button>
       </div>
     </nav>
@@ -34,24 +37,38 @@
     <!-- Entête de la page Apprendre -->
     <div class="learn-header">
       <div class="wrap">
-        <span class="tagline">Plateforme d'Apprentissage & Partage CIAA</span>
-        <h1>Formations IA, Cours en Ligne & Drives Masters</h1>
-        <p>Accédez aux capsules vidéo structurées comme sur Coursera, aux notebooks pratiques et aux dossiers Google Drive partagés des Masters SDSI &amp; MIATE de la FSAN Nador.</p>
+        <span class="tagline">Plateforme d'Apprentissage &amp; Ressources CIAA</span>
+        <h1>Formations IA, Cours en Ligne &amp; Drives par Semestre</h1>
+        <p>Regardez vos cours vidéo YouTube structurés en chapitres directement sur la plateforme, et accédez aux dossiers Google Drive des Masters SDSI &amp; MIATE classés par semestre (S1, S2, S3).</p>
         <div class="nav-anchors">
-          <a href="#platform-section" class="highlight">🎬 Cours Vidéo (Style Coursera)</a>
-          <a href="#drive-section">📁 Drives Masters (SDSI &amp; MIATE)</a>
-          <a href="#catalog-section">📚 Catalogue des Formations</a>
+          <a href="#platform-section" class="highlight">🎬 Vidéos YouTube</a>
+          <a href="#drive-section">📁 Drives Masters classés par Semestre</a>
+          <a href="#catalog-section">📚 Catalogue &amp; Chaînes Recommandées</a>
         </div>
       </div>
     </div>
 
-    <!-- SECTION 1 : LES DRIVES GOOGLE DES MASTERS (SDSI & MIATE) -->
+    <!-- SECTION 1 : LES DRIVES GOOGLE DES MASTERS PAR SEMESTRE -->
     <section id="drive-section" class="drive-section">
       <div class="wrap">
-        <div class="section-head">
-          <span class="section-badge">Ressources Universitaires FSAN Nador</span>
-          <h2>Google Drives des Masters</h2>
-          <p class="intro">Retrouvez les cours magistraux, travaux pratiques, examens corrigés, mémoires et ressources partagés par les promotions des deux Masters.</p>
+        <div class="section-head" style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px">
+          <div>
+            <span class="section-badge">Ressources Universitaires FSAN Nador</span>
+            <h2>Google Drives des Masters par Semestre</h2>
+            <p class="intro">Accédez facilement aux cours, travaux pratiques et annales d'examens organisés semestre par semestre pour les Masters SDSI et MIATE.</p>
+          </div>
+          <a class="btn ghost" href="adddrive.html" style="font-size:0.85rem;padding:8px 16px;border-radius:10px;text-decoration:none">
+            📁 + Ajouter un Module Drive (Page Dédiée)
+          </a>
+        </div>
+
+        <!-- Barre de filtre par semestre -->
+        <div class="semester-filter-bar">
+          <span class="semester-filter-label">Afficher par semestre :</span>
+          <button class="sem-btn active" data-sem="all" type="button">Tous les semestres</button>
+          <button class="sem-btn" data-sem="s1" type="button">Semestre 1 (S1)</button>
+          <button class="sem-btn" data-sem="s2" type="button">Semestre 2 (S2)</button>
+          <button class="sem-btn" data-sem="s3" type="button">Semestre 3 (S3)</button>
         </div>
 
         <div class="drive-grid">
@@ -62,61 +79,12 @@
               <span class="master-badge">Master Recherche &amp; Pro</span>
             </div>
             <h3 class="master-title">Sciences des Données et Systèmes Intelligents</h3>
-            <p class="master-desc">Formation axée sur le Big Data, le Machine Learning avancé, les statistiques multidimensionnelles et l'architecture des systèmes intelligents.</p>
+            <p class="master-desc">Spécialisé dans le Big Data, le Machine Learning avancé, les statistiques multidimensionnelles et l'architecture des systèmes intelligents.</p>
             
-            <div class="semesters-container">
-              <div class="semester-box">
-                <div class="semester-title">
-                  <span>Semestre 1 (S1)</span>
-                  <span class="count">4 Modules</span>
-                </div>
-                <div class="semester-modules">
-                  <span class="mod-pill">Fondements ML</span>
-                  <span class="mod-pill">Big Data &amp; NoSQL</span>
-                  <span class="mod-pill">Mathématiques &amp; Optimisation</span>
-                  <span class="mod-pill">Python &amp; R Avancé</span>
-                </div>
-              </div>
-
-              <div class="semester-box">
-                <div class="semester-title">
-                  <span>Semestre 2 (S2)</span>
-                  <span class="count">4 Modules</span>
-                </div>
-                <div class="semester-modules">
-                  <span class="mod-pill">Deep Learning</span>
-                  <span class="mod-pill">NLP &amp; Text Mining</span>
-                  <span class="mod-pill">Cloud &amp; MLOps</span>
-                  <span class="mod-pill">Data Mining</span>
-                </div>
-              </div>
-
-              <div class="semester-box">
-                <div class="semester-title">
-                  <span>Semestre 3 (S3)</span>
-                  <span class="count">Spécialisation</span>
-                </div>
-                <div class="semester-modules">
-                  <span class="mod-pill">Vision par Ordinateur</span>
-                  <span class="mod-pill">Systèmes Recommandation</span>
-                  <span class="mod-pill">Projet R&amp;D</span>
-                </div>
-              </div>
+            <div id="drives-sdsi-container" class="semesters-container">
             </div>
 
-            <div class="drive-actions">
-              <a class="btn-drive primary" href="https://drive.google.com/drive/folders/VOTRE_DRIVE_SDSI_ID" target="_blank" rel="noopener noreferrer">
-                <span>📁 Ouvrir le Google Drive Master SDSI</span>
-              </a>
-              <div style="display:flex;gap:8px">
-                <a class="btn-drive sub" style="flex:1" href="https://drive.google.com/drive/folders/VOTRE_DRIVE_SDSI_COURS" target="_blank" rel="noopener noreferrer">
-                  📖 Cours &amp; TP
-                </a>
-                <a class="btn-drive sub" style="flex:1" href="https://drive.google.com/drive/folders/VOTRE_DRIVE_SDSI_EXAMENS" target="_blank" rel="noopener noreferrer">
-                  📝 Annales d'Examens
-                </a>
-              </div>
-            </div>
+            
           </article>
 
           <!-- Carte Master MIATE -->
@@ -126,61 +94,12 @@
               <span class="master-badge">Master Ingénierie &amp; IA</span>
             </div>
             <h3 class="master-title">Intelligence Artificielle &amp; Technologies Émergentes</h3>
-            <p class="master-desc">Cursus spécialisé dans les architectures neuronales avancées, les systèmes embarqués (Edge AI), l'IoT, la robotique et les technologies émergentes.</p>
+            <p class="master-desc">Cursus orienté vers les architectures neuronales avancées, les systèmes embarqués (Edge AI), l'Internet des Objets (IoT) et la robotique.</p>
             
-            <div class="semesters-container">
-              <div class="semester-box">
-                <div class="semester-title">
-                  <span>Semestre 1 (S1)</span>
-                  <span class="count">4 Modules</span>
-                </div>
-                <div class="semester-modules">
-                  <span class="mod-pill">Apprentissage Automatique</span>
-                  <span class="mod-pill">Algorithmique Distribuée</span>
-                  <span class="mod-pill">Systèmes Embarqués &amp; IoT</span>
-                  <span class="mod-pill">Programmation GPU</span>
-                </div>
-              </div>
-
-              <div class="semester-box">
-                <div class="semester-title">
-                  <span>Semestre 2 (S2)</span>
-                  <span class="count">4 Modules</span>
-                </div>
-                <div class="semester-modules">
-                  <span class="mod-pill">Réseaux Neuronaux Profonds</span>
-                  <span class="mod-pill">LLMs &amp; Agents Autonomes</span>
-                  <span class="mod-pill">Edge AI &amp; TinyML</span>
-                  <span class="mod-pill">Cybersécurité &amp; IA</span>
-                </div>
-              </div>
-
-              <div class="semester-box">
-                <div class="semester-title">
-                  <span>Semestre 3 (S3)</span>
-                  <span class="count">Spécialisation</span>
-                </div>
-                <div class="semester-modules">
-                  <span class="mod-pill">Robotique Intelligente</span>
-                  <span class="mod-pill">Traitement d'Images &amp; Signal</span>
-                  <span class="mod-pill">Projet Innovant</span>
-                </div>
-              </div>
+            <div id="drives-miate-container" class="semesters-container">
             </div>
 
-            <div class="drive-actions">
-              <a class="btn-drive primary" href="https://drive.google.com/drive/folders/VOTRE_DRIVE_MIATE_ID" target="_blank" rel="noopener noreferrer">
-                <span>📁 Ouvrir le Google Drive Master MIATE</span>
-              </a>
-              <div style="display:flex;gap:8px">
-                <a class="btn-drive sub" style="flex:1" href="https://drive.google.com/drive/folders/VOTRE_DRIVE_MIATE_COURS" target="_blank" rel="noopener noreferrer">
-                  📖 Cours &amp; TP
-                </a>
-                <a class="btn-drive sub" style="flex:1" href="https://drive.google.com/drive/folders/VOTRE_DRIVE_MIATE_EXAMENS" target="_blank" rel="noopener noreferrer">
-                  📝 Annales d'Examens
-                </a>
-              </div>
-            </div>
+            
           </article>
         </div>
 
@@ -193,16 +112,21 @@
       </div>
     </section>
 
-    <!-- SECTION 2 : PLATEFORME VIDÉO STYLE COURSERA -->
+    <!-- SECTION 2 : CATALOGUE DE VIDÉOS SUPABASE -->
     <section id="platform-section" class="platform-section">
       <div class="wrap">
-        <div class="section-head">
-          <span class="section-badge">E-Learning &amp; Vidéothèque</span>
-          <h2>Plateforme de Cours en Ligne (Style Coursera)</h2>
-          <p class="intro">Suivez nos parcours de formation vidéo guidés avec suivi de progression, supports de cours, notebooks Google Colab et exercices pratiques.</p>
+        <div class="section-head" style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px">
+          <div>
+            <span class="section-badge">Vidéothèque</span>
+            <h2>Vidéos publiées par la CIAA</h2>
+            <p class="intro">Visionnez les vidéos publiées dans le catalogue Supabase et suivez votre progression pendant cette session.</p>
+          </div>
+          <a class="btn ghost" href="addvideo.html" style="font-size:0.85rem;padding:8px 16px;border-radius:10px;text-decoration:none">
+            🎬 + Ajouter une Vidéo (Page Dédiée)
+          </a>
         </div>
 
-        <!-- Onglets des parcours de formation -->
+        <!-- Onglets des cours -->
         <div class="courses-tabs-bar" role="tablist">
           <button class="track-btn active" data-track="ml" type="button">
             <span>🧠 Machine Learning Fondamental</span>
@@ -213,87 +137,76 @@
           <button class="track-btn" data-track="nlp" type="button">
             <span>💬 NLP, Transformers &amp; LLMs</span>
           </button>
+          <button class="track-btn" data-track="python" type="button">
+            <span>🐍 Python &amp; Maths pour la Data</span>
+          </button>
+          <button class="track-btn" data-track="robotics" type="button">
+            <span>🤖 Robotique</span>
+          </button>
         </div>
 
-        <!-- Lecteur interactif & Syllabus -->
         <div class="coursera-container">
-          <!-- Colonne Gauche : Vidéo, Métadonnées et Onglets -->
+          <!-- Colonne Gauche : Vidéo YouTube, Métadonnées et Onglets -->
           <div class="player-column">
-            <!-- Lecteur Vidéo YouTube -->
+            <!-- Lecteur Vidéo YouTube intégré directement sur la plateforme -->
             <div class="video-wrapper">
               <iframe id="yt-player"
-                src="https://www.youtube.com/embed/ukzFI9rgwfU?rel=0"
+                src="about:blank"
                 title="Lecteur de cours CIAA"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 allowfullscreen>
               </iframe>
             </div>
 
-            <!-- Métadonnées de la vidéo -->
+            <!-- Métadonnées du chapitre en cours -->
             <div class="video-meta">
               <div class="meta-tags">
-                <span id="player-track-badge" class="tag-badge track">Machine Learning</span>
-                <span id="player-duration-badge" class="tag-badge duration">18 min</span>
-                <span id="player-level-badge" class="tag-badge level">Débutant à Intermédiaire</span>
+                <span id="player-track-badge" class="tag-badge track"></span>
+                <span id="player-duration-badge" class="tag-badge duration"></span>
               </div>
-              <h2 id="player-lesson-title">1. Qu'est-ce que le Machine Learning ? (Supervisé vs Non-supervisé)</h2>
+              <h2 id="player-lesson-title"></h2>
 
               <div class="instructor-row">
                 <div class="instructor-info">
-                  <div id="player-instructor-avatar" class="instructor-avatar">AN</div>
+                  <div id="player-instructor-avatar" class="instructor-avatar"></div>
                   <div class="instructor-text">
-                    <span id="player-instructor-name" class="instructor-name">Dr. Andrew Ng / Stanford Online</span>
-                    <span id="player-instructor-role" class="instructor-sub">Pionnier en IA &amp; Fondateur Coursera</span>
+                    <span id="player-instructor-name" class="instructor-name"></span>
                   </div>
                 </div>
 
                 <div class="player-actions">
+                  <button id="btn-prev-lesson" class="action-btn" type="button">&larr; Précédent</button>
                   <button id="btn-toggle-complete" class="action-btn" type="button">
                     ○ Marquer comme terminé
                   </button>
-                  <button id="btn-next-lesson" class="action-btn" type="button">
-                    Suivant &rarr;
-                  </button>
+                  <button id="btn-next-lesson" class="action-btn" type="button">Suivant &rarr;</button>
                 </div>
               </div>
             </div>
 
-            <!-- Onglets de la leçon -->
+            <!-- Onglets d'apprentissage sous la vidéo -->
             <div class="lesson-tabs">
               <div class="tab-headers">
-                <button class="tab-nav-btn active" data-tab="tab-desc" type="button">Description &amp; Objectifs</button>
-                <button class="tab-nav-btn" data-tab="tab-resources" type="button">Ressources &amp; Notebooks</button>
-                <button class="tab-nav-btn" data-tab="tab-notes" type="button">Notes &amp; Conseils</button>
+                <button class="tab-nav-btn active" data-tab="tab-desc" type="button">Description de la vidéo</button>
               </div>
 
               <div class="tab-content">
                 <!-- Panel 1: Description -->
                 <div id="tab-desc" class="tab-panel active">
-                  <p id="tab-desc-content">Introduction aux notions clés du Machine Learning : définition formelle, taxonomie des algorithmes (supervisé, non-supervisé, par renforcement) et cycle de vie d'un projet d'IA.</p>
+                  <p id="tab-desc-content"></p>
                 </div>
 
-                <!-- Panel 2: Ressources -->
-                <div id="tab-resources" class="tab-panel">
-                  <ul id="tab-resources-list" class="resource-list">
-                    <!-- Rempli dynamiquement en JS -->
-                  </ul>
-                </div>
-
-                <!-- Panel 3: Notes -->
-                <div id="tab-notes" class="tab-panel">
-                  <p id="tab-notes-content">Concentrez-vous sur la distinction entre jeu d'entraînement (Train), de validation (Val) et de test. Ne touchez jamais au jeu de test pendant l'entraînement !</p>
-                </div>
               </div>
             </div>
           </div>
 
-          <!-- Colonne Droite : Syllabus du cours & Suivi de progression -->
+          <!-- Colonne Droite : Chapitres et Syllabus du cours -->
           <div class="syllabus-column">
             <div class="syllabus-header">
-              <div class="syllabus-title" id="syllabus-course-title">Machine Learning de A à Z</div>
+              <div class="syllabus-title" id="syllabus-course-title">Machine Learning</div>
               <div class="progress-container">
                 <div class="progress-label">
-                  <span id="course-progress-text">0 / 7 leçons terminées</span>
+                  <span id="course-progress-text">0 / 0 vidéos terminées</span>
                   <span id="course-progress-percent">0%</span>
                 </div>
                 <div class="progress-bar-bg">
@@ -302,89 +215,19 @@
               </div>
             </div>
 
-            <!-- Liste des modules et leçons -->
+            <!-- Liste des modules et chapitres cliquables -->
             <div id="modules-list" class="modules-list">
-              <!-- Rempli dynamiquement par apprendre.js -->
+              <!-- Rempli dynamiquement par js/apprendre.js -->
             </div>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- SECTION 3 : AUTRES FORMATIONS & CHAÎNES RECOMMANDÉES -->
-    <section id="catalog-section" class="catalog-section">
-      <div class="wrap">
-        <div class="section-head">
-          <span class="section-badge">Bibliothèque Recommandée</span>
-          <h2>Cours &amp; Chaînes YouTube Complémentaires</h2>
-          <p class="intro">Des chaînes et cours de renommée internationale recommandés pour approfondir vos connaissances théoriques et pratiques.</p>
-        </div>
 
-        <div class="courses-grid">
-          <!-- Cours 1 -->
-          <article class="course-card">
-            <div class="course-thumb">
-              <img src="https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?auto=format&fit=crop&w=700&q=80" alt="Code & IA">
-              <div class="course-thumb-overlay">
-                <span class="thumb-tag">Python &amp; Data</span>
-              </div>
-            </div>
-            <div class="course-body">
-              <span class="course-provider">FreeCodeCamp &middot; 12 Heures</span>
-              <h3>Python pour la Data Science (NumPy, Pandas, Matplotlib)</h3>
-              <p>Maîtrisez les bibliothèques indispensables pour nettoyer, transformer et visualiser de grands volumes de données.</p>
-              <div class="course-meta-row">
-                <span>Niveau : Débutant</span>
-                <span>⭐ 4.9 (YouTube)</span>
-              </div>
-              <a class="btn-start-course" href="https://www.youtube.com/watch?v=LHBE6Q9XlzI" target="_blank" rel="noopener noreferrer">Suivre le cours sur YouTube &rarr;</a>
-            </div>
-          </article>
-
-          <!-- Cours 2 -->
-          <article class="course-card">
-            <div class="course-thumb">
-              <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=700&q=80" alt="Réseaux de neurones">
-              <div class="course-thumb-overlay">
-                <span class="thumb-tag">Maths &amp; Deep Learning</span>
-              </div>
-            </div>
-            <div class="course-body">
-              <span class="course-provider">3Blue1Brown &middot; 4 Épisodes</span>
-              <h3>L'Essence des Réseaux de Neurones &amp; Rétropropagation</h3>
-              <p>La série visuelle la plus limpide au monde pour comprendre les mathématiques sous-jacentes à l'apprentissage profond.</p>
-              <div class="course-meta-row">
-                <span>Niveau : Tout public</span>
-                <span>⭐ 5.0 (Recommandé FSAN)</span>
-              </div>
-              <a class="btn-start-course" href="https://www.youtube.com/playlist?list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi" target="_blank" rel="noopener noreferrer">Voir la playlist &rarr;</a>
-            </div>
-          </article>
-
-          <!-- Cours 3 -->
-          <article class="course-card">
-            <div class="course-thumb">
-              <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=700&q=80" alt="Generative AI">
-              <div class="course-thumb-overlay">
-                <span class="thumb-tag">IA Générative</span>
-              </div>
-            </div>
-            <div class="course-body">
-              <span class="course-provider">Andrej Karpathy &middot; Cours Vidéo</span>
-              <h3>De Zero à Hero : Construire des Modèles de Langage (LLMs)</h3>
-              <p>Construisez pas à pas un modèle de type GPT en partant de zéro jusqu'au fine-tuning avec PyTorch.</p>
-              <div class="course-meta-row">
-                <span>Niveau : Avancé</span>
-                <span>⭐ 4.98 (Ex-OpenAI)</span>
-              </div>
-              <a class="btn-start-course" href="https://www.youtube.com/playlist?list=PLAqhIrjkxbuWI23v9cThsA9GvCAUhRvKZ" target="_blank" rel="noopener noreferrer">Voir la série vidéo &rarr;</a>
-            </div>
-          </article>
-        </div>
-      </div>
-    </section>
   </main>
 
+  <!-- Footer -->
   <footer>
     <div class="wrap">
       <span>© 2026 CIAA · Club d'Intelligence Artificielle et ses Applications</span>
@@ -393,6 +236,9 @@
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/dist/umd/supabase.min.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/dialog.js"></script>
   <script src="js/apprendre.js"></script>
 </body>
 </html>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Ajouter un Projet · CIAA</title>
+  <title>Ajouter / Proposer un Projet · CIAA FSAN</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -11,104 +11,138 @@
 </head>
 <body>
   <main>
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:12px">
+      <button type="button" class="btn-return-back" onclick="if(history.length > 1){history.back()}else{window.location.href='projects.html'}">&larr; Retour à la page précédente</button>
+      <a href="index.html">
+        <img src="logo.png" alt="Club IAA - FSAN" class="brand-logo">
+      </a>
+    </div>
+
+    <!-- Barre de Navigation & Fil d'ariane -->
     <header class="topbar">
       <div>
-        <h1>Proposer un Projet</h1>
-        <p class="hint"><a href="projects.html">&larr; Retour aux projets</a> | <a href="index.html">Accueil</a></p>
+        <h1>Ajouter un Projet</h1>
+        <p class="hint">
+          <a id="return-dash-link" href="dashboard.html" hidden>&larr; Retour au Dashboard Admin</a>
+          <span> | </span>
+          <a href="projects.html">Galerie de tous les projets</a>
+          <span> | </span>
+          <a href="annonces.html">Sujets de Projets &amp; News</a>
+          <span> | </span>
+          <a href="apprendre.html">Apprendre l'IA</a>
+          <span> | </span>
+          <a href="profile.html">Mon Profil</a>
+          <span> | </span>
+          <a href="index.html">Accueil</a>
+        </p>
       </div>
-      <button id="logout-btn" class="secondary" type="button" hidden>Déconnexion</button>
     </header>
-    <p id="msg" class="status" role="status" aria-live="polite"></p>
 
-    <section id="login-box" class="panel" aria-labelledby="login-heading">
-      <h2 id="login-heading">Connexion requise</h2>
-      <p class="hint">Vous devez être connecté avec votre compte membre CIAA pour soumettre un projet.</p>
-      <label for="email">Adresse Email</label>
-      <input id="email" type="email" autocomplete="username" placeholder="etudiant@ump.ac.ma">
-      <label for="password">Mot de passe</label>
-      <input id="password" type="password" autocomplete="current-password">
-      <button id="login-btn" type="button" style="margin-top: 1rem">Se connecter</button>
-      <p class="hint" style="margin-top:1rem">Pas encore de compte ? <a href="signup.html">Inscrivez-vous ici</a>.</p>
-    </section>
+    <!-- Bannière Admin si connecté en Administrateur -->
+    <div id="admin-banner" class="admin-badge-callout" hidden>
+      <span>👑</span>
+      <span>Session Administrateur active : vous pouvez valider et publier directement</span>
+    </div>
 
-    <section id="upload-box" class="panel" aria-labelledby="add-project-heading" hidden>
-      <h2 id="add-project-heading">Formulaire de soumission de projet</h2>
-      <label for="title">Titre du projet *</label>
-      <input id="title" required placeholder="Ex: Classification d'images médicales avec CNN">
-      <label for="description">Description détaillée</label>
-      <textarea id="description" rows="4" placeholder="Problématique abordée, méthodologie employée, technologies et résultats..."></textarea>
-      <label for="link">Lien du dépôt GitHub ou Démo en ligne (optionnel)</label>
-      <input id="link" type="url" placeholder="https://github.com/...">
-      <label for="image">Image d'illustration (optionnel)</label>
-      <input id="image" type="file" accept="image/*">
-      <button id="add-btn" type="button" style="margin-top: 1.25rem">Soumettre le projet pour validation</button>
+    <!-- Formulaire de soumission complet -->
+    <section class="panel" aria-labelledby="add-project-heading">
+      <h2 id="add-project-heading">Formulaire de Projet (Page Individuelle)</h2>
+      <p class="hint">Remplissez les informations ci-dessous. Le projet sera soumis à l'administrateur pour revue et validation dans le tableau de bord avant sa publication publique.</p>
+      
+      <form id="project-submission-form">
+        <div class="form-grid-2">
+          <div>
+            <label for="title">Nom / Titre du projet *</label>
+            <input id="title" required placeholder="Ex: Classification d'images médicales avec CNN">
+          </div>
+          <div>
+            <label for="category">Domaine d'application *</label>
+            <select id="category" required>
+              <option value="ml">Machine Learning</option>
+                <option value="dl">Deep Learning</option>
+                <option value="cv">Computer Vision</option>
+                <option value="nlp">NLP &amp; LLMs</option>
+                <option value="data">Data Science &amp; Big Data</option>
+            </select>
+          </div>
+        </div>
+
+        <label for="description">Description détaillée du projet *</label>
+        <textarea id="description" rows="4" required placeholder="Problématique abordée, méthodologie employée, technologies, jeux de données et résultats obtenus..."></textarea>
+
+        <div class="form-grid-2">
+          <div>
+            <label for="link">Code source (Lien GitHub ou Démo en ligne) *</label>
+            <input id="link" type="url" required placeholder="https://github.com/votre-compte/votre-repo">
+          </div>
+          <div>
+            <label for="members">Membres qui ont créé ce projet *</label>
+            <input id="members" required placeholder="Ex: Karim Mansouri (karim-m), Salma Benali (salma-b)">
+          </div>
+        </div>
+
+        <!-- UPLOAD D'IMAGE DEPUIS L'APPAREIL LOCAL (EXIGÉ: PAS DE LIEN WEB) -->
+        <label for="project-image-file">Image explicative du projet (depuis votre appareil) *</label>
+        <div id="project-image-dropzone" class="file-upload-zone">
+          <input id="project-image-file" type="file" accept="image/*" aria-label="Choisir une image depuis l'appareil">
+          <div class="file-upload-content">
+            <div class="file-upload-icon">📷</div>
+            <div class="file-upload-title">Cliquez pour choisir une image depuis votre appareil ou glissez-déposez ici</div>
+            <div class="file-upload-subtitle">Formats supportés : JPG, PNG, WebP, SVG (Import local direct depuis votre PC / mobile)</div>
+          </div>
+        </div>
+
+        <!-- Boîte de prévisualisation de l'image locale -->
+        <div id="project-image-preview-box" class="image-preview-box">
+          <img id="project-image-preview-img" class="image-preview-thumbnail" src="" alt="Aperçu de l'image sélectionnée">
+          <div class="image-preview-info">
+            <div id="project-image-name" class="image-preview-name">image.png</div>
+            <div id="project-image-size" class="image-preview-size">0 Ko</div>
+          </div>
+          <button id="btn-remove-project-image" class="btn-remove-image" type="button">Supprimer l'image</button>
+        </div>
+
+        <!-- Options Administrateur conditionnelles -->
+        <div id="admin-options-box" hidden class="nav">
+          <label class="featured">
+            <input id="admin-direct-validate" type="checkbox" checked>
+            <span>Publier directement comme <strong>Validé</strong> sur le site (Mode Admin)</span>
+          </label>
+          <label class="featured">
+            <input id="admin-featured" type="checkbox">
+            <span>Mettre en vedette dans le <strong>Top 3 Meilleurs Projets</strong> de l'accueil</span>
+          </label>
+        </div>
+
+        <div class="form-actions">
+          <button id="add-btn" type="submit">
+            <span>🚀 Soumettre le projet &rarr;</span>
+          </button>
+          <a class="hint" href="projects.html">Annuler et voir les projets</a>
+        </div>
+      </form>
+
+      <!-- Message après soumission -->
+      <div id="submission-success-box" class="success-card">
+        <div class="success-card-icon">🎉</div>
+        <h3 class="success-card-title">Opération effectuée avec succès !</h3>
+        <p id="success-box-desc" class="success-card-desc">
+          Votre projet est enregistré.
+        </p>
+        <div class="success-card-actions">
+          <a class="btn-card-link primary" href="profile.html">Suivre dans mon profil</a>
+          <a class="btn-card-link ghost" href="projects.html">Voir la galerie des projets</a>
+          <a id="success-link-dashboard" class="btn-card-link ghost" href="dashboard.html" hidden>Ouvrir le dashboard</a>
+        </div>
+      </div>
     </section>
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/dist/umd/supabase.min.js"></script>
-  <script>
-    const SUPABASE_URL = 'https://dwtizibjpkdtcceiggxf.supabase.co';
-    const SUPABASE_ANON_KEY = 'sb_publishable_MeOXYq_SwsXx-IkyPhGqqQ_jGlxMeS5';
-    const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-    const $ = (id) => document.getElementById(id);
-    const say = (text, isErr = false) => {
-      $('msg').textContent = text;
-      $('msg').className = isErr ? 'status error' : 'status success';
-    };
-
-    function showForSession(session) {
-      $('login-box').hidden = !!session;
-      $('upload-box').hidden = !session;
-      $('logout-btn').hidden = !session;
-    }
-
-    db.auth.onAuthStateChange((_event, session) => showForSession(session));
-
-    $('login-btn').onclick = async () => {
-      say('Connexion en cours…');
-      const { error } = await db.auth.signInWithPassword({
-        email: $('email').value.trim(),
-        password: $('password').value,
-      });
-      if (error) {
-        say('Échec de la connexion : ' + error.message, true);
-      } else {
-        say('Connecté avec succès !');
-      }
-    };
-
-    $('logout-btn').onclick = async () => {
-      const { error } = await db.auth.signOut();
-      if (error) say('Échec de la déconnexion : ' + error.message, true);
-    };
-
-    $('add-btn').onclick = async () => {
-      const title = $('title').value.trim();
-      if (!title) { say('Le titre est requis.', true); return; }
-      say('Enregistrement en cours…');
-
-      let image_url = null;
-      const file = $('image').files[0];
-      if (file) {
-        const ext = file.name.split('.').pop();
-        const path = `${crypto.randomUUID()}.${ext}`;
-        const { error: upErr } = await db.storage.from('project-images').upload(path, file);
-        if (upErr) { say('Échec upload image : ' + upErr.message, true); return; }
-        image_url = db.storage.from('project-images').getPublicUrl(path).data.publicUrl;
-      }
-
-      const { error } = await db.from('projects').insert({
-        title,
-        description: $('description').value.trim(),
-        link: $('link').value.trim() || null,
-        image_url,
-      });
-
-      if (error) { say('Impossible d\'enregistrer : ' + error.message, true); return; }
-      say('Projet soumis avec succès ! Il sera examiné par le bureau du CIAA.');
-      for (const id of ['title', 'description', 'link', 'image']) $(id).value = '';
-    };
-  </script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/dialog.js"></script>
+  <script src="js/upload-helper.js"></script>
+  <script src="js/addproject.js"></script>
 </body>
 </html>

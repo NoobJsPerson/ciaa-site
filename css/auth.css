@@ -156,6 +156,150 @@ button:disabled {
   text-decoration: underline;
 }
 
+textarea {
+  display: block;
+  width: 100%;
+  margin-top: .4rem;
+  padding: .8rem .85rem;
+  border: 1px solid #c8d8e5;
+  border-radius: 9px;
+  background: #fff;
+  color: inherit;
+  font: inherit;
+  resize: vertical;
+}
+
+textarea:focus-visible {
+  outline: 3px solid #1cc8d8;
+  outline-offset: 3px;
+}
+
+.brand-logo {
+  height: 72px;
+  max-width: 320px;
+  width: auto;
+  object-fit: contain;
+  display: block;
+  margin: 0 auto 1rem;
+}
+
+.auth-form-row {
+  display: flex;
+  gap: 10px;
+}
+
+.auth-form-col {
+  flex: 1;
+}
+
+.quick-login-container {
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px dashed #dce8f2;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.btn-quick-test-admin {
+  background: #0b2447;
+  color: #fff;
+  border: none;
+  font-size: 0.8rem;
+  padding: 8px 12px;
+  margin: 0;
+  width: 100%;
+}
+
+.btn-quick-test-member {
+  background: #eaf4fb;
+  color: #0b2447;
+  border: 1px solid #c9e0f0;
+  font-size: 0.8rem;
+  padding: 8px 12px;
+  margin: 0;
+  width: 100%;
+}
+
+.auth-pending-box {
+  display: none;
+  background: #fef9e7;
+  border: 1px solid #f9e79f;
+  border-radius: 12px;
+  padding: 20px;
+  margin-top: 16px;
+  text-align: center;
+}
+
+.auth-pending-icon {
+  font-size: 2.2rem;
+  margin-bottom: 8px;
+}
+
+.auth-pending-title {
+  margin: 0 0 8px;
+  color: #b7791f;
+  font-size: 1.15rem;
+}
+
+.auth-pending-text {
+  margin: 0 0 16px;
+  color: #7d5a1b;
+  font-size: 0.92rem;
+  line-height: 1.6;
+}
+
+.auth-pending-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.auth-pending-btn-primary {
+  background: #0b2447;
+  color: #fff;
+  font-size: 0.85rem;
+  padding: 8px 16px;
+  text-decoration: none;
+  border-radius: 999px;
+  display: inline-block;
+}
+
+.auth-pending-btn-ghost {
+  font-size: 0.85rem;
+  padding: 8px 16px;
+  text-decoration: none;
+  border-radius: 999px;
+  border: 1px solid #b7791f;
+  color: #b7791f;
+  display: inline-block;
+}
+
+.btn-return-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #eaf2f7;
+  color: #0b2447;
+  border: 1px solid #d8e5ef;
+  padding: 0.55rem 1.15rem;
+  border-radius: 9px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 1.1rem;
+  transition: all 0.2s ease;
+  width: auto;
+  text-decoration: none;
+}
+
+.btn-return-back:hover {
+  background: #d8e8f5;
+  color: #1b6b82;
+  text-decoration: none;
+  transform: translateX(-2px);
+}
+
 [hidden] {
   display: none !important;
 }
@@ -165,4 +309,149 @@ button:disabled {
     scroll-behavior: auto !important;
     transition-duration: .01ms !important;
   }
+}
+
+/* Modales universelles personnalisées CIAA (remplace alert et confirm) */
+.ciaa-dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(11, 36, 71, 0.65);
+  backdrop-filter: blur(5px);
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.ciaa-dialog-box {
+  background: #ffffff;
+  border-radius: 18px;
+  width: min(100%, 460px);
+  padding: 28px 24px 22px;
+  text-align: center;
+  box-shadow: 0 24px 60px rgba(11, 36, 71, 0.25);
+  border: 1px solid #dce8f2;
+  position: relative;
+}
+
+.ciaa-dialog-top-close {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  background: transparent;
+  border: none;
+  font-size: 1.6rem;
+  color: #94a3b8;
+  cursor: pointer;
+  line-height: 1;
+  padding: 4px 8px;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.ciaa-dialog-top-close:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.ciaa-dialog-icon-wrapper {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  margin: 0 auto 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  background: #eaf4fb;
+  color: #1b6b82;
+}
+
+.ciaa-dialog-icon-wrapper.success {
+  background: #eafaf1;
+  color: #27ae60;
+  font-size: 2rem;
+  font-weight: 800;
+}
+
+.ciaa-dialog-icon-wrapper.error {
+  background: #fdedec;
+  color: #e74c3c;
+  font-size: 1.8rem;
+  font-weight: 800;
+}
+
+.ciaa-dialog-icon-wrapper.confirm {
+  background: #fff8e6;
+  color: #d97706;
+}
+
+.ciaa-dialog-title {
+  margin: 0 0 8px;
+  color: #0b2447;
+  font-family: Sora, Inter, sans-serif;
+  font-size: 1.25rem;
+}
+
+.ciaa-dialog-message {
+  margin: 0 0 22px;
+  color: #4b6178;
+  font-size: 0.95rem;
+  line-height: 1.55;
+  white-space: pre-wrap;
+}
+
+.ciaa-dialog-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.ciaa-dialog-btn {
+  padding: 10px 22px;
+  border-radius: 10px;
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  font-family: inherit;
+  transition: all 0.2s ease;
+}
+
+.ciaa-dialog-btn.primary {
+  background: #0b2447;
+  color: #fff;
+}
+
+.ciaa-dialog-btn.primary:hover {
+  background: #1b6b82;
+}
+
+.ciaa-dialog-btn.primary.success {
+  background: #16a34a;
+  color: #fff;
+}
+
+.ciaa-dialog-btn.primary.success:hover {
+  background: #15803d;
+}
+
+.ciaa-dialog-btn.primary.danger {
+  background: #e74c3c;
+  color: #fff;
+}
+
+.ciaa-dialog-btn.primary.danger:hover {
+  background: #c0392b;
+}
+
+.ciaa-dialog-btn.secondary {
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #cbd5e1;
+}
+
+.ciaa-dialog-btn.secondary:hover {
+  background: #e2e8f0;
 }

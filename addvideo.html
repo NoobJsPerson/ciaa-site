@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ajouter une Vidéo de Cours · CIAA FSAN</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+  <main>
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:12px">
+      <button type="button" class="btn-return-back" onclick="if(history.length > 1){history.back()}else{window.location.href='dashboard.html'}">&larr; Retour à la page précédente</button>
+      <a href="index.html">
+        <img src="logo.png" alt="Club IAA - FSAN" class="brand-logo">
+      </a>
+    </div>
+
+    <!-- Navigation & Fil d'ariane -->
+    <header class="topbar">
+      <div>
+        <h1>Ajouter une Vidéo de Cours</h1>
+        <p class="hint">
+          <a href="dashboard.html">&larr; Retour au Dashboard Admin</a>
+          <span> | </span>
+          <a href="apprendre.html">Page Apprendre l'IA (Lecteur Vidéo)</a>
+          <span> | </span>
+          <a href="index.html">Accueil</a>
+        </p>
+      </div>
+    </header>
+
+    <!-- Bannière Admin -->
+    <div id="admin-banner" class="admin-badge-callout" hidden>
+      <span>🎬</span>
+      <span>Plateforme E-Learning CIAA FSAN : Ajout de capsules vidéo YouTube</span>
+    </div>
+
+    <!-- Formulaire individuel d'ajout de cours vidéo YouTube -->
+    <section class="panel" aria-labelledby="add-video-heading">
+      <h2 id="add-video-heading">Formulaire de Vidéo de Cours (Page Individuelle)</h2>
+      <p class="hint">Ajoutez une capsule vidéo YouTube consultable directement dans le lecteur intégré de la plateforme d'apprentissage CIAA, avec suivi de progression et sélection de chapitres.</p>
+
+      <form id="add-video-form">
+        <div class="form-grid-2">
+          <div>
+            <label for="video-title">Titre du cours / leçon vidéo *</label>
+            <input id="video-title" required placeholder="Ex: 4. Architectures Transformers &amp; Mécanisme d'Attention">
+          </div>
+          <div>
+            <label for="video-track">Parcours / Filière *</label>
+            <select id="video-track" required>
+              <option value="ml">Machine Learning Fondamental</option>
+              <option value="dl">Deep Learning &amp; Computer Vision</option>
+              <option value="nlp">NLP, Transformers &amp; LLMs</option>
+              <option value="python">Python &amp; Mathématiques pour l'IA</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-grid-3">
+          <div>
+            <label for="video-url">Lien de la Vidéo sur YouTube *</label>
+            <input id="video-url" type="url" required placeholder="https://www.youtube.com/watch?v=...">
+          </div>
+          <div>
+            <label for="video-duration">Durée estimée (ex: 28 min)</label>
+            <input id="video-duration" placeholder="28 min">
+          </div>
+          <div>
+            <label for="video-instructor">Enseignant / Chaîne YouTube</label>
+            <input id="video-instructor" placeholder="Ex: 3Blue1Brown / Dr. Andrew Ng">
+          </div>
+        </div>
+
+        <label for="video-desc">Description du cours et notions abordées *</label>
+        <textarea id="video-desc" rows="3" required placeholder="Présentation synthétique des concepts expliqués, démonstrations pratiques et algorithmes mis en œuvre..."></textarea>
+
+        <!-- UPLOAD D'IMAGE DEPUIS L'APPAREIL LOCAL (EXIGÉ: PAS DE LIEN WEB) -->
+        <label for="video-image-file">Image descriptive / Miniature du cours (depuis votre appareil) *</label>
+        <div id="video-image-dropzone" class="file-upload-zone">
+          <input id="video-image-file" type="file" accept="image/*" aria-label="Choisir une miniature depuis l'appareil">
+          <div class="file-upload-content">
+            <div class="file-upload-icon">🎬</div>
+            <div class="file-upload-title">Cliquez pour importer la miniature depuis votre appareil ou glissez-déposez ici</div>
+            <div class="file-upload-subtitle">Formats supportés : JPG, PNG, WebP, SVG (Import direct local depuis votre PC)</div>
+          </div>
+        </div>
+
+        <!-- Boîte de prévisualisation de l'image -->
+        <div id="video-image-preview-box" class="image-preview-box">
+          <img id="video-image-preview-img" class="image-preview-thumbnail" src="" alt="Aperçu de la miniature">
+          <div class="image-preview-info">
+            <div id="video-image-name" class="image-preview-name">miniature.png</div>
+            <div id="video-image-size" class="image-preview-size">0 Ko</div>
+          </div>
+          <button id="btn-remove-video-image" class="btn-remove-image" type="button">Supprimer l'image</button>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit">
+            <span>▶ Ajouter cette Vidéo au Catalogue &rarr;</span>
+          </button>
+          <a class="hint" href="dashboard.html">Annuler et retourner au dashboard</a>
+        </div>
+      </form>
+
+      <!-- Message succès -->
+      <div id="video-success-box" class="success-card">
+        <div class="success-card-icon">🎬</div>
+        <h3 class="success-card-title">Vidéo ajoutée au catalogue avec succès !</h3>
+        <p id="video-success-desc" class="success-card-desc">
+          La vidéo est prête à être visionnée par les étudiants sur la plateforme.
+        </p>
+        <div class="success-card-actions">
+          <a class="btn-card-link primary" href="dashboard.html">Retourner au Dashboard</a>
+          <a class="btn-card-link ghost" href="apprendre.html">Voir dans le lecteur Apprendre l'IA</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/dist/umd/supabase.min.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/dialog.js"></script>
+  <script src="js/upload-helper.js"></script>
+  <script src="js/addvideo.js"></script>
+</body>
+</html>

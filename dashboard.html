@@ -1,0 +1,1319 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard Administrateur · CIAA FSAN</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body class="dashboard-body">
+  <!-- Barre Latérale (Sidebar) -->
+  <aside class="dash-sidebar">
+    <div class="dash-brand">
+      <a href="index.html">
+        <img src="logo.png" alt="Club IAA - FSAN" class="dash-brand-logo">
+        <span class="admin-badge">Admin</span>
+      </a>
+    </div>
+
+    <nav class="dash-nav" aria-label="Navigation Dashboard">
+      <button class="dash-nav-btn active" data-tab="tab-overview" data-title="Vue d'ensemble du Club" type="button">
+        <span>📊</span>
+        <span class="label">Vue d'ensemble</span>
+      </button>
+
+      <button class="dash-nav-btn" data-tab="tab-users" data-title="Gestion des Utilisateurs &amp; Approbations" type="button">
+        <span>👥</span>
+        <span class="label">Utilisateurs &amp; Comptes</span>
+        <span id="badge-nav-users" class="badge-count urgent" style="display:none">0</span>
+      </button>
+
+      <button class="dash-nav-btn" data-tab="tab-bureau" data-title="Membres du Bureau &amp; Professeurs Encadrants" type="button">
+        <span>👔</span>
+        <span class="label">Bureau &amp; Encadrants</span>
+      </button>
+
+      <button class="dash-nav-btn" data-tab="tab-sujets" data-title="Validation des Sujets de Projets Proposés" type="button">
+        <span>🚀</span>
+        <span class="label">Sujets de Projets</span>
+        <span id="badge-nav-sujets" class="badge-count urgent" style="display:none">0</span>
+      </button>
+
+      <button class="dash-nav-btn" data-tab="tab-projects" data-title="Review &amp; Gestion des Projets Soumis" type="button">
+        <span>📂</span>
+        <span class="label">Gestion des Projets</span>
+        <span id="badge-nav-projects" class="badge-count" style="display:none">0</span>
+      </button>
+
+      <button class="dash-nav-btn" data-tab="tab-drives" data-title="Gestion des Drives par Module &amp; Semestre" type="button">
+        <span>📁</span>
+        <span class="label">Drives par Semestre</span>
+      </button>
+
+      <button class="dash-nav-btn" data-tab="tab-videos" data-title="Gestion des Vidéos YouTube de Cours" type="button">
+        <span>🎬</span>
+        <span class="label">Vidéos de Cours</span>
+      </button>
+
+      <button class="dash-nav-btn" data-tab="tab-messages" data-title="Boîte de Réception &amp; Emails des Membres" type="button">
+        <span>📬</span>
+        <span class="label">Emails des Membres</span>
+        <span id="badge-nav-messages" class="badge-count urgent" style="display:none">0</span>
+      </button>
+
+      <button class="dash-nav-btn" data-tab="tab-settings" data-title="Description du Site &amp; Réseaux Sociaux" type="button">
+        <span>⚙️</span>
+        <span class="label">Infos &amp; Réseaux</span>
+      </button>
+
+      <button class="dash-nav-btn" data-tab="tab-backend" data-title="Liaison &amp; État du Backend Supabase (PostgreSQL)" type="button">
+        <span>⚡</span>
+        <span class="label">Backend Supabase</span>
+        <span id="badge-nav-backend" class="status-pill drive-granted" style="font-size:0.68rem;padding:2px 6px">Cloud</span>
+      </button>
+    </nav>
+
+    <div class="dash-sidebar-footer">
+      <div class="dash-user-card">
+        <div id="dash-admin-avatar" class="dash-user-avatar">AD</div>
+        <div class="dash-user-info">
+          <strong id="dash-admin-name">Admin CIAA</strong>
+          <span id="dash-admin-role">Super Admin</span>
+        </div>
+      </div>
+      <a class="btn-sidebar-link" href="profile.html">👤 Voir mon profil</a>
+      <a class="btn-sidebar-link" href="index.html">🌐 Retourner au site</a>
+      <button id="dash-logout-btn" class="btn-tbl delete" style="width:100%;margin-top:4px;justify-content:center" type="button">Déconnexion</button>
+    </div>
+  </aside>
+
+  <!-- Zone Principale -->
+  <div class="dash-main">
+    <!-- Barre supérieure -->
+    <header class="dash-topbar">
+      <div class="dash-topbar-title">
+        <h1 id="dash-current-title">Vue d'ensemble du Club</h1>
+      </div>
+      <div class="dash-topbar-actions">
+        <div class="backend-status-pill offline" id="topbar-backend-pill" title="État de la connexion Supabase">
+          <span class="dot"></span> <strong>Supabase indisponible</strong>
+        </div>
+        <a class="btn-site-return" href="profile.html">Mon Profil</a>
+        <a class="btn-site-return" href="index.html" target="_blank" rel="noopener">Ouvrir le Site Public &rarr;</a>
+      </div>
+    </header>
+
+    <main class="dash-container">
+      <!-- Cartes KPIs Résumé -->
+      <section class="kpi-grid">
+        <div class="kpi-card">
+          <div class="kpi-icon blue">👥</div>
+          <div class="kpi-details">
+            <div id="kpi-total-users" class="kpi-number">0</div>
+            <div class="kpi-label">Membres Inscrits (<span id="kpi-pending-users-badge">0 en attente</span>)</div>
+          </div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-icon amber">📂</div>
+          <div class="kpi-details">
+            <div id="kpi-total-projects" class="kpi-number">0</div>
+            <div class="kpi-label">Projets Répertoriés (<span id="kpi-pending-projects-badge">0 à valider</span>)</div>
+          </div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-icon green">🚀</div>
+          <div class="kpi-details">
+            <div id="kpi-total-sujets" class="kpi-number">0</div>
+            <div class="kpi-label">Sujets de Projets à Construire</div>
+          </div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-icon teal">📚</div>
+          <div class="kpi-details">
+            <div id="kpi-total-drives" class="kpi-number">—</div>
+            <div class="kpi-label">Ressources Pédagogiques Actives</div>
+          </div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-icon blue">📬</div>
+          <div class="kpi-details">
+            <div id="kpi-total-messages" class="kpi-number">0</div>
+            <div class="kpi-label">Messages Membres (<span id="kpi-unread-messages-badge">0 non lus</span>)</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ONGLET 1 : VUE D'ENSEMBLE -->
+      <section id="tab-overview" class="dash-tab-section active">
+        <div class="dash-panel">
+          <div class="panel-header">
+            <div class="panel-title">
+              <h2>Centre de Contrôle Global CIAA</h2>
+              <p>Bienvenue dans votre tableau de bord d'administration de la Faculté des Sciences Appliquées de Nador.</p>
+            </div>
+          </div>
+          <div style="background:#f7fafd;border:1px solid #d8e8f5;border-radius:14px;padding:20px;margin-bottom:24px;line-height:1.6">
+            <h4 style="margin:0 0 8px;color:var(--navy)">🎯 Rôles &amp; Autorisations Administrateur :</h4>
+            <ul style="margin:0;padding-left:20px;color:#435e76;font-size:0.92rem">
+              <li><strong>Contrôle des Accès :</strong> Validez ou rejetez les inscriptions des étudiants avant qu'ils ne puissent soumettre des projets ou candidater aux sujets.</li>
+              <li><strong>Validation des Sujets de Projets :</strong> Examinez les propositions de sujets déposées par les membres et publiez-les officiellement sur la page Annonces.</li>
+              <li><strong>Modération des Projets :</strong> Validez les projets soumis et sélectionnez ceux qui apparaîtront dans le <strong>Top 3</strong> de la page d'accueil.</li>
+              <li><strong>Gestion des Liens Drive :</strong> Mettez à jour en cas de lien expiré ou ajoutez les dossiers Cours, TP, TD et Examens de chaque module.</li>
+              <li><strong>Vidéos de Cours :</strong> Enrichissez le catalogue vidéo de la plateforme avec de nouvelles capsules YouTube.</li>
+              <li><strong>Personnalisation :</strong> Modifiez à tout moment la description du club et les liens des réseaux sociaux officiels.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- ONGLET 2 : GESTION DES UTILISATEURS (VALIDATION DES COMPTES) -->
+      <section id="tab-users" class="dash-tab-section">
+        <div class="dash-panel">
+          <div class="panel-header">
+            <div class="panel-title">
+              <h2>Gestion des Utilisateurs &amp; Approbation des Comptes</h2>
+              <p>Les nouveaux comptes créés par les étudiants sont en attente de traitement jusqu'à validation par l'administrateur.</p>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+              <a id="btn-add-user-dash" class="btn-dash-primary" href="signup.html">+ Inscrire un Utilisateur</a>
+              <button class="btn-tbl btn-user-filter active" data-status="all" onclick="filterUsersByStatus('all')">Tous</button>
+              <button class="btn-tbl btn-user-filter" data-status="pending" onclick="filterUsersByStatus('pending')">⏳ En attente</button>
+              <button class="btn-tbl btn-user-filter" data-status="approved" onclick="filterUsersByStatus('approved')">✓ Validés</button>
+              <button class="btn-tbl btn-user-filter" data-status="rejected" onclick="filterUsersByStatus('rejected')">✗ Rejetés</button>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="dash-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Nom complet</th>
+                  <th>Email institutionnel</th>
+                  <th>Master / Filière</th>
+                  <th>Statut du Compte</th>
+                  <th>Date d'inscription</th>
+                  <th>Actions d'Administration</th>
+                </tr>
+              </thead>
+              <tbody id="dash-users-tbody">
+                <!-- Rempli dynamiquement par js/dashboard.js -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ONGLET : GESTION DU BUREAU DU CLUB & PROFESSEURS ENCADRANTS -->
+      <section id="tab-bureau" class="dash-tab-section">
+        <div class="dash-panel">
+          <div class="panel-header">
+            <div class="panel-title">
+              <h2>Membres du Bureau du Club &amp; Professeurs Encadrants</h2>
+              <p>Gérez les 8 rôles officiels : 2 Profs Encadrants, Président, Vice-Président, Trésorier, Vice-Trésorier, et 2 Responsables Réseaux Sociaux. Modifiez les personnes ou réassignez les rôles si quelqu'un quitte le bureau. Les changements sont immédiatement appliqués sur la page d'accueil et la page À propos.</p>
+            </div>
+            <button id="btn-add-bureau-member" class="btn-dash-primary" type="button">+ Ajouter / Réassigner un Rôle</button>
+          </div>
+
+          <div class="table-responsive">
+            <table class="dash-table">
+              <thead>
+                <tr>
+                  <th>Rôle / Poste Officiel</th>
+                  <th>Nom &amp; Prénom</th>
+                  <th>Email Académique</th>
+                  <th>Affiliation / Master</th>
+                  <th>Profil LinkedIn</th>
+                  <th>Description du Rôle</th>
+                  <th>Accès Dashboard</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="dash-bureau-tbody">
+                <!-- Rempli dynamiquement par js/dashboard.js -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ONGLET 3 : VALIDATION DES SUJETS DE PROJETS PROPOSÉS -->
+      <section id="tab-sujets" class="dash-tab-section">
+        <div class="dash-panel">
+          <div class="panel-header">
+            <div class="panel-title">
+              <h2>Validation des Sujets de Projets Proposés par les Membres</h2>
+              <p>Examinez les idées et propositions de sujets soumises par les étudiants. Validez-les pour les afficher sur la page Annonces &amp; Sujets.</p>
+            </div>
+          </div>
+
+          <!-- Bannière d'accès à la page individuelle pour proposer/ajouter un sujet -->
+          <div class="dash-action-banner">
+            <div class="dash-action-banner-info">
+              <h3>💡 Proposer ou Créer un Sujet via le Formulaire sur Page Individuelle</h3>
+              <p>Formulaire complet sur page dédiée avec téléversement d'image/schéma depuis votre appareil (PC/mobile). Également ouvert aux étudiants pour soumettre leurs propositions.</p>
+            </div>
+            <a href="propose-sujet.html" class="btn-open-individual-page">
+              <span>💡 Ouvrir la Page Individuelle (propose-sujet.html) &rarr;</span>
+            </a>
+          </div>
+
+          <div class="table-responsive">
+            <table class="dash-table">
+              <thead>
+                <tr>
+                  <th>Proposé par (ID &amp; Nom)</th>
+                  <th>Nom du Sujet</th>
+                  <th>Description &amp; Objectifs</th>
+                  <th>Thématique</th>
+                  <th>Master ciblé</th>
+                  <th>Statut</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="dash-sujets-tbody">
+                <!-- Rempli dynamiquement par js/dashboard.js -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ONGLET 4 : REVIEW & GESTION DES PROJETS SOUMIS -->
+      <section id="tab-projects" class="dash-tab-section">
+        <div class="dash-panel">
+          <div class="panel-header">
+            <div class="panel-title">
+              <h2>Gestion &amp; Modération des Projets</h2>
+              <p>Validez les projets soumis par les membres, configurez le Top 3 d'accueil et mettez à jour les informations.</p>
+            </div>
+          </div>
+
+          <!-- Option mise en avant : Ajouter un projet via la page individuelle -->
+          <div class="dash-action-banner">
+            <div class="dash-action-banner-info">
+              <h3>➕ Ajouter un Projet via la Page Individuelle Dédiée</h3>
+              <p>Remplissez le formulaire complet dans une page individuelle individuelle avec sélection d'image locale depuis votre appareil. Cette même page individuelle est accessible à tous les étudiants et membres pour soumettre leurs projets.</p>
+            </div>
+            <a href="addproject.html" class="btn-open-individual-page">
+              <span>🚀 Ouvrir le Formulaire Individuel (addproject.html) &rarr;</span>
+            </a>
+          </div>
+
+          <!-- Tableau des projets existants -->
+          <div class="table-responsive" style="margin-bottom:35px">
+            <table class="dash-table">
+              <thead>
+                <tr>
+                  <th>Titre du Projet</th>
+                  <th>Membres de l'Équipe</th>
+                  <th>Description</th>
+                  <th>Code Source</th>
+                  <th>Statut Public</th>
+                  <th>Top 3 Accueil</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="dash-projects-tbody">
+                <!-- Rempli dynamiquement par js/dashboard.js -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Formulaire d'ajout direct d'un projet par l'administrateur -->
+          <div style="background:#f8fbfe;border:1px solid #dce8f2;border-radius:14px;padding:24px">
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:12px">
+              <div>
+                <h3 style="margin:0 0 4px;color:var(--navy);font-size:1.15rem">+ Publier Directement un Nouveau Projet (Mode Admin)</h3>
+                <p style="margin:0;color:#55728d;font-size:0.88rem">Permet à l'administrateur de renseigner un projet directement validé sur le site.</p>
+              </div>
+              <a href="addproject.html" class="btn-tbl edit" style="padding:6px 14px;text-decoration:none">
+                ↗ Formulaire sur Page Individuelle
+              </a>
+            </div>
+            
+            <form id="form-add-project-dash">
+              <div class="form-grid-2">
+                <div class="form-group-dash">
+                  <label for="dash-proj-title">Nom du Projet *</label>
+                  <input id="dash-proj-title" required placeholder="Ex: Classification d'images satellites">
+                </div>
+                <div class="form-group-dash">
+                  <label for="dash-proj-link">Code Source (Lien GitHub ou Démo) *</label>
+                  <input id="dash-proj-link" type="url" required placeholder="https://github.com/...">
+                </div>
+              </div>
+
+              <div class="form-group-dash">
+                <label for="dash-proj-desc">Description Complète du Projet *</label>
+                <textarea id="dash-proj-desc" rows="3" required placeholder="Méthodologie, architecture, résultats..."></textarea>
+              </div>
+
+              <div class="form-group-dash">
+                <label for="dash-proj-members">Membres créateurs (séparés par des virgules) *</label>
+                <input id="dash-proj-members" required placeholder="Ex: Karim Mansouri, Salma Benali">
+              </div>
+
+              <!-- Upload image depuis l'appareil local (pas d'URL web) -->
+              <div class="form-group-dash">
+                <label for="dash-proj-image-file">Image explicative du projet (depuis votre appareil) *</label>
+                <div id="dash-proj-image-dropzone" class="file-upload-zone-dash">
+                  <input id="dash-proj-image-file" type="file" accept="image/*" aria-label="Choisir une image depuis l'appareil">
+                  <div class="file-upload-content-dash">
+                    <div class="file-upload-icon-dash">📷</div>
+                    <div class="file-upload-title-dash">Cliquez pour importer l'image depuis votre appareil ou glissez-déposez ici</div>
+                    <div class="file-upload-subtitle-dash">JPG, PNG, WebP, SVG (Fichier local de votre machine)</div>
+                  </div>
+                </div>
+                <div id="dash-proj-image-preview-box" class="image-preview-box-dash">
+                  <img id="dash-proj-image-preview-thumb" class="image-preview-thumb-dash" src="" alt="Aperçu">
+                  <div class="image-preview-info-dash">
+                    <strong id="dash-proj-image-name">image.png</strong>
+                    <div id="dash-proj-image-size" style="color:#7f8c8d;font-size:0.75rem">0 Ko</div>
+                  </div>
+                  <button id="btn-remove-dash-proj-image" class="btn-remove-image-dash" type="button">Supprimer</button>
+                </div>
+              </div>
+
+              <div class="form-group-dash">
+                <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+                  <input id="dash-proj-featured" type="checkbox">
+                  <span>Mettre immédiatement ce projet dans le <strong>Top 3 Meilleurs Projets</strong> de la page d'accueil</span>
+                </label>
+              </div>
+
+              <button class="btn-dash-primary" type="submit">Publier le Projet Validé &rarr;</button>
+              <p id="project-dash-feedback" class="form-status-feedback" role="status" aria-live="polite"></p>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <!-- ONGLET 5 : GESTION DES DRIVES PAR MODULE & SEMESTRE -->
+      <section id="tab-drives" class="dash-tab-section">
+        <div class="dash-panel">
+          <div class="panel-header">
+            <div class="panel-title">
+              <h2>Gestion des Liens Google Drive par Semestre</h2>
+              <p>Mettez à jour ou remplacez les liens des dossiers Google Drive (Cours, TP, TD, Anciens Examens) si l'accès change dans le temps.</p>
+            </div>
+          </div>
+
+          <!-- Bannière Accès Drive par email académique (@ump.ac.ma) -->
+          <div class="dash-academic-info-banner">
+            <div class="icon">🎓</div>
+            <div>
+              <h4>Accès Drive Sécurisé par Email Académique (@ump.ac.ma)</h4>
+              <p>L'accès aux ressources Google Drive des Masters SDSI &amp; MIATE est réservé aux étudiants inscrits avec leur adresse académique institutionnelle. Vous pouvez accepter ou révoquer l'accès des membres directement via le tableau ci-dessous.</p>
+            </div>
+          </div>
+
+          <!-- Bannière pour ajouter un module Drive via page individuelle -->
+          <div class="dash-action-banner">
+            <div class="dash-action-banner-info">
+              <h3>📁 Ajouter un Module Drive via la Page Individuelle Dédiée</h3>
+              <p>Formulaire complet sur page individuelle avec téléversement d'image descriptive depuis votre appareil (PC/mobile) pour associer les 4 sous-dossiers Drive (Cours, TP, TD, Examens).</p>
+            </div>
+            <a href="adddrive.html" class="btn-open-individual-page">
+              <span>📁 Ouvrir la Page Individuelle (adddrive.html) &rarr;</span>
+            </a>
+          </div>
+
+          <!-- Formulaire d'ajout / modification de Drive de module -->
+          <div style="background:#f8fbfe;border:1px solid #dce8f2;border-radius:14px;padding:24px;margin-bottom:30px">
+            <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:12px">
+              <div>
+                <h3 style="margin:0 0 4px;color:var(--navy);font-size:1.15rem">+ Ajouter ou Mettre à Jour un Module avec ses Liens Drive</h3>
+                <p style="margin:0;color:#55728d;font-size:0.88rem">Renseignez le nom du module, le semestre correspondant, et collez les liens des sous-dossiers Google Drive.</p>
+              </div>
+              <a href="adddrive.html" class="btn-tbl edit" style="padding:6px 14px;text-decoration:none">
+                ↗ Formulaire sur Page Individuelle
+              </a>
+            </div>
+            
+            <form id="form-add-drive">
+              <div class="form-grid-3">
+                <div class="form-group-dash">
+                  <label for="drive-master">Filière Master *</label>
+                  <select id="drive-master" required>
+                    <option value="SDSI">Master SDSI</option>
+                    <option value="MIATE">Master MIATE</option>
+                  </select>
+                </div>
+                <div class="form-group-dash">
+                  <label for="drive-semestre">Semestre Universitaire *</label>
+                  <select id="drive-semestre" required>
+                    <option value="s1">Semestre 1 (S1)</option>
+                    <option value="s2">Semestre 2 (S2)</option>
+                    <option value="s3">Semestre 3 (S3)</option>
+                  </select>
+                </div>
+                <div class="form-group-dash">
+                  <label for="drive-mod-name">Nom du Module *</label>
+                  <input id="drive-mod-name" required placeholder="Ex: Deep Learning &amp; Vision">
+                </div>
+              </div>
+
+              <!-- Upload image depuis l'appareil local (pas de lien web) -->
+              <div class="form-group-dash">
+                <label for="drive-mod-image-file">Image descriptive du module (depuis votre appareil) *</label>
+                <div id="drive-mod-image-dropzone" class="file-upload-zone-dash">
+                  <input id="drive-mod-image-file" type="file" accept="image/*" aria-label="Choisir une image de module depuis l'appareil">
+                  <div class="file-upload-content-dash">
+                    <div class="file-upload-icon-dash">🖼️</div>
+                    <div class="file-upload-title-dash">Cliquez pour importer l'image de module depuis votre appareil ou glissez-déposez ici</div>
+                    <div class="file-upload-subtitle-dash">JPG, PNG, WebP, SVG (Fichier local de votre machine)</div>
+                  </div>
+                </div>
+                <div id="drive-mod-image-preview-box" class="image-preview-box-dash">
+                  <img id="drive-mod-image-preview-thumb" class="image-preview-thumb-dash" src="" alt="Aperçu">
+                  <div class="image-preview-info-dash">
+                    <strong id="drive-mod-image-name">module.png</strong>
+                    <div id="drive-mod-image-size" style="color:#7f8c8d;font-size:0.75rem">0 Ko</div>
+                  </div>
+                  <button id="btn-remove-drive-mod-image" class="btn-remove-image-dash" type="button">Supprimer</button>
+                </div>
+              </div>
+
+              <div class="form-grid-2">
+                <div class="form-group-dash">
+                  <label for="drive-url-cours">Lien Google Drive : Partie Cours (Diapos/PDF) *</label>
+                  <input id="drive-url-cours" type="url" required placeholder="https://drive.google.com/drive/folders/...">
+                </div>
+                <div class="form-group-dash">
+                  <label for="drive-url-tp">Lien Google Drive : Partie Travaux Pratiques (TP) *</label>
+                  <input id="drive-url-tp" type="url" required placeholder="https://drive.google.com/drive/folders/...">
+                </div>
+              </div>
+
+              <div class="form-grid-2">
+                <div class="form-group-dash">
+                  <label for="drive-url-td">Lien Google Drive : Partie Travaux Dirigés (TD) *</label>
+                  <input id="drive-url-td" type="url" required placeholder="https://drive.google.com/drive/folders/...">
+                </div>
+                <div class="form-group-dash">
+                  <label for="drive-url-exams">Lien Google Drive : Anciens Examens &amp; Contrôles *</label>
+                  <input id="drive-url-exams" type="url" required placeholder="https://drive.google.com/drive/folders/...">
+                </div>
+              </div>
+
+              <button class="btn-dash-primary" type="submit">Enregistrer les Liens Drive pour ce Module &rarr;</button>
+              <p id="drive-form-feedback" class="form-status-feedback" role="status" aria-live="polite"></p>
+            </form>
+          </div>
+
+          <!-- Tableau des modules existants -->
+          <div class="table-responsive">
+            <table class="dash-table">
+              <thead>
+                <tr>
+                  <th>Filière &amp; Semestre</th>
+                  <th>Module</th>
+                  <th>Drive Cours</th>
+                  <th>Drive TP</th>
+                  <th>Drive TD</th>
+                  <th>Anciens Examens</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="dash-drives-tbody">
+                <!-- Rempli dynamiquement par js/dashboard.js -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Tableau d'autorisation d'accès Drive par membre (@ump.ac.ma) -->
+          <div class="panel-header" style="margin-top:30px;border-top:1px solid #e2ecf5;padding-top:24px">
+            <div class="panel-title">
+              <h3>👥 Autorisation d'Accès aux Liens Drive par Membre (@ump.ac.ma)</h3>
+              <p>Validez et autorisez directement l'accès des étudiants et membres aux ressources Google Drive des Masters SDSI &amp; MIATE.</p>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="dash-table">
+              <thead>
+                <tr>
+                  <th>Nom &amp; Prénom</th>
+                  <th>Email Académique</th>
+                  <th>Master / Filière</th>
+                  <th>Statut Accès Drive</th>
+                  <th>Actions d'Autorisation</th>
+                </tr>
+              </thead>
+              <tbody id="dash-drive-members-tbody">
+                <!-- Rempli dynamiquement par js/dashboard.js -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ONGLET 6 : GESTION DES VIDÉOS YOUTUBE DE COURS -->
+      <section id="tab-videos" class="dash-tab-section">
+        <div class="dash-panel">
+          <div class="panel-header">
+            <div class="panel-title">
+              <h2>Gestion des Vidéos YouTube du Cours en Ligne</h2>
+              <p>Ajoutez de nouvelles vidéos de cours visualisables directement sur la plateforme E-Learning d'apprentissage.</p>
+            </div>
+          </div>
+
+          <!-- Bannière pour ajouter une vidéo via page individuelle -->
+          <div class="dash-action-banner">
+            <div class="dash-action-banner-info">
+              <h3>🎬 Ajouter une Vidéo de Cours via la Page Individuelle Dédiée</h3>
+              <p>Formulaire complet sur page individuelle avec téléversement de la miniature depuis votre appareil pour enrichir le lecteur interactif de cours.</p>
+            </div>
+            <a href="addvideo.html" class="btn-open-individual-page">
+              <span>🎬 Ouvrir la Page Individuelle (addvideo.html) &rarr;</span>
+            </a>
+          </div>
+
+          <!-- Tableau complet des vidéos YouTube du cours -->
+          <div class="table-responsive">
+            <table class="dash-table">
+              <thead>
+                <tr>
+                  <th>Miniature</th>
+                  <th>Catégorie / Filière</th>
+                  <th>Titre du Cours</th>
+                  <th>Description</th>
+                  <th>Durée</th>
+                  <th>Lien YouTube</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="dash-videos-tbody">
+                <!-- Rempli dynamiquement par js/dashboard.js -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ONGLET 7 : BOÎTE DE RÉCEPTION & EMAILS DES MEMBRES -->
+      <section id="tab-messages" class="dash-tab-section">
+        <div class="dash-panel">
+          <div class="panel-header">
+            <div class="panel-title">
+              <h2>Boîte de Réception &amp; Emails des Membres</h2>
+              <p>Consultez, lisez et répondez aux messages et demandes envoyés par les étudiants et membres via le site.</p>
+            </div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <button class="btn-tbl btn-msg-filter active" data-status="all" onclick="filterMessagesByStatus('all')">Tous</button>
+              <button class="btn-tbl btn-msg-filter" data-status="unread" onclick="filterMessagesByStatus('unread')">📬 Non lus</button>
+              <button class="btn-tbl btn-msg-filter" data-status="read" onclick="filterMessagesByStatus('read')">✓ Lus</button>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="dash-table">
+              <thead>
+                <tr>
+                  <th>Statut</th>
+                  <th>Date &amp; Heure</th>
+                  <th>Expéditeur</th>
+                  <th>Email</th>
+                  <th>Objet de la Demande</th>
+                  <th>Aperçu du Message</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="dash-messages-tbody">
+                <!-- Rempli dynamiquement par js/dashboard.js -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ONGLET 8 : DESCRIPTION DU SITE & RÉSEAUX SOCIAUX -->
+      <section id="tab-settings" class="dash-tab-section">
+        <div class="dash-panel">
+          <div class="panel-header">
+            <div class="panel-title">
+              <h2>Description du Club &amp; Réseaux Sociaux Officiels</h2>
+              <p>Toutes les modifications apportées ici sont immédiatement répercutées sur la page À propos et sur l'ensemble du site.</p>
+            </div>
+          </div>
+
+          <form id="form-site-settings">
+            <div class="form-grid-2">
+              <div class="form-group-dash">
+                <label for="set-club-name">Nom Officiel du Club *</label>
+                <input id="set-club-name" required>
+              </div>
+              <div class="form-group-dash">
+                <label for="set-email">Email de Contact Officiel *</label>
+                <input id="set-email" type="email" required>
+              </div>
+            </div>
+
+            <div class="form-grid-2">
+              <div class="form-group-dash">
+                <label for="set-faculty">Établissement Universitaire *</label>
+                <input id="set-faculty" required>
+              </div>
+              <div class="form-group-dash">
+                <label for="set-address">Adresse Physique du Club *</label>
+                <input id="set-address" required>
+              </div>
+            </div>
+
+            <div class="form-group-dash">
+              <label for="set-description">Description Globale du Club (affichée sur la page À propos) *</label>
+              <textarea id="set-description" rows="4" required></textarea>
+            </div>
+
+            <div class="form-group-dash">
+              <label for="set-mission">Mission &amp; Objectifs du Club *</label>
+              <textarea id="set-mission" rows="3" required></textarea>
+            </div>
+
+            <h3 style="color:var(--navy);font-size:1.1rem;margin:24px 0 12px;padding-top:16px;border-top:1px solid #edf4f8">
+              🔗 Liens des Réseaux Sociaux Officiels (Modifiables)
+            </h3>
+
+            <div class="form-grid-2">
+              <div class="form-group-dash">
+                <label for="set-linkedin">Lien Page LinkedIn Officielle *</label>
+                <input id="set-linkedin" type="url" required placeholder="https://www.linkedin.com/company/...">
+              </div>
+              <div class="form-group-dash">
+                <label for="set-youtube">Lien Chaîne YouTube Officielle *</label>
+                <input id="set-youtube" type="url" required placeholder="https://www.youtube.com/@...">
+              </div>
+            </div>
+
+            <div class="form-grid-3">
+              <div class="form-group-dash">
+                <label for="set-github">Lien Organisation GitHub *</label>
+                <input id="set-github" type="url" required placeholder="https://github.com/...">
+              </div>
+              <div class="form-group-dash">
+                <label for="set-discord">Lien Serveur Discord Étudiants</label>
+                <input id="set-discord" type="url" placeholder="https://discord.gg/...">
+              </div>
+              <div class="form-group-dash">
+                <label for="set-instagram">Lien Compte Instagram</label>
+                <input id="set-instagram" type="url" placeholder="https://www.instagram.com/...">
+              </div>
+            </div>
+
+            <button class="btn-dash-primary" type="submit" style="margin-top:10px">
+              💾 Sauvegarder les Paramètres du Site &amp; Réseaux Sociaux
+            </button>
+            <p id="settings-feedback" class="form-status-feedback" role="status" aria-live="polite"></p>
+          </form>
+        </div>
+      </section>
+
+      <!-- ONGLET 9 : LIAISON SUPABASE & SENSIBILITÉ BACKEND -->
+      <section id="tab-backend" class="dash-tab-section">
+        <div class="dash-panel">
+          <div class="panel-header">
+            <div class="panel-title">
+              <h2>Liaison Backend Supabase (PostgreSQL Cloud) &amp; Sensibilité Frontend</h2>
+              <p>Pilotez la connexion directe avec votre base de données Supabase (version gratuite), visualisez la latence réseau en temps réel, lancez des requêtes et synchronisez les tables.</p>
+            </div>
+            <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+              <span id="backend-live-badge" class="backend-status-pill offline"><span class="dot"></span> Supabase indisponible</span>
+              <button id="btn-ping-backend" class="btn-tbl edit" type="button">⚡ Tester Latence</button>
+            </div>
+          </div>
+
+          <!-- Cartes métriques Supabase -->
+          <div class="backend-panel-grid">
+            <div class="backend-info-card">
+              <h4>Moteur &amp; Hébergement</h4>
+              <p>PostgreSQL 15+ · Cloud Supabase (Free Tier 500 Mo) avec Row Level Security (RLS) et extensions <code>uuid-ossp</code> &amp; <code>pg_trgm</code>.</p>
+              <div style="margin-top:10px;font-size:0.85rem;color:#0b2447"><strong>Latence :</strong> <span id="backend-latency-val">0 ms</span></div>
+            </div>
+
+            <div class="backend-info-card">
+              <h4>Modélisation &amp; Scripts</h4>
+              <p>Schéma relationnel 3NF complet avec index partiels Top 3, vues consolidées, déclencheurs d'intégrité et curseurs PL/pgSQL.</p>
+              <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+                <a href="database_schema.sql" download class="btn-tbl accept" style="text-decoration:none;font-size:0.78rem">📥 database_schema.sql</a>
+                <a href="DATABASE_MODELISATION.txt" download class="btn-tbl reply" style="text-decoration:none;font-size:0.78rem">📖 DATABASE_MODELISATION.txt</a>
+              </div>
+            </div>
+
+            <div class="backend-info-card">
+              <h4>État des Tables Cloud</h4>
+              <p>Comptage en temps réel des lignes enregistrées dans votre instance Supabase PostgreSQL :</p>
+              <div class="backend-counts-grid">
+                <div class="backend-count-box">
+                  <div id="cnt-sb-users" class="val">0</div>
+                  <div class="lbl">Users</div>
+                </div>
+                <div class="backend-count-box">
+                  <div id="cnt-sb-projects" class="val">0</div>
+                  <div class="lbl">Projets</div>
+                </div>
+                <div class="backend-count-box">
+                  <div id="cnt-sb-sujets" class="val">0</div>
+                  <div class="lbl">Sujets</div>
+                </div>
+                <div class="backend-count-box">
+                  <div id="cnt-sb-drives" class="val">0</div>
+                  <div class="lbl">Drives</div>
+                </div>
+                <div class="backend-count-box">
+                  <div id="cnt-sb-videos" class="val">0</div>
+                  <div class="lbl">Vidéos</div>
+                </div>
+                <div class="backend-count-box">
+                  <div id="cnt-sb-messages" class="val">0</div>
+                  <div class="lbl">Messages</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Formulaire de Configuration des Clés API Supabase -->
+          <div style="background:#f8fbfe;border:1px solid #dce8f2;border-radius:14px;padding:24px;margin-bottom:24px">
+            <h3 style="margin:0 0 8px;color:var(--navy);font-size:1.15rem">⚙️ Configuration des Identifiants Supabase (Projet Gratuit)</h3>
+            <p style="margin:0 0 16px;color:#55728d;font-size:0.88rem">Renseignez l'URL de votre projet et la clé publique anon. Le site nécessite une connexion Supabase active pour charger et enregistrer les données.</p>
+
+            <form id="form-supabase-config">
+              <div class="form-grid-2">
+                <div class="form-group-dash">
+                  <label for="cfg-supabase-url">Project URL Supabase *</label>
+                  <input id="cfg-supabase-url" type="url" required placeholder="https://votre-projet.supabase.co">
+                </div>
+                <div class="form-group-dash">
+                  <label for="cfg-supabase-key">Clé Publique Anonyme (Anon Public Key) *</label>
+                  <input id="cfg-supabase-key" type="text" required placeholder="sb_publishable_... ou eyJhbGci...">
+                </div>
+              </div>
+
+              <div class="backend-actions-bar">
+                <button class="btn-dash-primary" type="submit">💾 Enregistrer &amp; Connecter à Supabase</button>
+                <button id="btn-copy-sql" class="btn-tbl edit" type="button" style="padding:10px 18px;font-size:0.92rem">
+                  📋 Copier le Script SQL dans le Presse-Papier
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Console de Statut & Logs en Direct -->
+          <h4 style="margin:0 0 6px;color:var(--navy)">📡 Journal d'Activité &amp; Télémétrie Backend :</h4>
+          <div id="backend-console-log" class="backend-console-output">Initialisation du moniteur Supabase...</div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Modale pour lire le message et répondre par email dans la même fenêtre -->
+  <div id="dash-message-modal" class="dash-modal-overlay" style="display:none" role="dialog" aria-modal="true" aria-labelledby="modal-msg-subject">
+    <div class="dash-modal-container">
+      <div class="dash-modal-header">
+        <div>
+          <h3 id="modal-msg-subject">Objet de la demande</h3>
+          <span id="modal-msg-badge" class="status-pill unread">Non lu</span>
+        </div>
+        <button class="dash-modal-close-btn" onclick="closeMessageModal()" type="button">&times;</button>
+      </div>
+      <div class="dash-modal-body">
+        <div class="dash-modal-meta">
+          <div><strong>Expéditeur :</strong> <span id="modal-msg-sender">Nom</span></div>
+          <div><strong>Email :</strong> <a id="modal-msg-email" href="">email@ump.ac.ma</a></div>
+          <div><strong>Rôle / Profil :</strong> <span id="modal-msg-role">Membre</span></div>
+          <div><strong>Date de réception :</strong> <span id="modal-msg-date">2026-10-24 14:00</span></div>
+        </div>
+        <label style="font-weight:700;color:var(--navy);display:block;margin-bottom:6px">Corps du message :</label>
+        <div id="modal-msg-body" class="dash-modal-message-text">...</div>
+
+        <!-- Zone de réponse intégrée dans la même fenêtre -->
+        <div id="msg-reply-section" class="msg-reply-box">
+          <label for="msg-reply-textarea">✉️ Rédiger une réponse officielle au membre :</label>
+          <textarea id="msg-reply-textarea" rows="5" placeholder="Bonjour..."></textarea>
+          <div class="msg-reply-actions">
+            <button id="btn-cancel-reply" class="btn-tbl delete" type="button" onclick="toggleMessageReply(false)">✕ Fermer</button>
+            <button id="btn-send-inline-reply" class="btn-dash-primary" type="button" onclick="handleSendInlineReply()">🚀 Envoyer la Réponse</button>
+          </div>
+        </div>
+      </div>
+      <div class="dash-modal-footer">
+        <button id="modal-btn-mark-read" class="btn-tbl accept" type="button">✓ Marquer comme lu</button>
+        <button id="modal-btn-open-reply" class="btn-tbl reply" type="button" onclick="toggleMessageReply(true)">✉️ Répondre par Email</button>
+        <button class="btn-dash-primary" onclick="closeMessageModal()" type="button">✕ Fermer</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODALE COMPLÈTE : MODIFIER UN MEMBRE DU BUREAU OU ENCADRANT -->
+  <div id="modal-edit-bureau" class="dash-modal-overlay" style="display:none" role="dialog" aria-modal="true" aria-labelledby="title-edit-bureau">
+    <div class="dash-modal-container large">
+      <div class="dash-modal-header">
+        <div>
+          <h3 id="title-edit-bureau">Modifier le Rôle &amp; Membre du Bureau</h3>
+          <p style="margin:4px 0 0;font-size:0.85rem;color:#64748b">Modifiez les informations d'un membre ou assignez le rôle à une nouvelle personne.</p>
+        </div>
+        <button class="dash-modal-close-btn" onclick="closeEditBureauModal()" type="button">&times;</button>
+      </div>
+      <div class="dash-modal-body">
+        <form id="form-modal-edit-bureau">
+          <input type="hidden" id="modal-bur-id">
+          
+          <div class="form-grid-2">
+            <div class="form-group-dash">
+              <label for="modal-bur-prenom">Prénom *</label>
+              <input id="modal-bur-prenom" required placeholder="Ex: Youssef">
+            </div>
+            <div class="form-group-dash">
+              <label for="modal-bur-nom">Nom *</label>
+              <input id="modal-bur-nom" required placeholder="Ex: El Amrani">
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group-dash">
+              <label for="modal-bur-role-label">Titre du Rôle Officiel *</label>
+              <input id="modal-bur-role-label" required placeholder="Ex: Président du Club, Trésorier...">
+            </div>
+            <div class="form-group-dash">
+              <label for="modal-bur-category">Catégorie *</label>
+              <select id="modal-bur-category" required>
+                <option value="bureau">Bureau Exécutif Étudiant</option>
+                <option value="encadrant">Professeur Encadrant FSAN</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group-dash">
+              <label for="modal-bur-affiliation">Affiliation / Filière Master *</label>
+              <input id="modal-bur-affiliation" required placeholder="Ex: Étudiant Master SDSI (S3)">
+            </div>
+            <div class="form-group-dash">
+              <label for="modal-bur-email">Email Académique (@ump.ac.ma) *</label>
+              <input id="modal-bur-email" type="email" required placeholder="prenom.nom@ump.ac.ma">
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group-dash">
+              <label for="modal-bur-linkedin">Profil ou Identifiant LinkedIn *</label>
+              <input id="modal-bur-linkedin" required placeholder="Ex: youssef-elamrani ou URL complète">
+            </div>
+            <div class="form-group-dash">
+              <label for="modal-bur-access">Privilèges d'Accès au Dashboard Administrateur *</label>
+              <select id="modal-bur-access" required>
+                <option value="true">Oui — Accès Dashboard Autorisé (Président, Vice-Président, Encadrants)</option>
+                <option value="false">Non — Accès Membre Simple</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group-dash">
+            <label for="modal-bur-desc">Description sur le rôle &amp; responsabilités au club *</label>
+            <textarea id="modal-bur-desc" rows="3" required placeholder="Missions et attributions au sein de la gouvernance du CIAA..."></textarea>
+          </div>
+
+          <div class="dash-modal-footer">
+            <button type="button" class="btn-tbl delete" onclick="closeEditBureauModal()">✕ Fermer</button>
+            <button type="submit" class="btn-dash-primary">💾 Sauvegarder les Modifications</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODALE COMPLÈTE : MODIFIER UN PROJET SOUMIS -->
+  <div id="modal-edit-project" class="dash-modal-overlay" style="display:none" role="dialog" aria-modal="true" aria-labelledby="title-edit-project">
+    <div class="dash-modal-container large">
+      <div class="dash-modal-header">
+        <div>
+          <h3 id="title-edit-project">Modifier le Projet Soumis</h3>
+          <p style="margin:4px 0 0;font-size:0.85rem;color:#64748b">Formulaire complet avec l'ensemble des données du projet modifiables.</p>
+        </div>
+        <button class="dash-modal-close-btn" onclick="closeEditProjectModal()" type="button">&times;</button>
+      </div>
+      <div class="dash-modal-body">
+        <form id="form-modal-edit-project">
+          <input type="hidden" id="modal-proj-id">
+
+          <div class="form-grid-2">
+            <div class="form-group-dash">
+              <label for="modal-proj-title">Titre du Projet *</label>
+              <input id="modal-proj-title" required>
+            </div>
+            <div class="form-group-dash">
+              <label for="modal-proj-category">Catégorie *</label>
+              <select id="modal-proj-category" required>
+                <option value="ml">Machine Learning</option>
+                <option value="dl">Deep Learning</option>
+                <option value="cv">Computer Vision</option>
+                <option value="nlp">NLP &amp; LLMs</option>
+                <option value="data">Data Science &amp; Big Data</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group-dash">
+              <label for="modal-proj-link">Lien Code Source GitHub *</label>
+              <input id="modal-proj-link" type="url" required placeholder="https://github.com/...">
+            </div>
+            <div class="form-group-dash">
+              <label for="modal-proj-image">URL de l'Image / Miniature *</label>
+              <input id="modal-proj-image" type="text" required placeholder="https://... ou base64">
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group-dash">
+              <label for="modal-proj-team">Membres de l'Équipe (séparés par virgules) *</label>
+              <input id="modal-proj-team" required placeholder="Ex: Karim Mansouri, Salma Benali">
+            </div>
+            <div class="form-group-dash">
+              <label for="modal-proj-tags">Technologies / Tags (séparés par virgules)</label>
+              <input id="modal-proj-tags" placeholder="Ex: PyTorch, YOLOv8, FastAPI">
+            </div>
+          </div>
+
+          <div class="form-group-dash">
+            <label for="modal-proj-desc">Description Complète du Projet *</label>
+            <textarea id="modal-proj-desc" rows="4" required></textarea>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group-dash">
+              <label for="modal-proj-state">État de Validation *</label>
+              <select id="modal-proj-state" required>
+                <option value="1">✓ Validé &amp; En Ligne</option>
+                <option value="0">⏳ En Attente de Review</option>
+              </select>
+            </div>
+            <div class="form-group-dash" style="display:flex;align-items:center;gap:10px;padding-top:24px">
+              <input type="checkbox" id="modal-proj-featured" style="width:20px;height:20px;margin:0">
+              <label for="modal-proj-featured" style="margin:0;cursor:pointer">⭐ Projet En Vedette (Top 3 Page d'Accueil)</label>
+            </div>
+          </div>
+
+          <div class="dash-modal-footer">
+            <button type="button" class="btn-tbl delete" onclick="closeEditProjectModal()">✕ Fermer</button>
+            <button type="submit" class="btn-dash-primary">💾 Sauvegarder les Modifications</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODALE COMPLÈTE : MODIFIER UN SUJET DE PROJET -->
+  <div id="modal-edit-sujet" class="dash-modal-overlay" style="display:none" role="dialog" aria-modal="true" aria-labelledby="title-edit-sujet">
+    <div class="dash-modal-container large">
+      <div class="dash-modal-header">
+        <div>
+          <h3 id="title-edit-sujet">Modifier le Sujet de Projet Proposé</h3>
+          <p style="margin:4px 0 0;font-size:0.85rem;color:#64748b">Formulaire complet avec l'ensemble des valeurs du sujet modifiables.</p>
+        </div>
+        <button class="dash-modal-close-btn" onclick="closeEditSujetModal()" type="button">&times;</button>
+      </div>
+      <div class="dash-modal-body">
+        <form id="form-modal-edit-sujet">
+          <input type="hidden" id="modal-sujet-id">
+
+          <div class="form-grid-2">
+            <div class="form-group-dash">
+              <label for="modal-sujet-title">Titre du Sujet de Projet *</label>
+              <input id="modal-sujet-title" required>
+            </div>
+            <div class="form-group-dash">
+              <label for="modal-sujet-category">Catégorie *</label>
+              <select id="modal-sujet-category" required>
+                <option value="cv">Vision par Ordinateur</option>
+                <option value="nlp">Traitement du Langage Naturel &amp; LLMs</option>
+                <option value="iot">Systèmes Embarqués &amp; Robotique</option>
+                <option value="ml">Machine Learning Appliqué</option>
+                <option value="data">Big Data &amp; Analyse Prédictive</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group-dash">
+              <label for="modal-sujet-master">Filière Master Ciblée *</label>
+              <select id="modal-sujet-master" required>
+                <option value="Master SDSI">Master SDSI</option>
+                <option value="Master MIATE">Master MIATE</option>
+                <option value="SDSI &amp; MIATE">Masters SDSI &amp; MIATE</option>
+              </select>
+            </div>
+            <div class="form-group-dash">
+              <label for="modal-sujet-teamsize">Taille d'Équipe Recommandée *</label>
+              <input id="modal-sujet-teamsize" required placeholder="Ex: 2 à 3 étudiants">
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group-dash">
+              <label for="modal-sujet-author">Proposé Par (Nom de l'étudiant ou Bureau) *</label>
+              <input id="modal-sujet-author" required>
+            </div>
+            <div class="form-group-dash">
+              <label for="modal-sujet-status">Statut de Publication *</label>
+              <select id="modal-sujet-status" required>
+                <option value="approved">✓ Validé &amp; Publié sur Annonces</option>
+                <option value="pending">⏳ En Attente de Validation</option>
+                <option value="rejected">✗ Rejeté</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group-dash">
+            <label for="modal-sujet-tech">Technologies Requises (séparées par virgules) *</label>
+            <input id="modal-sujet-tech" required placeholder="Ex: PyTorch, ROS 2, OpenCV, Docker">
+          </div>
+
+          <div class="form-group-dash">
+            <label for="modal-sujet-desc">Description Complète du Sujet &amp; Objectifs *</label>
+            <textarea id="modal-sujet-desc" rows="4" required></textarea>
+          </div>
+
+          <div class="dash-modal-footer">
+            <button type="button" class="btn-tbl delete" onclick="closeEditSujetModal()">✕ Fermer</button>
+            <button type="submit" class="btn-dash-primary">💾 Sauvegarder les Modifications</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODALE COMPLÈTE : MODIFIER UNE VIDÉO DE COURS -->
+  <div id="modal-edit-video" class="dash-modal-overlay" style="display:none" role="dialog" aria-modal="true" aria-labelledby="title-edit-video">
+    <div class="dash-modal-container large">
+      <div class="dash-modal-header">
+        <div>
+          <h3 id="title-edit-video">Modifier la Vidéo de Cours YouTube</h3>
+          <p style="margin:4px 0 0;font-size:0.85rem;color:#64748b">Formulaire complet avec l'ensemble des valeurs actuelles modifiables.</p>
+        </div>
+        <button class="dash-modal-close-btn" onclick="closeEditVideoModal()" type="button">&times;</button>
+      </div>
+      <div class="dash-modal-body">
+        <form id="form-modal-edit-video">
+          <input type="hidden" id="modal-video-id">
+
+          <div class="form-grid-2">
+            <div class="form-group-dash">
+              <label for="modal-video-title">Titre de la Vidéo / Leçon *</label>
+              <input id="modal-video-title" required>
+            </div>
+            <div class="form-group-dash">
+              <label for="modal-video-track">Parcours / Filière *</label>
+              <select id="modal-video-track" required>
+                <option value="ml">Machine Learning Fondamental</option>
+                <option value="dl">Deep Learning &amp; Computer Vision</option>
+                <option value="nlp">NLP, Transformers &amp; LLMs</option>
+                <option value="python">Python &amp; Maths pour la Data</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group-dash">
+              <label for="modal-video-url">Lien YouTube ou Identifiant Vidéo *</label>
+              <input id="modal-video-url" required placeholder="https://www.youtube.com/watch?v=...">
+            </div>
+            <div class="form-group-dash">
+              <label for="modal-video-duration">Durée Estimée (ex: 25 min) *</label>
+              <input id="modal-video-duration" required placeholder="25 min">
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group-dash">
+              <label for="modal-video-instructor">Formateur / Enseignant</label>
+              <input id="modal-video-instructor" placeholder="Ex: Andrew Ng, StatQuest...">
+            </div>
+            <div class="form-group-dash">
+              <label for="modal-video-image">URL de Miniature Personnalisée</label>
+              <input id="modal-video-image" placeholder="https://... (ou laissez vide pour auto-miniature YouTube)">
+            </div>
+          </div>
+
+          <div class="form-group-dash">
+            <label for="modal-video-desc">Description du Cours &amp; Objectifs *</label>
+            <textarea id="modal-video-desc" rows="4" required></textarea>
+          </div>
+
+          <div class="dash-modal-footer">
+            <button type="button" class="btn-tbl delete" onclick="closeEditVideoModal()">✕ Fermer</button>
+            <button type="submit" class="btn-dash-primary">💾 Sauvegarder les Modifications</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODALE COMPLÈTE : MODIFIER UN MODULE DRIVE -->
+  <div id="modal-edit-drive" class="dash-modal-overlay" style="display:none" role="dialog" aria-modal="true" aria-labelledby="title-edit-drive">
+    <div class="dash-modal-container large">
+      <div class="dash-modal-header">
+        <div>
+          <h3 id="title-edit-drive">Modifier les Liens Google Drive du Module</h3>
+          <p style="margin:4px 0 0;font-size:0.85rem;color:#64748b">Formulaire complet pour mettre à jour les liens de dossiers ou les métadonnées du module.</p>
+        </div>
+        <button class="dash-modal-close-btn" onclick="closeEditDriveModal()" type="button">&times;</button>
+      </div>
+      <div class="dash-modal-body">
+        <form id="form-modal-edit-drive">
+          <input type="hidden" id="modal-drive-id">
+
+          <div class="form-grid-3">
+            <div class="form-group-dash">
+              <label for="modal-drive-master">Filière Master *</label>
+              <select id="modal-drive-master" required>
+                <option value="SDSI">Master SDSI</option>
+                <option value="MIATE">Master MIATE</option>
+              </select>
+            </div>
+            <div class="form-group-dash">
+              <label for="modal-drive-semestre">Semestre *</label>
+              <select id="modal-drive-semestre" required>
+                <option value="s1">Semestre 1 (S1)</option>
+                <option value="s2">Semestre 2 (S2)</option>
+                <option value="s3">Semestre 3 (S3)</option>
+              </select>
+            </div>
+            <div class="form-group-dash">
+              <label for="modal-drive-name">Nom du Module *</label>
+              <input id="modal-drive-name" required>
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group-dash">
+              <label for="modal-drive-cours">Lien Drive : Partie Cours (Diapos/PDF) *</label>
+              <input id="modal-drive-cours" type="url" required>
+            </div>
+            <div class="form-group-dash">
+              <label for="modal-drive-tp">Lien Drive : Partie TP *</label>
+              <input id="modal-drive-tp" type="url" required>
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group-dash">
+              <label for="modal-drive-td">Lien Drive : Partie TD *</label>
+              <input id="modal-drive-td" type="url" required>
+            </div>
+            <div class="form-group-dash">
+              <label for="modal-drive-exams">Lien Drive : Anciens Examens &amp; Contrôles *</label>
+              <input id="modal-drive-exams" type="url" required>
+            </div>
+          </div>
+
+          <div class="form-group-dash">
+            <label for="modal-drive-image">URL de l'Image Descriptive</label>
+            <input id="modal-drive-image" placeholder="https://... ou base64">
+          </div>
+
+          <div class="form-group-dash">
+            <label for="modal-drive-desc">Description du Module</label>
+            <textarea id="modal-drive-desc" rows="3"></textarea>
+          </div>
+
+          <div class="dash-modal-footer">
+            <button type="button" class="btn-tbl delete" onclick="closeEditDriveModal()">✕ Fermer</button>
+            <button type="submit" class="btn-dash-primary">💾 Sauvegarder les Modifications</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODALE COMPLÈTE : MODIFIER UN UTILISATEUR -->
+  <div id="modal-edit-user" class="dash-modal-overlay" style="display:none" role="dialog" aria-modal="true" aria-labelledby="title-edit-user">
+    <div class="dash-modal-container large">
+      <div class="dash-modal-header">
+        <div>
+          <h3 id="title-edit-user">Modifier l'Utilisateur &amp; Privilèges</h3>
+          <p style="margin:4px 0 0;font-size:0.85rem;color:#64748b">Modifiez les coordonnées, le statut du compte et les privilèges d'accès au dashboard.</p>
+        </div>
+        <button class="dash-modal-close-btn" onclick="closeEditUserModal()" type="button">&times;</button>
+      </div>
+      <div class="dash-modal-body">
+        <form id="form-modal-edit-user">
+          <input type="hidden" id="modal-user-id">
+
+          <div class="form-grid-2">
+            <div class="form-group-dash">
+              <label for="modal-user-prenom">Prénom *</label>
+              <input id="modal-user-prenom" required>
+            </div>
+            <div class="form-group-dash">
+              <label for="modal-user-nom">Nom *</label>
+              <input id="modal-user-nom" required>
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group-dash">
+              <label for="modal-user-email">Email Académique (@ump.ac.ma) *</label>
+              <input id="modal-user-email" type="email" required>
+            </div>
+            <div class="form-group-dash">
+              <label for="modal-user-master">Filière / Master *</label>
+              <input id="modal-user-master" required placeholder="Ex: Master SDSI (S1)">
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group-dash">
+              <label for="modal-user-role">Rôle &amp; Privilèges *</label>
+              <select id="modal-user-role" required>
+                <option value="member">Membre Simple (sans dashboard)</option>
+                <option value="president">Président (accès dashboard autorisé)</option>
+                <option value="vice_president">Vice-Président (accès dashboard autorisé)</option>
+                <option value="prof_encadrant">Professeur Encadrant (accès dashboard autorisé)</option>
+                <option value="admin">Super Administrateur (accès complet)</option>
+              </select>
+            </div>
+            <div class="form-group-dash">
+              <label for="modal-user-status">Statut du Compte *</label>
+              <select id="modal-user-status" required>
+                <option value="approved">✓ Validé / Actif</option>
+                <option value="pending">⏳ En attente de validation</option>
+                <option value="rejected">✗ Rejeté / Suspendu</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group-dash">
+            <label for="modal-user-linkedin">Profil ou Identifiant LinkedIn</label>
+            <input id="modal-user-linkedin" placeholder="Ex: prenom-nom">
+          </div>
+
+          <div class="form-group-dash">
+            <label for="modal-user-bio">Bio &amp; Compétences Techniques</label>
+            <textarea id="modal-user-bio" rows="3" placeholder="Langages, frameworks et domaines d'intérêt en IA..."></textarea>
+          </div>
+
+          <div class="dash-modal-footer">
+            <button type="button" class="btn-tbl delete" onclick="closeEditUserModal()">✕ Fermer</button>
+            <button type="submit" class="btn-dash-primary">💾 Sauvegarder les Modifications</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/dist/umd/supabase.min.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/dialog.js"></script>
+  <script src="js/upload-helper.js"></script>
+  <script src="js/dashboard.js"></script>
+</body>
+</html>

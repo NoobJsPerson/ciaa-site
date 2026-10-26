@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ajouter un Module Drive par Semestre · CIAA FSAN</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+  <main>
+    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:12px">
+      <button type="button" class="btn-return-back" onclick="if(history.length > 1){history.back()}else{window.location.href='dashboard.html'}">&larr; Retour à la page précédente</button>
+      <a href="index.html">
+        <img src="logo.png" alt="Club IAA - FSAN" class="brand-logo">
+      </a>
+    </div>
+
+    <!-- Navigation & Fil d'ariane -->
+    <header class="topbar">
+      <div>
+        <h1>Ajouter un Module Drive</h1>
+        <p class="hint">
+          <a href="dashboard.html">&larr; Retour au Dashboard Admin</a>
+          <span> | </span>
+          <a href="apprendre.html">Page Apprendre l'IA (Drives &amp; Vidéos)</a>
+          <span> | </span>
+          <a href="index.html">Accueil</a>
+        </p>
+      </div>
+    </header>
+
+    <!-- Bannière Admin -->
+    <div id="admin-banner" class="admin-badge-callout" hidden>
+      <span>📁</span>
+      <span>Gestion des Ressources Pédagogiques Administrateur (Masters SDSI &amp; MIATE)</span>
+    </div>
+
+    <!-- Formulaire individuel d'ajout de module et dossiers Drive -->
+    <section class="panel" aria-labelledby="add-drive-heading">
+      <h2 id="add-drive-heading">Formulaire de Module Drive (Page Individuelle)</h2>
+      <p class="hint">Ajoutez un module universitaire avec ses dossiers Google Drive organisés en 4 parties : Cours magistraux, Travaux Pratiques (TP), Travaux Dirigés (TD) et Anciens Examens avec contrôles.</p>
+
+      <form id="add-drive-form">
+        <div class="form-grid-3">
+          <div>
+            <label for="drive-master">Filière Master *</label>
+            <select id="drive-master" required>
+              <option value="SDSI">Master SDSI</option>
+              <option value="MIATE">Master MIATE</option>
+            </select>
+          </div>
+          <div>
+            <label for="drive-semestre">Semestre Universitaire *</label>
+            <select id="drive-semestre" required>
+              <option value="s1">Semestre 1 (S1)</option>
+              <option value="s2">Semestre 2 (S2)</option>
+              <option value="s3">Semestre 3 (S3)</option>
+            </select>
+          </div>
+          <div>
+            <label for="drive-mod-name">Nom du Module Universitaire *</label>
+            <input id="drive-mod-name" required placeholder="Ex: Deep Learning &amp; Vision Artificielle">
+          </div>
+        </div>
+
+        <label for="drive-mod-desc">Description / Syllabus synthétique du module</label>
+        <textarea id="drive-mod-desc" rows="3" placeholder="Réseaux de neurones profonds, architectures CNN/RNN, optimisation et détection d'objets..."></textarea>
+
+        <!-- UPLOAD D'IMAGE DEPUIS L'APPAREIL LOCAL (EXIGÉ: PAS DE LIEN WEB) -->
+        <label for="drive-image-file">Image descriptive du module (depuis votre appareil) *</label>
+        <div id="drive-image-dropzone" class="file-upload-zone">
+          <input id="drive-image-file" type="file" accept="image/*" aria-label="Choisir une image depuis l'appareil">
+          <div class="file-upload-content">
+            <div class="file-upload-icon">🖼️</div>
+            <div class="file-upload-title">Cliquez pour choisir une image de module depuis votre appareil ou glissez-déposez ici</div>
+            <div class="file-upload-subtitle">Formats supportés : JPG, PNG, WebP, SVG (Import direct local depuis votre PC)</div>
+          </div>
+        </div>
+
+        <!-- Boîte de prévisualisation de l'image -->
+        <div id="drive-image-preview-box" class="image-preview-box">
+          <img id="drive-image-preview-img" class="image-preview-thumbnail" src="" alt="Aperçu du module">
+          <div class="image-preview-info">
+            <div id="drive-image-name" class="image-preview-name">module.png</div>
+            <div id="drive-image-size" class="image-preview-size">0 Ko</div>
+          </div>
+          <button id="btn-remove-drive-image" class="btn-remove-image" type="button">Supprimer l'image</button>
+        </div>
+
+        <!-- 4 Liens Google Drive -->
+        <div class="form-grid-2">
+          <div>
+            <label for="drive-url-cours">Lien Google Drive : Partie Cours (Diapositives / PDF) *</label>
+            <input id="drive-url-cours" type="url" required placeholder="https://drive.google.com/drive/folders/...">
+          </div>
+          <div>
+            <label for="drive-url-tp">Lien Google Drive : Partie Travaux Pratiques (TP) *</label>
+            <input id="drive-url-tp" type="url" required placeholder="https://drive.google.com/drive/folders/...">
+          </div>
+        </div>
+
+        <div class="form-grid-2">
+          <div>
+            <label for="drive-url-td">Lien Google Drive : Partie Travaux Dirigés (TD) *</label>
+            <input id="drive-url-td" type="url" required placeholder="https://drive.google.com/drive/folders/...">
+          </div>
+          <div>
+            <label for="drive-url-exams">Lien Google Drive : Anciens Examens &amp; Épreuves *</label>
+            <input id="drive-url-exams" type="url" required placeholder="https://drive.google.com/drive/folders/...">
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit">
+            <span>💾 Enregistrer les Liens Drive &rarr;</span>
+          </button>
+          <a class="hint" href="dashboard.html">Annuler et retourner au dashboard</a>
+        </div>
+      </form>
+
+      <!-- Message succès -->
+      <div id="drive-success-box" class="success-card">
+        <div class="success-card-icon">📁</div>
+        <h3 class="success-card-title">Module Drive enregistré avec succès !</h3>
+        <p id="drive-success-desc" class="success-card-desc">
+          Les ressources sont maintenant disponibles pour les étudiants.
+        </p>
+        <div class="success-card-actions">
+          <a class="btn-card-link primary" href="dashboard.html">Retourner au Dashboard</a>
+          <a class="btn-card-link ghost" href="apprendre.html">Voir sur la page Apprendre l'IA</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/dist/umd/supabase.min.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/dialog.js"></script>
+  <script src="js/upload-helper.js"></script>
+  <script src="js/adddrive.js"></script>
+</body>
+</html>

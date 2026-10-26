@@ -10,124 +10,87 @@
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+  <!-- Barre de navigation -->
   <header>
     <nav class="wrap" aria-label="Navigation principale">
-      <a class="brand" href="index.html#accueil">
-        CIAA
-        <span class="badge-fsan">FSAN</span>
+      <a class="brand" href="index.html">
+        <img src="logo.png" alt="Club IAA - Faculté des Sciences Appliquées Nador" class="brand-logo">
       </a>
       <div class="links">
-        <a href="index.html#apropos">À propos</a>
+        <a href="index.html" class="active">Accueil</a>
         <a href="projects.html">Projets</a>
         <a href="apprendre.html">Apprendre</a>
-        <a id="login-link" class="cta" href="login.html" hidden>Connexion</a>
-        <a id="signup-link" class="cta" href="signup.html" hidden>Inscription</a>
+        <a href="annonces.html">Annonces &amp; Sujets</a>
+        <a href="apropos.html">À propos du club</a>
+        <!-- <span class="backend-status-pill offline" title="État de la connexion Supabase"><span class="dot"></span> <strong>Supabase indisponible</strong></span> -->
+        <a id="profile-link" href="profile.html" hidden>Mon Profil</a>
+        <a id="dash-link" href="dashboard.html" class="cta" style="background:var(--teal)" hidden>Dashboard</a>
+        <a id="login-link" class="cta" href="login.html">Connexion</a>
+        <a id="signup-link" class="cta" href="signup.html">Inscription</a>
         <button id="logout-btn" class="cta" type="button" hidden>Déconnexion</button>
       </div>
     </nav>
   </header>
 
   <main>
+    <!-- Bannière Hero -->
     <div class="hero" id="accueil">
       <div class="wrap in">
-        <h1>CIAA</h1>
-        <p class="sub">Club d'Intelligence Artificielle et ses Applications</p>
+        <h1>Club IAA</h1>
+        <p class="sub">Intelligence Artificielle et ses Applications</p>
         <p class="where">Faculté des Sciences Appliquées de Nador (FSAN)</p>
-        <p class="lead">Bienvenue dans l'espace d'échange et d'innovation du club CIAA. Ici, les étudiants partagent leurs ressources, suivent l'actualité de l'IA et construisent des projets ensemble.</p>
+        <p class="lead">Bienvenue dans l'espace d'échange, d'apprentissage et d'innovation du club. Retrouvez les formations et projets publiés par les étudiants des Masters SDSI &amp; MIATE.</p>
         <div class="btns">
-          <a class="btn primary" href="projects.html">Voir nos projets</a>
-          <a class="btn ghost" href="apprendre.html">Accéder aux cours & Drive</a>
+          <a class="btn primary" href="projects.html">Voir tous les projets</a>
+          <a class="btn ghost" href="apprendre.html">Plateforme Apprendre</a>
+          <a class="btn ghost" style="background:#eaf4fb;color:var(--navy);border-color:#c8dfef" href="annonces.html">🚀 Sujets de Projets à Construire &amp; News</a>
         </div>
       </div>
     </div>
 
-    <section id="apropos">
-      <div class="wrap">
-        <h2>À propos du club</h2>
-        <p class="intro">Ce groupe rassemble les étudiants des Masters suivants :</p>
-        <div class="masters">
-          <div class="master">
-            <b>SDSI</b>
-            <span>Sciences des Données et Systèmes Intelligents</span>
-          </div>
-          <div class="master">
-            <b>MIATE</b>
-            <span>Intelligence Artificielle & Technologies Émergentes</span>
-          </div>
-        </div>
-        <div class="objectif">
-          <h3>Nos objectifs</h3>
-          <p style="margin:0 0 16px;color:#fff">Partage de ressources, veille scientifique et technologique :</p>
-          <div class="tags">
-            <span>Machine Learning</span>
-            <span>Deep Learning</span>
-            <span>LLMs</span>
-            <span>Computer Vision</span>
-            <span>Data Science</span>
-            <span>NLP</span>
-          </div>
-        </div>
-      </div>
-    </section>
-
+    <!-- Le bureau du club -->
     <section id="bureau" class="alt">
       <div class="wrap">
         <h2>Le bureau du club</h2>
-        <p class="intro">Les étudiants qui organisent et animent les activités du CIAA.</p>
-        <div class="grid">
-          <!-- MODÈLE : membre du bureau -->
-          <article class="person">
-            <div class="avatar" aria-hidden="true">PN</div>
-            <div class="body">
-              <h3>Prénom Nom</h3>
-              <div class="role">Président(e)</div>
-              <p>Étudiant(e) en Master SDSI. Passionné(e) par le Deep Learning et la vision par ordinateur.</p>
-              <a href="https://www.linkedin.com/" target="_blank" rel="noopener">LinkedIn</a>
-            </div>
-          </article>
+        <p class="intro">Les étudiants qui organisent et animent les activités du CIAA (Président, Vice-Président, Trésorier, etc.).</p>
+        <div class="grid" id="index-bureau-grid">
+          <!-- Rempli dynamiquement par js/index.js depuis CIAA_STORE -->
         </div>
       </div>
     </section>
 
+    <!-- Encadrants -->
     <section id="encadrants">
       <div class="wrap">
         <h2>Nos professeurs encadrants</h2>
         <p class="intro">Les enseignants qui guident le club et accompagnent ses projets.</p>
-        <div class="grid">
-          <!-- MODÈLE : encadrant -->
-          <article class="person">
-            <div class="avatar" aria-hidden="true">Pr</div>
-            <div class="body">
-              <h3>Pr. Prénom Nom</h3>
-              <div class="role">Professeur encadrant · FSAN</div>
-              <p>Spécialités : apprentissage automatique, traitement du langage naturel. Responsable du Master MIATE.</p>
-              <a href="mailto:prenom.nom@exemple.ma">prenom.nom@exemple.ma</a>
-            </div>
-          </article>
+        <div class="grid" id="index-encadrants-grid">
+          <!-- Rempli dynamiquement par js/index.js depuis CIAA_STORE -->
         </div>
       </div>
     </section>
 
+    <!-- Section : Top 3 Meilleurs Projets (avec lien vers la page individuelle) -->
     <section id="projets" class="alt">
       <div class="wrap">
-        <div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:12px;margin-bottom:12px">
+        <div style="display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:16px;margin-bottom:24px">
           <div>
-            <h2>Nos projets</h2>
-            <p class="intro" style="margin-bottom:0">Les réalisations des membres du club, de l'idée au prototype.</p>
+            <h2>Top 3 Meilleurs Projets</h2>
+            <p class="intro" style="margin-bottom:0">Une sélection des 3 meilleures réalisations de nos membres. Retrouvez l'ensemble des projets sur la page dédiée.</p>
           </div>
-          <a class="btn ghost" href="projects.html" style="font-size:0.9rem;padding:8px 18px">Voir tous les projets &rarr;</a>
+          <a class="btn primary" href="projects.html" style="font-size:0.92rem;padding:10px 22px">
+            Voir tous les projets sur la page dédiée &rarr;
+          </a>
         </div>
+
         <div class="projects">
-          <!-- Template de projet pour l'affichage dynamique -->
+          <!-- Template de carte de projet utilisé par js/index.js -->
           <article class="project" style="display: none;">
             <img id="image" class="thumb" alt="Projet">
             <div class="body">
-              <h3 id="titre">Titre du projet</h3>
-              <p id="description">Description succincte du problème résolu et de la méthodologie appliquée.</p>
+              <h3 id="titre"></h3>
+              <p id="description"></p>
               <div class="tags">
-                <span>Python</span>
-                <span>Deep Learning</span>
-                <span>Computer Vision</span>
               </div>
               <div class="team" aria-label="Équipe"></div>
               <a id="source_code" target="_blank" rel="noopener" style="font-weight:600;color:var(--blue)">Voir le code sur GitHub</a>
@@ -137,14 +100,15 @@
       </div>
     </section>
 
+    <!-- Section : Apprendre l'IA (Lien vers la page individuelle) -->
     <section id="apprendre">
       <div class="wrap">
         <div class="learn">
-          <h2>Apprendre l'IA & Ressources</h2>
-          <p>Découvrez notre plateforme d'apprentissage complète inspirée de Coursera avec des cours vidéo, tutoriels et les dossiers Google Drive dédiés aux Masters SDSI & MIATE.</p>
-          <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:18px">
-            <a class="btn" href="apprendre.html">Ouvrir la plateforme d'apprentissage &rarr;</a>
-            <a class="btn" href="apprendre.html#drive-section" style="background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.5)">Accéder aux Drives Masters</a>
+          <h2>Plateforme Apprendre l'IA &amp; Drives par Semestre</h2>
+          <p>Accédez à notre plateforme d'apprentissage complète : les dossiers Google Drive des Masters SDSI &amp; MIATE classés par semestre (S1, S2, S3), ainsi que nos cours vidéo YouTube interactifs visualisables directement en ligne.</p>
+          <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:20px">
+            <a class="btn" href="apprendre.html">Ouvrir la page individuelle Apprendre &rarr;</a>
+            <a class="btn" href="apprendre.html#drive-section" style="background:rgba(255,255,255,0.18);color:#fff;border:1px solid rgba(255,255,255,0.5)">Consulter les Drives par Semestre</a>
           </div>
         </div>
       </div>
@@ -159,6 +123,9 @@
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/dist/umd/supabase.min.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/dialog.js"></script>
   <script src="js/index.js"></script>
 </body>
 </html>

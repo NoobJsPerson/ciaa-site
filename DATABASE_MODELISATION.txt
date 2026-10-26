@@ -1,0 +1,387 @@
+================================================================================
+MODÉLISATION COMPLÈTE DE LA BASE DE DONNÉES & GUIDE TECHNIQUE SUPABASE
+CLUB D'INTELLIGENCE ARTIFICIELLE ET SES APPLICATIONS (CIAA - FSAN NADOR)
+Faculté des Sciences Appliquées de Nador · Université Mohammed Premier (UMP)
+Masters d'Excellence : SDSI (Science des Données & SI) & MIATE (IA & Tech Émergentes)
+================================================================================
+
+DOCUMENT DE RÉFÉRENCE TECHNIQUE (SGBD RELATIONNEL / POSTGRESQL & SUPABASE FREE TIER)
+Auteur : Bureau Technique CIAA FSAN & Équipe de Modélisation des Données
+Date : Octobre 2026
+Version : 2.0 (Production-Ready)
+
+--------------------------------------------------------------------------------
+TABLE DES MATIÈRES
+--------------------------------------------------------------------------------
+1. INTRODUCTION & ANALYSE DU PÉRIMÈTRE FONCTIONNEL
+2. MODÈLE CONCEPTUEL DES DONNÉES (MCD) & CARDINALITÉS
+3. MODÈLE LOGIQUE DES DONNÉES (MLD) & NORMALISATION (3NF)
+4. DICTIONNAIRE EXHAUSTIF DES DONNÉES
+5. COMPOSANTS ESSENTIELS DE LA BASE DE DONNÉES :
+   5.1 TABLES ET CONTRAINTES D'INTÉGRITÉ
+   5.2 INDEX D'OPTIMISATION (B-TREE, COMPOSITES, PARTIELS, GIN/TRIGRAMMES)
+   5.3 VUES SQL (VIEWS) POUR LE FRONTEND ET LE DASHBOARD
+   5.4 TRIGGERS (DÉCLENCHEURS) & AUTOMATISATION MÉTIER
+   5.5 PROCÉDURES STOCKÉES & UTILISATION DES CURSEURS (CURSORS)
+   5.6 SÉCURITÉ ROW LEVEL SECURITY (RLS) SUR SUPABASE
+6. GUIDE D'INTÉGRATION SUPABASE (VERSION GRATUITE) & LIAISON FRONT-END
+7. CONCLUSION & PERSPECTIVES D'ÉVOLUTION
+
+================================================================================
+1. INTRODUCTION & ANALYSE DU PÉRIMÈTRE FONCTIONNEL
+================================================================================
+Le site web du Club d'Intelligence Artificielle et ses Applications (CIAA) de la
+Faculté des Sciences Appliquées de Nador (FSAN) est une plateforme complète
+combinant vitrine associative, espace d'apprentissage interactif (E-learning),
+galerie de projets open-source, forum de soumission de sujets de recherche et
+centre de commande (Dashboard Administrateur).
+
+Les entités fondamentales à modéliser sont :
+1. Les Utilisateurs (`users`) : Étudiants, candidats, professeurs encadrants et administrateurs.
+2. Le Bureau Exécutif & Encadrants (`bureau_members`) : 8 postes officiels (2 professeurs
+   coordonnateurs, Président, Vice-Présidente, Trésorier, Vice-Trésorière et 2 Responsables
+   Réseaux Sociaux).
+3. Les Projets (`projects` & `project_members`) : Projets IA soumis par les étudiants,
+   validés par l'administrateur, avec mise en vedette Top 3 sur la page d'accueil.
+4. Les Sujets de Recherche (`sujets`) : Propositions de thématiques pour les Masters
+   SDSI et MIATE avec modération préalable.
+5. Les Ressources Pédagogiques Drive (`drives` & `drive_authorizations`) : Dossiers Drive
+   découpés en 4 sous-sections (Cours, TP, TD, Examens) par module et semestre (S1, S2, S3),
+   sécurisés par email académique institutionnel (@ump.ac.ma).
+6. Les Vidéos de Cours (`videos`) : Catalogue Supabase de vidéos en ligne, classées par parcours.
+7. La Messagerie (`messages`) : Demandes de contact et réponses officielles par courriel.
+8. Les Paramètres du Site (`site_settings`) : Informations officielles, adresse et réseaux sociaux.
+9. La Traçabilité d'Audit (`audit_logs`) : Historique de chaque action d'administration.
+
+================================================================================
+2. MODÈLE CONCEPTUEL DES DONNÉES (MCD) & CARDINALITÉS
+================================================================================
+
+Diagramme Conceptuel Textuel :
+
+       [ USERS ] 1,1 -----------------( Appartient )---------------- 0,1 [ BUREAU_MEMBERS ]
+           |
+           | 0,N (Soumet)
+           v
+      [ PROJECTS ] 1,N -----------------( Contient )---------------- 1,1 [ PROJECT_MEMBERS ]
+           |
+           | 0,N (Propose)
+           v
+       [ SUJETS ]
+           |
+           | 1,1 (Lié à)
+           v
+    [ DRIVE_AUTHORIZATIONS ] 1,1 -------( Possède )----------------- 0,N [ USERS ]
+           |
+           |
+      [ DRIVES ] (Classés par Master [SDSI/MIATE] et Semestre [S1/S2/S3])
+      [ VIDEOS ] (Classées par Track [ML/DL/NLP/Python/Robotics])
+      [ MESSAGES ] (Reçus via formulaire public, traités dans le Dashboard)
+      [ SITE_SETTINGS ] (Singleton pour description et liens des réseaux sociaux)
+      [ AUDIT_LOGS ] (Journalisation des actions d'approbation et modération)
+
+Règles de gestion associées :
+* R1 : Un utilisateur s'inscrit avec son email institutionnel (@ump.ac.ma). Son compte
+  est par défaut en statut 'pending' jusqu'à validation dans le dashboard.
+* R2 : Un utilisateur validé peut soumettre des projets et proposer des sujets.
+* R3 : Un projet validé peut être promu dans le "Top 3 Accueil" (`featured = TRUE`).
+  La règle métier impose un maximum strict de 3 projets simultanément en vedette.
+* R4 : Les dossiers Google Drive sont organisés par Master (SDSI ou MIATE) et par Semestre
+  (S1, S2, S3). Chaque module regroupe 4 liens Drive distincts : Cours, TP, TD et Anciens Examens.
+* R5 : Les membres du bureau officiel sont au nombre de 8 et disposent d'un ordre
+  hiérarchique d'affichage et de privilèges d'accès au Dashboard.
+
+================================================================================
+3. MODÈLE LOGIQUE DES DONNÉES (MLD) & NORMALISATION (3NF)
+================================================================================
+Toutes les relations sont en 3e Forme Normale (3NF) : chaque attribut non-clé dépend
+directement et uniquement de la clé primaire.
+
+Schéma Relationnel :
+* USERS (id [PK], email [UNIQUE], password_hash, prenom, nom, master, role,
+  status, linkedin, bio, drive_access, can_access_dashboard, created_at, updated_at)
+* BUREAU_MEMBERS (id [PK], user_id [FK nullable], prenom, nom, role_key [UNIQUE],
+  role_label, category, affiliation, email, linkedin, description, can_access_dashboard,
+  display_order, created_at, updated_at)
+* PROJECTS (id [PK], submitted_by [FK nullable], title, category, description,
+  link, image_url, tags, state, featured, views_count, created_at, updated_at)
+* PROJECT_MEMBERS (id [PK], project_id [FK], user_id [FK nullable], name,
+  linkedin, role_in_team, created_at)
+* SUJETS (id [PK], user_id [FK nullable], member_name, member_email, title,
+  category, target_master, team_size, technologies, description, image_url,
+  status, created_at, updated_at)
+* DRIVES (id [PK], master, semestre, module_name, description, image_url,
+  drive_cours, drive_tp, drive_td, drive_examens, created_at, updated_at)
+* DRIVE_AUTHORIZATIONS (id [PK], user_id [FK], academic_email, access_status,
+  granted_at, updated_at)
+* VIDEOS (id [PK], title, track, category_name, youtube_id, youtube_url,
+  duration, instructor, description, image_url, display_order, created_at, updated_at)
+* MESSAGES (id [PK], sender_name, sender_email, sender_role, subject, message,
+  status, reply_content, replied_at, replied_by [FK nullable], created_at)
+* SITE_SETTINGS (id [PK CHECK id=1], club_name, short_name, faculty, university,
+  email, address, description, mission, linkedin_url, youtube_url, github_url,
+  discord_url, instagram_url, updated_at)
+* AUDIT_LOGS (id [PK], admin_id [FK nullable], action_type, target_table,
+  target_id, details [JSONB], created_at)
+
+================================================================================
+4. DICTIONNAIRE EXHAUSTIF DES DONNÉES
+================================================================================
+TABLE : USERS
+--------------------------------------------------------------------------------
+Champ                 Type             Null?     Description
+id                    UUID             NON (PK)  Identifiant unique (v4)
+email                 VARCHAR(255)     NON       Email unique (ex: etudiant@ump.ac.ma)
+password_hash         VARCHAR(255)     OUI       Hash mot de passe (géré via Supabase Auth)
+prenom                VARCHAR(100)     NON       Prénom de l'étudiant
+nom                   VARCHAR(100)     NON       Nom de famille
+master                VARCHAR(100)     NON       Master ciblé (Master SDSI, Master MIATE)
+role                  VARCHAR(50)      NON       Rôle ('member', 'president', 'vice_president', 'prof_encadrant', 'admin')
+status                VARCHAR(50)      NON       Statut ('pending', 'approved', 'rejected')
+linkedin              VARCHAR(255)     OUI       Identifiant ou lien LinkedIn
+bio                   TEXT             OUI       Bio & compétences techniques
+drive_access          BOOLEAN          NON       Autorisation d'accès aux Drives
+can_access_dashboard  BOOLEAN          NON       Droit d'accès au tableau de bord
+created_at            TIMESTAMPTZ      NON       Date d'inscription
+updated_at            TIMESTAMPTZ      NON       Dernière mise à jour
+
+TABLE : PROJECTS
+--------------------------------------------------------------------------------
+Champ                 Type             Null?     Description
+id                    UUID             NON (PK)  Identifiant unique du projet
+submitted_by          UUID             OUI (FK)  Clé étrangère vers USERS
+title                 VARCHAR(255)     NON       Intitulé du projet IA
+category              VARCHAR(50)      NON       Domaine ('ml', 'dl', 'cv', 'nlp', 'robotics')
+description           TEXT             NON       Description détaillée de la solution
+link                  VARCHAR(500)     OUI       Lien GitHub ou démo interactive
+image_url             TEXT             OUI       Image descriptive (URL ou Base64)
+tags                  TEXT[]           OUI       Tableau de tags technologiques
+state                 INT              NON       État (-1: rejeté, 0: en attente, 1: validé)
+featured              BOOLEAN          NON       Si TRUE, sélectionné dans le Top 3 Accueil
+views_count           INT              NON       Compteur de consultations
+created_at            TIMESTAMPTZ      NON       Date de soumission
+updated_at            TIMESTAMPTZ      NON       Date de dernière modification
+
+TABLE : DRIVES
+--------------------------------------------------------------------------------
+Champ                 Type             Null?     Description
+id                    UUID             NON (PK)  Identifiant unique du module
+master                VARCHAR(50)      NON       Filière ('SDSI' ou 'MIATE')
+semestre              VARCHAR(10)      NON       Semestre ('s1', 's2', 's3')
+module_name           VARCHAR(200)     NON       Nom officiel du module
+description           TEXT             OUI       Description du cours
+image_url             TEXT             OUI       Miniature ou schéma du module
+drive_cours           VARCHAR(500)     NON       Lien Drive : Partie Cours (Diapos/PDF)
+drive_tp              VARCHAR(500)     NON       Lien Drive : Travaux Pratiques (TP)
+drive_td              VARCHAR(500)     NON       Lien Drive : Travaux Dirigés (TD)
+drive_examens         VARCHAR(500)     NON       Lien Drive : Anciens Examens & Contrôles
+created_at            TIMESTAMPTZ      NON       Date de création
+updated_at            TIMESTAMPTZ      NON       Date de mise à jour
+
+================================================================================
+5. COMPOSANTS ESSENTIELS DE LA BASE DE DONNÉES
+================================================================================
+
+--------------------------------------------------------------------------------
+5.1 INDEX D'OPTIMISATION (PERFORMANCE SUR SUPABASE)
+--------------------------------------------------------------------------------
+Sur le cloud PostgreSQL (notamment en offre gratuite Supabase 500 Mo), les index
+sont indispensables pour maintenir des temps de réponse sous les 50 millisecondes :
+
+1. Index B-Tree :
+   * `idx_users_status` sur `users(status)` : Accélère le filtre des étudiants 'pending'
+     dans le Dashboard.
+   * `idx_projects_state` sur `projects(state)` : Filtre immédiat des projets validés.
+   * `idx_drives_master_semestre` sur `drives(master, semestre)` : Filtre instantané
+     des cours par semestre sur la page `apprendre.html`.
+
+2. Index Composites :
+   * `idx_projects_state_created` sur `projects(state, created_at DESC)` : Tri chronologique
+     des projets approuvés sans calcul de tri lourd en mémoire vive.
+
+3. Index Partiel Spécifique (Top 3 Accueil) :
+   * `CREATE INDEX idx_projects_top3 ON projects(featured, created_at DESC) WHERE state = 1 AND featured = TRUE;`
+     Cet index n'indexe que les 3 lignes correspondant aux projets d'accueil, rendant
+     le chargement de la page d'accueil ultra-rapide (coût d'I/O quasi nul).
+
+4. Index GIN et Trigrammes (`pg_trgm`) :
+   * `idx_projects_title_trgm` sur `projects USING gin (title gin_trgm_ops);`
+   * `idx_drives_module_trgm` sur `drives USING gin (module_name gin_trgm_ops);`
+     Permettent une recherche instantanée par mot-clé incomplet ou faute de frappe.
+
+--------------------------------------------------------------------------------
+5.2 VUES SQL (VIEWS) POUR LE FRONT-END & LE DASHBOARD
+--------------------------------------------------------------------------------
+Les vues masquent la complexité des jointures relationnelles et fournissent au front-end
+des payloads JSON directement exploitables :
+
+1. `v_top3_projects` :
+   Retourne les 3 projets vedettes avec l'agrégation JSON de leurs membres d'équipe :
+   ```sql
+   SELECT p.*, json_agg(json_build_object('name', pm.name, 'linkedin', pm.linkedin)) AS team_members
+   FROM projects p LEFT JOIN project_members pm ON p.id = pm.project_id
+   WHERE p.state = 1 ORDER BY p.featured DESC, p.created_at DESC LIMIT 3;
+   ```
+
+2. `v_bureau_official` :
+   Retourne les 8 membres du bureau officiel et encadrants FSAN triés selon l'ordre
+   officiel (`display_order`).
+
+3. `v_dashboard_kpis` :
+   Agrège en une seule transaction tous les compteurs clés du Dashboard :
+   total des utilisateurs, candidatures en attente, projets à modérer, sujets non validés,
+   messages non lus, évitant de multiplier les requêtes HTTP.
+
+--------------------------------------------------------------------------------
+5.3 TRIGGERS (DÉCLENCHEURS) & AUTOMATISATION
+--------------------------------------------------------------------------------
+Les déclencheurs garantissent l'intégrité métier directement au niveau de la base :
+
+1. `trg_users_updated`, `trg_projects_updated`, etc. :
+   Exécute la fonction `fn_trigger_set_timestamp()` pour mettre à jour la colonne `updated_at`
+   à chaque opération `UPDATE`.
+
+2. `trg_projects_top3_limit` :
+   Exécute `fn_check_top3_limit()`. Si un administrateur marque un projet comme `featured = TRUE`,
+   le trigger vérifie s'il y a déjà 3 projets en vedette. Si oui, il retire automatiquement
+   le plus ancien du Top 3 pour respecter l'exigence stricte des 3 projets sur l'accueil.
+
+3. `trg_audit_project_state` :
+   Dès qu'un administrateur valide ou rejette un projet, ce trigger écrit automatiquement
+   un enregistrement dans la table `audit_logs` avec l'ancien et le nouvel état.
+
+4. `trg_user_approval_drive` :
+   Dès qu'un étudiant est validé (`status = 'approved'`), ce trigger lui accorde automatiquement
+   l'accès Drive (`drive_access = TRUE`) et inscrit son email institutionnel dans
+   `drive_authorizations`.
+
+--------------------------------------------------------------------------------
+5.4 PROCÉDURES STOCKÉES & UTILISATION DES CURSEURS (CURSORS)
+--------------------------------------------------------------------------------
+Un curseur en PL/pgSQL permet de parcourir séquentiellement un jeu de données ligne par ligne
+sans charger l'intégralité des enregistrements en mémoire centrale, ce qui est idéal pour
+les traitements par lots ou les environnements cloud à mémoire restreinte.
+
+Exemple 1 : Traitement par lots des inscriptions d'étudiants en attente (`fn_process_pending_users_cursor`)
+```sql
+CREATE OR REPLACE FUNCTION fn_process_pending_users_cursor(
+    p_auto_approve_ump BOOLEAN DEFAULT TRUE
+)
+RETURNS TABLE (
+    processed_count INT,
+    approved_count INT,
+    summary_message TEXT
+) AS $$
+DECLARE
+    -- 1. Déclaration explicite du Curseur
+    cur_pending_users CURSOR FOR 
+        SELECT id, prenom, nom, email, master 
+        FROM users 
+        WHERE status = 'pending' 
+        ORDER BY created_at ASC;
+
+    v_user_record RECORD;
+    v_total_processed INT := 0;
+    v_total_approved INT := 0;
+BEGIN
+    -- 2. Ouverture du curseur
+    OPEN cur_pending_users;
+
+    -- 3. Boucle de parcours ligne par ligne avec FETCH
+    LOOP
+        FETCH cur_pending_users INTO v_user_record;
+        EXIT WHEN NOT FOUND; -- Condition de sortie
+
+        v_total_processed := v_total_processed + 1;
+
+        -- Validation conditionnelle si adresse académique institutionnelle
+        IF p_auto_approve_ump AND v_user_record.email ~* '@ump\.ac\.ma$' THEN
+            UPDATE users 
+            SET status = 'approved', drive_access = TRUE, updated_at = NOW() 
+            WHERE id = v_user_record.id;
+
+            v_total_approved := v_total_approved + 1;
+        END IF;
+    END LOOP;
+
+    -- 4. Fermeture obligatoire du curseur pour libérer les ressources
+    CLOSE cur_pending_users;
+
+    processed_count := v_total_processed;
+    approved_count := v_total_approved;
+    summary_message := format('%s candidatures traitées, %s validées.', v_total_processed, v_total_approved);
+    RETURN NEXT;
+END;
+$$ LANGUAGE plpgsql;
+```
+
+Exemple 2 : Rapport semestriel automatique (`fn_generate_semester_summary_report`)
+Utilise un curseur pour itérer sur chaque semestre ('s1', 's2', 's3') et calculer le nombre
+de modules et de liens Drive associés.
+
+--------------------------------------------------------------------------------
+5.5 ROW LEVEL SECURITY (RLS) SUR SUPABASE
+--------------------------------------------------------------------------------
+Pour sécuriser l'API REST générée automatiquement par Supabase :
+* Les visiteurs non connectés ont le droit de LECTURE (`SELECT`) uniquement sur les
+  données publiques validées (`projects WHERE state = 1`, `drives`, `videos`, `site_settings`, `bureau_members`).
+* Les visiteurs peuvent insérer (`INSERT`) des demandes de contact (`messages`),
+  des candidatures (`users`) ou des propositions de sujets (`sujets`), mais ne peuvent
+  pas modifier ou supprimer les données existantes.
+* Les administrateurs et membres privilégiés du bureau ont le contrôle complet (`ALL`)
+  sur l'ensemble des tables via le Dashboard.
+
+================================================================================
+6. GUIDE D'INTÉGRATION SUPABASE (VERSION GRATUITE) & LIAISON FRONT-END
+================================================================================
+
+Étape 1 : Créer votre projet Supabase Gratuit
+1. Rendez-vous sur https://supabase.com et connectez-vous avec GitHub.
+2. Cliquez sur "New Project", donnez-lui un nom (ex: "ciaa-fsan-db") et un mot de passe fort.
+3. Choisissez la région la plus proche (ex: Frankfurt eu-central-1 ou Paris).
+4. Le tier gratuit (Free Plan) offre 500 Mo de base de données PostgreSQL, 50 000 utilisateurs
+   actifs mensuels et 1 Go de stockage de fichiers, largement suffisant pour le club !
+
+Étape 2 : Exécuter le Script SQL de Modélisation
+1. Dans le menu de gauche de Supabase, cliquez sur "SQL Editor".
+2. Cliquez sur "+ New query".
+3. Ouvrez le fichier `database_schema.sql` fourni dans ce projet, copiez l'intégralité
+   du contenu et collez-le dans l'éditeur Supabase.
+4. Cliquez sur le bouton vert "Run".
+5. En quelques secondes, les tables, index, vues, déclencheurs et fonctions sont créés.
+   Les tables applicatives ne contiennent aucune donnée de démonstration.
+
+ATTENTION : database_schema.sql supprime les tables et vues existantes avant de les
+recréer. Exécutez-le uniquement pour une installation neuve ; il efface les données
+présentes d'une base existante.
+
+Étape 3 : Récupérer vos Clés API
+1. Dans Supabase, cliquez sur "Project Settings" (icône engrenage en bas à gauche) > "API".
+2. Copiez l'URL du projet (`Project URL`, ex: https://votre-projet.supabase.co).
+3. Copiez la clé publique anonyme (`Project API keys` > `anon` / `public`).
+
+Étape 4 : Lier le Site Web
+1. La configuration par défaut est dans `js/supabase-client.js`. Le panneau Backend
+   du Dashboard permet de définir l'URL et la clé publique `anon`/`publishable`.
+2. Le site charge ses données métier depuis Supabase uniquement. Aucun contenu de
+   démonstration, cache local de données métier ni mode hors ligne/synchronisation
+   n'est utilisé. La persistance de session est gérée par Supabase Auth.
+3. Inscrivez un premier compte, puis attribuez-lui le rôle administrateur depuis le
+   SQL Editor Supabase :
+
+   UPDATE public.users
+   SET role = 'admin', status = 'approved', can_access_dashboard = TRUE
+   WHERE email = 'adresse-administrateur@ump.ac.ma';
+
+   Utilisez uniquement la clé publique côté navigateur ; ne publiez jamais une clé
+   `service_role`.
+
+================================================================================
+7. CONCLUSION & SYNTHÈSE
+================================================================================
+Cette architecture de base de données garantit :
+* Une conformité stricte aux exigences académiques des Masters SDSI et MIATE de la FSAN Nador.
+* Une haute performance grâce aux index partiels (Top 3) et trigrammes (recherche floue).
+* Une robustesse métier garantie par les triggers et curseurs PL/pgSQL.
+* Un déploiement immédiat et 100 % gratuit sur l'infrastructure cloud de Supabase.
+================================================================================

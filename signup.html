@@ -12,90 +12,210 @@
 </head>
 <body>
   <main>
+    <button type="button" class="btn-return-back" onclick="if(history.length > 1){history.back()}else{window.location.href='index.html'}">&larr; Retour à la page précédente</button>
+
     <header class="brand">
-      <span class="brand-mark" aria-hidden="true">CIAA</span>
-      <h1>Club IA &amp; Applications</h1>
+      <a href="index.html">
+        <img src="logo.png" alt="Club IAA - FSAN" class="brand-logo">
+      </a>
       <p>Rejoignez la communauté étudiante du CIAA.</p>
     </header>
+
     <section class="card" aria-labelledby="signup-heading">
-      <h2 id="signup-heading">Créer un compte</h2>
+      <h2 id="signup-heading">Créer un compte étudiant</h2>
       <p class="intro">Inscrivez-vous pour soumettre vos projets et collaborer avec les membres.</p>
+      
       <form id="signup-form">
-        <div style="display:flex;gap:10px">
-          <div style="flex:1">
-            <label for="prenom">Prénom</label>
+        <div class="auth-form-row">
+          <div class="auth-form-col">
+            <label for="prenom">Prénom *</label>
             <input id="prenom" required placeholder="Ex: Karim">
           </div>
-          <div style="flex:1">
-            <label for="nom">Nom</label>
+          <div class="auth-form-col">
+            <label for="nom">Nom *</label>
             <input id="nom" required placeholder="Ex: Mansouri">
           </div>
         </div>
-        <label for="email">Adresse Email institutionnelle</label>
+
+        <label for="email">Adresse Email institutionnelle *</label>
         <input id="email" type="email" autocomplete="username" required placeholder="etudiant@ump.ac.ma">
-        <label for="password">Mot de passe (6 caractères min.)</label>
+
+        <label for="master">Filière / Master *</label>
+        <input id="master" required placeholder="Ex: Master SDSI (S1) ou Master MIATE (S1)">
+
+        <label for="password">Mot de passe (6 caractères min.) *</label>
         <input id="password" type="password" autocomplete="new-password" required minlength="6">
+
         <label for="linkedin">Identifiant LinkedIn (optionnel)</label>
         <input id="linkedin" placeholder="Ex: prenom-nom">
+
+        <label for="bio">Bio &amp; Compétences techniques</label>
+        <textarea id="bio" rows="3" placeholder="Vos langages de programmation, frameworks IA et centres d'intérêt (ex: PyTorch, Vision, NLP)..."></textarea>
+
         <button id="signup-btn" type="submit">S'inscrire</button>
         <p id="status" class="status" role="status" aria-live="polite"></p>
       </form>
+
+      <div id="email-confirmation-box" class="auth-pending-box" hidden>
+        <div class="auth-pending-icon">✉️</div>
+        <h3 class="auth-pending-title">Confirmez votre adresse email</h3>
+        <p id="pending-approval-text" class="auth-pending-text">
+          Un lien de confirmation a été envoyé à <strong id="confirmation-email"></strong>.
+          Ouvrez ce lien pour confirmer votre adresse et terminer l'inscription.
+        </p>
+        <button id="resend-confirmation-btn" type="button">Renvoyer l’email de confirmation</button>
+        <p id="confirmation-status" class="status" role="status" aria-live="polite"></p>
+        <div class="auth-pending-actions">
+          <a class="auth-pending-btn-ghost" href="login.html">Aller à la connexion</a>
+        </div>
+      </div>
+
+      <!-- Message d'attente d'approbation affiché après l'inscription -->
+      <div id="pending-approval-box" class="auth-pending-box" hidden>
+        <div class="auth-pending-icon">⏳</div>
+        <h3 id="pending-approval-title" class="auth-pending-title">Compte créé avec succès !</h3>
+        <p class="auth-pending-text">
+          <strong>Votre candidature est en cours de traitement jusqu'à la validation dans le dashboard par l'administrateur du site.</strong><br>
+          Votre compte pourra être utilisé après la confirmation de votre adresse email et l’approbation de votre candidature par le bureau du CIAA.
+        </p>
+        <div class="auth-pending-actions">
+          <a class="auth-pending-btn-ghost" href="index.html">Retour à l'accueil</a>
+        </div>
+      </div>
     </section>
+
     <p class="signup"><a href="login.html">Déjà un compte ? Se connecter</a></p>
     <p class="back"><a href="index.html">&larr; Retour au site principal</a></p>
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.0/dist/umd/supabase.min.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/dialog.js"></script>
   <script>
-    const SUPABASE_URL = 'https://dwtizibjpkdtcceiggxf.supabase.co';
-    const SUPABASE_ANON_KEY = 'sb_publishable_MeOXYq_SwsXx-IkyPhGqqQ_jGlxMeS5';
-    const db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     const $ = (id) => document.getElementById(id);
-    let submitting = false;
 
     function showStatus(message, kind = 'error') {
       $('status').textContent = message;
       $('status').dataset.kind = kind;
     }
 
+    function redirectUrl() {
+      const url = new URL(window.location.href);
+      url.search = '?email-confirmed=1';
+      url.hash = '';
+      return url.toString();
+    }
+
+    function showPendingApproval(emailConfirmed = false) {
+      $('signup-form').hidden = true;
+      $('pending-approval-box').hidden = false;
+      $('pending-approval-box').style.display = 'block';
+      $('pending-approval-title').textContent = emailConfirmed
+        ? 'Adresse email confirmée !'
+        : 'Compte créé avec succès !';
+      $('pending-approval-text').innerHTML = emailConfirmed
+        ? '<strong>Votre candidature est en cours de traitement jusqu’à la validation dans le dashboard par l’administrateur du site.</strong><br>Votre adresse email est confirmée. L’accès sera accordé après approbation par le bureau du CIAA.'
+        : '<strong>Votre candidature est en cours de traitement jusqu’à la validation dans le dashboard par l’administrateur du site.</strong><br>Le bureau du CIAA vous informera lorsque votre compte sera approuvé.';
+    }
+
+    function showEmailConfirmation(email) {
+      $('signup-form').hidden = true;
+      $('confirmation-email').textContent = email;
+      $('email-confirmation-box').hidden = false;
+      $('email-confirmation-box').style.display = 'block';
+    }
+
+    async function handleConfirmationReturn() {
+      const params = new URLSearchParams(`${window.location.search.slice(1)}&${window.location.hash.slice(1)}`);
+      const errorDescription = params.get('error_description');
+      if (errorDescription) {
+        showStatus(`La confirmation a échoué : ${errorDescription}`);
+        return;
+      }
+      if (!params.has('email-confirmed')) return;
+
+      const db = CIAA_BACKEND.getClient();
+      if (!db) throw new Error('Client Supabase indisponible.');
+      const { data, error } = await db.auth.getSession();
+      if (error) throw error;
+
+      if (data.session?.user?.email_confirmed_at) {
+        showPendingApproval(true);
+        window.history.replaceState({}, document.title, window.location.pathname);
+      } else {
+        showStatus("La confirmation n'a pas pu être vérifiée. Ouvrez le lien reçu par email ou demandez-en un nouveau.");
+      }
+    }
+
+    handleConfirmationReturn().catch(error => {
+      console.error('[signup] Erreur lors de la confirmation email :', error);
+      showStatus(`Impossible de vérifier la confirmation : ${error.message}`);
+    });
+
     $('signup-form').addEventListener('submit', async (event) => {
       event.preventDefault();
-      if (submitting) return;
-
-      submitting = true;
-      $('signup-btn').disabled = true;
-      showStatus('Création de votre compte en cours…', 'info');
 
       const prenom = $('prenom').value.trim();
       const nom = $('nom').value.trim();
       const email = $('email').value.trim();
+      const master = $('master').value.trim();
       const password = $('password').value;
       const linkedin = $('linkedin').value.trim();
+      const bio = $('bio') ? $('bio').value.trim() : '';
 
-      const { data, error } = await db.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            prenom,
-            nom,
-            linkedin_username: linkedin || null
+      $('signup-btn').disabled = true;
+      showStatus('Enregistrement de votre candidature…', 'info');
+
+      try {
+        const db = CIAA_BACKEND.getClient();
+        if (!db) throw new Error("Client Supabase indisponible.");
+        const { data, error } = await db.auth.signUp({
+          email,
+          password,
+          options: {
+            data: { prenom, nom, master, linkedin, bio },
+            emailRedirectTo: redirectUrl()
           }
+        });
+        if (error) throw error;
+        if (!data.user) throw new Error("Supabase n'a pas créé le compte.");
+
+        if (data.session) {
+          showPendingApproval(Boolean(data.user.email_confirmed_at));
+        } else {
+          showEmailConfirmation(email);
         }
-      });
-
-      submitting = false;
-      $('signup-btn').disabled = false;
-
-      if (error) {
-        showStatus('Échec de l\'inscription : ' + error.message, 'error');
-        return;
+      } catch (error) {
+        showStatus("Échec de l'inscription : " + error.message, 'error');
+        $('signup-btn').disabled = false;
       }
+    });
 
-      showStatus('Compte créé avec succès ! Vérifiez votre boîte email pour valider votre compte.', 'success');
-      setTimeout(() => {
-        window.location.href = 'login.html';
-      }, 2500);
+    $('resend-confirmation-btn').addEventListener('click', async () => {
+      const email = $('confirmation-email').textContent;
+      const button = $('resend-confirmation-btn');
+      button.disabled = true;
+      $('confirmation-status').textContent = 'Envoi en cours…';
+      $('confirmation-status').dataset.kind = 'info';
+      try {
+        const db = CIAA_BACKEND.getClient();
+        if (!db) throw new Error('Client Supabase indisponible.');
+        const { error } = await db.auth.resend({
+          type: 'signup',
+          email,
+          options: { emailRedirectTo: redirectUrl() }
+        });
+        if (error) throw error;
+        $('confirmation-status').textContent = 'Un nouvel email de confirmation a été envoyé.';
+        $('confirmation-status').dataset.kind = 'success';
+      } catch (error) {
+        console.error('[signup] Impossible de renvoyer la confirmation :', error);
+        $('confirmation-status').textContent = `Échec de l’envoi : ${error.message}`;
+        $('confirmation-status').dataset.kind = 'error';
+      } finally {
+        button.disabled = false;
+      }
     });
   </script>
 </body>

@@ -1,4 +1,4 @@
-/* Styles de la page Projets (Showcase, Filtres & Recherche) */
+/* Styles de la page individuelle Projets (Showcase, Filtres, Recherche & Modal Détails) */
 
 .projects-hero {
   background: linear-gradient(135deg, #0B2447 0%, #17486f 60%, #1B6B82 100%);
@@ -132,9 +132,23 @@
   color: #ffffff;
 }
 
+/* Compteur de projets */
+.projects-count-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  font-size: 0.92rem;
+  color: var(--muted);
+}
+
+.projects-count-bar strong {
+  color: var(--navy);
+}
+
 /* Grille des Projets */
 .projects-gallery-section {
-  padding: 45px 0 80px;
+  padding: 35px 0 80px;
   background: #fbfdff;
 }
 
@@ -279,13 +293,14 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 8px;
 }
 
 .btn-code {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  font-size: 0.88rem;
+  font-size: 0.86rem;
   font-weight: 600;
   color: var(--blue);
   padding: 6px 12px;
@@ -297,6 +312,128 @@
 .btn-code:hover {
   background: var(--blue);
   color: #fff;
+}
+
+.btn-details {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: var(--navy);
+  background: #f0f4f8;
+  border: 1px solid var(--line);
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-details:hover {
+  background: #e2ecf5;
+}
+
+/* Modale de Détails du Projet */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(11, 36, 71, 0.6);
+  backdrop-filter: blur(5px);
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+
+.modal-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-container {
+  background: #ffffff;
+  border-radius: 20px;
+  max-width: 680px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 25px 60px rgba(11, 36, 71, 0.25);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-close-btn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid var(--line);
+  font-size: 1.2rem;
+  color: var(--navy);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  z-index: 10;
+  transition: background 0.15s ease;
+}
+
+.modal-close-btn:hover {
+  background: #f0f4f8;
+}
+
+.modal-cover {
+  height: 240px;
+  background: linear-gradient(135deg, #0B2447, #1B6B82);
+  position: relative;
+  overflow: hidden;
+}
+
+.modal-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.modal-body {
+  padding: 28px;
+}
+
+.modal-body h2 {
+  font-size: 1.6rem;
+  color: var(--navy);
+  margin-bottom: 12px;
+}
+
+.modal-body h2::after {
+  display: none;
+}
+
+.modal-body p {
+  color: #3b5266;
+  line-height: 1.7;
+  font-size: 0.96rem;
+  margin-bottom: 20px;
+}
+
+.modal-meta-section {
+  background: #f7fafd;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-bottom: 20px;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
 /* Empty state */
