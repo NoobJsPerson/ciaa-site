@@ -46,8 +46,8 @@
         <label for="password">Mot de passe (6 caractères min.) *</label>
         <input id="password" type="password" autocomplete="new-password" required minlength="6">
 
-        <label for="linkedin">Identifiant LinkedIn (optionnel)</label>
-        <input id="linkedin" placeholder="Ex: prenom-nom">
+        <label for="linkedin">Lien du Profil LinkedIn (URL, optionnel)</label>
+        <input id="linkedin" type="url" placeholder="https://www.linkedin.com/in/votre-profil">
 
         <label for="bio">Bio &amp; Compétences techniques</label>
         <textarea id="bio" rows="3" placeholder="Vos langages de programmation, frameworks IA et centres d'intérêt (ex: PyTorch, Vision, NLP)..."></textarea>
@@ -161,7 +161,8 @@
       const email = $('email').value.trim();
       const master = $('master').value.trim();
       const password = $('password').value;
-      const linkedin = $('linkedin').value.trim();
+      const rawLinkedin = $('linkedin').value.trim();
+      const linkedin = rawLinkedin ? (rawLinkedin.startsWith('http') ? rawLinkedin : `https://www.linkedin.com/in/${rawLinkedin.replace(/^\/+/, '')}`) : '';
       const bio = $('bio') ? $('bio').value.trim() : '';
 
       $('signup-btn').disabled = true;

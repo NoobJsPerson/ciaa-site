@@ -55,7 +55,8 @@
           if (index > 0) teamElement.append(", ");
           if (member.linkedinUsername) {
             const link = document.createElement("a");
-            link.href = `https://www.linkedin.com/in/${encodeURIComponent(member.linkedinUsername)}`;
+            const rawL = member.linkedinUsername.trim();
+            link.href = rawL.startsWith("http") ? rawL : `https://www.linkedin.com/in/${encodeURIComponent(rawL)}`;
             link.target = "_blank";
             link.rel = "noopener noreferrer";
             link.textContent = member.name;
@@ -98,16 +99,104 @@
 
   CIAA_STORE.syncNavigation();
 
-  // 3. Contrôleur du carrousel de slides des annonces du club
-  const track = document.getElementById("slides-track");
-  const prevBtn = document.getElementById("slider-prev-btn");
-  const nextBtn = document.getElementById("slider-next-btn");
-  const dots = document.querySelectorAll(".slider-dot");
-  const totalSlides = document.querySelectorAll(".slide-item").length;
+  // 3. Rendu dynamique et contrôleur du carrousel de slides des annonces du club
+  renderIndexAnnoncesSlider();
 
-  if (track && totalSlides > 0) {
+  function renderIndexAnnoncesSlider() {
+    const track = document.getElementById("slides-track");
+    const prevBtn = document.getElementById("slider-prev-btn");
+    const nextBtn = document.getElementById("slider-next-btn");
+    const dotsContainer = document.getElementById("slider-dots-container");
+    if (!track) return;
+
+    track.innerHTML = "";
+    if (dotsContainer) dotsContainer.innerHTML = "";
+
+    const categoryNames = {
+      cv: "Computer Vision",
+      dl: "Deep Learning",
+      ml: "Machine Learning",
+      nlp: "NLP & LLMs",
+      data: "Data Science"
+    };
+
+    const allSujets = typeof CIAA_STORE !== "undefined" ? CIAA_STORE.getSujets() : [];
+    const annonces = allSujets.filter(s => s.status === "approved" || s.status === "in_progress");
+
+    if (annonces.length === 0) {
+      const emptySlide = document.createElement("div");
+      emptySlide.className = "slide-item";
+      emptySlide.style.cssText = "text-align:center;padding:48px 24px;display:flex;flex-direction:column;align-items:center;";
+      emptySlide.innerHTML = `
+        <div style="font-size:2.2rem;margin-bottom:10px">📢</div>
+        <h3 class="slide-title" style="margin-bottom:8px">Aucune annonce actuellement publiée</h3>
+        <p class="slide-desc" style="margin:0 auto 20px;max-width:60ch">Les prochains appels à projets et actualités officiels du club apparaîtront ici dès leur validation.</p>
+        <div class="slide-actions">
+          <a class="btn ghost" href="annonces.html">Consulter l'espace Annonces &amp; Sujets</a>
+        </div>
+      `;
+      track.appendChild(emptySlide);
+      if (prevBtn) prevBtn.style.display = "none";
+      if (nextBtn) nextBtn.style.display = "none";
+      return;
+    }
+
+    annonces.forEach((s, idx) => {
+      const slide = document.createElement("div");
+      slide.className = "slide-item";
+
+      const catLabel = categoryNames[s.category] || s.category || "Appel à projet";
+      const statusLabel = s.status === "approved" ? "Candidatures ouvertes" : "En cours";
+      const statusClass = s.status === "approved" ? "green" : "urgent";
+      const targetLabel = s.targetMaster || "Masters FSAN";
+
+      const techTags = Array.isArray(s.technologies) && s.technologies.length > 0
+        ? `<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:18px">${s.technologies.slice(0, 4).map(t => `<span style="background:#eaf2fa;color:var(--navy);font-size:0.75rem;padding:3px 10px;border-radius:999px;font-weight:600">${t}</span>`).join('')}</div>`
+        : "";
+
+      slide.innerHTML = `
+        <div class="slide-badge-row">
+          <span class="slide-tag ${statusClass}">${statusLabel}</span>
+          <span class="slide-tag" style="background:#1b6b82">${catLabel}</span>
+          <span class="slide-date">🎓 ${targetLabel}</span>
+        </div>
+        <h3 class="slide-title">${s.title || 'Annonce du Club CIAA'}</h3>
+        <p class="slide-desc">${s.description || ''}</p>
+        ${techTags}
+        <div class="slide-actions">
+          <a class="btn primary" href="annonces.html" style="font-size:0.92rem;padding:10px 22px">
+            🚀 Découvrir &amp; Postuler &rarr;
+          </a>
+          <a class="btn ghost" href="annonces.html#sujets-section" style="font-size:0.92rem;padding:10px 18px">
+            Voir tous les sujets
+          </a>
+        </div>
+      `;
+      track.appendChild(slide);
+
+      if (dotsContainer && annonces.length > 1) {
+        const dot = document.createElement("button");
+        dot.className = `slider-dot ${idx === 0 ? "active" : ""}`;
+        dot.type = "button";
+        dot.dataset.index = String(idx);
+        dot.setAttribute("aria-label", `Slide ${idx + 1}`);
+        dotsContainer.appendChild(dot);
+      }
+    });
+
+    const totalSlides = annonces.length;
+    if (totalSlides <= 1) {
+      if (prevBtn) prevBtn.style.display = "none";
+      if (nextBtn) nextBtn.style.display = "none";
+      return;
+    }
+
+    if (prevBtn) prevBtn.style.display = "flex";
+    if (nextBtn) nextBtn.style.display = "flex";
+
     let currentSlide = 0;
     let autoSlideInterval = null;
+    const dots = dotsContainer ? dotsContainer.querySelectorAll(".slider-dot") : [];
 
     function goToSlide(index) {
       currentSlide = (index + totalSlides) % totalSlides;
@@ -116,25 +205,25 @@
     }
 
     if (prevBtn) {
-      prevBtn.addEventListener("click", () => {
+      prevBtn.onclick = () => {
         goToSlide(currentSlide - 1);
         resetAutoSlide();
-      });
+      };
     }
 
     if (nextBtn) {
-      nextBtn.addEventListener("click", () => {
+      nextBtn.onclick = () => {
         goToSlide(currentSlide + 1);
         resetAutoSlide();
-      });
+      };
     }
 
     dots.forEach(dot => {
-      dot.addEventListener("click", () => {
+      dot.onclick = () => {
         const idx = parseInt(dot.dataset.index, 10);
         goToSlide(idx);
         resetAutoSlide();
-      });
+      };
     });
 
     function startAutoSlide() {
@@ -150,12 +239,12 @@
 
     const sliderWrapper = document.querySelector(".slider-wrapper");
     if (sliderWrapper) {
-      sliderWrapper.addEventListener("mouseenter", () => {
+      sliderWrapper.onmouseenter = () => {
         if (autoSlideInterval) clearInterval(autoSlideInterval);
-      });
-      sliderWrapper.addEventListener("mouseleave", () => {
+      };
+      sliderWrapper.onmouseleave = () => {
         startAutoSlide();
-      });
+      };
     }
 
     startAutoSlide();
@@ -177,17 +266,24 @@
 
     bureau.forEach(m => {
       const initials = (m.prenom ? m.prenom[0] : '') + (m.nom ? m.nom[0] : '');
-      const linkedinHref = m.linkedin ? (m.linkedin.startsWith("http") ? m.linkedin : `https://www.linkedin.com/in/${m.linkedin}`) : "https://www.linkedin.com";
+      const rawLinkedin = (m.linkedin || '').trim();
+      const linkedinHref = rawLinkedin ? (rawLinkedin.startsWith("http") ? rawLinkedin : `https://www.linkedin.com/in/${rawLinkedin.replace(/^\/+/, '')}`) : "";
+      const cleanDesc = (m.cleanDescription || m.description || m.affiliation || '').replace(/<!--avatar:.+?-->/g, '').trim();
 
       const card = document.createElement("article");
       card.className = "person";
+
+      const avatarHtml = m.imageUrl
+        ? `<div class="avatar has-image" aria-label="${m.prenom} ${m.nom}"><img src="${m.imageUrl}" alt="${m.prenom} ${m.nom}"></div>`
+        : `<div class="avatar" aria-hidden="true">${initials || 'CI'}</div>`;
+
       card.innerHTML = `
-        <div class="avatar" aria-hidden="true">${initials || 'CI'}</div>
+        ${avatarHtml}
         <div class="body">
           <h3>${m.prenom} ${m.nom}</h3>
-          <div class="role">${m.roleLabel || 'Membre du Bureau'}</div>
-          <p>${m.description || m.affiliation || 'Membre actif du bureau CIAA.'}</p>
-          <a href="${linkedinHref}" target="_blank" rel="noopener">LinkedIn</a>
+          ${m.roleLabel ? `<div class="role">${m.roleLabel}</div>` : ''}
+          ${cleanDesc ? `<p>${cleanDesc}</p>` : ''}
+          ${linkedinHref ? `<a href="${linkedinHref}" target="_blank" rel="noopener">LinkedIn</a>` : ''}
         </div>
       `;
       container.appendChild(card);
@@ -203,17 +299,29 @@
 
     encadrants.forEach(e => {
       const initials = (e.prenom ? e.prenom[0] : '') + (e.nom ? e.nom[0] : 'Pr');
-      const emailHref = e.email ? `mailto:${e.email}` : "mailto:contact.ciaa.fsan@gmail.com";
+      const emailHref = e.email ? `mailto:${e.email}` : "";
+      const rawLinkedin = (e.linkedin || '').trim();
+      const linkedinHref = rawLinkedin ? (rawLinkedin.startsWith("http") ? rawLinkedin : `https://www.linkedin.com/in/${rawLinkedin.replace(/^\/+/, '')}`) : "";
+      const cleanDesc = (e.cleanDescription || e.description || e.affiliation || '').replace(/<!--avatar:.+?-->/g, '').trim();
 
       const card = document.createElement("article");
       card.className = "person";
+
+      const avatarHtml = e.imageUrl
+        ? `<div class="avatar has-image" aria-label="Pr. ${e.prenom} ${e.nom}"><img src="${e.imageUrl}" alt="Pr. ${e.prenom} ${e.nom}"></div>`
+        : `<div class="avatar" aria-hidden="true">${initials || 'Pr'}</div>`;
+
+      const linksHtml = [];
+      if (emailHref) linksHtml.push(`<a href="${emailHref}">✉️ ${e.email}</a>`);
+      if (linkedinHref) linksHtml.push(`<a href="${linkedinHref}" target="_blank" rel="noopener">LinkedIn</a>`);
+
       card.innerHTML = `
-        <div class="avatar" aria-hidden="true">${initials || 'Pr'}</div>
+        ${avatarHtml}
         <div class="body">
           <h3>Pr. ${e.prenom} ${e.nom}</h3>
-          <div class="role">${e.roleLabel || 'Professeur encadrant · FSAN'}</div>
-          <p>${e.description || e.affiliation || 'Superviseur scientifique des activités et projets du club.'}</p>
-          <a href="${emailHref}">✉️ ${e.email || 'Email Universitaire'}</a>
+          ${e.roleLabel ? `<div class="role">${e.roleLabel}</div>` : ''}
+          ${cleanDesc ? `<p>${cleanDesc}</p>` : ''}
+          ${linksHtml.length ? `<div style="display:flex;gap:14px;flex-wrap:wrap;align-items:center;margin-top:8px;">${linksHtml.join('')}</div>` : ''}
         </div>
       `;
       container.appendChild(card);

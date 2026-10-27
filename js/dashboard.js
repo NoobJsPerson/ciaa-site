@@ -310,6 +310,14 @@ window.filterUsersByStatus = (status) => {
 // -------------------------------------------------------------
 // SECTION 2 : GESTION DU BUREAU DU CLUB & PROFESSEURS ENCADRANTS
 // -------------------------------------------------------------
+function normalizeLinkedInUrl(input) {
+  if (!input) return "";
+  const trimmed = String(input).trim();
+  if (!trimmed) return "";
+  if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) return trimmed;
+  return `https://www.linkedin.com/in/${trimmed.replace(/^\/+/, "")}`;
+}
+
 function renderBureauTable() {
   const tbody = document.getElementById("dash-bureau-tbody");
   if (!tbody) return;
@@ -333,20 +341,38 @@ function renderBureauTable() {
       ? `<span class="status-pill" style="background:#e0f2fe;color:#0369a1">Prof. Encadrant</span>`
       : `<span class="status-pill" style="background:#f1f5f9;color:#334155">Bureau Étudiant</span>`;
 
+    const initials = (m.prenom ? m.prenom[0] : '') + (m.nom ? m.nom[0] : '');
+    const avatarEl = m.imageUrl
+      ? `<div class="dash-user-table-avatar has-image"><img src="${m.imageUrl}" alt="${m.prenom} ${m.nom}"></div>`
+      : `<div class="dash-user-table-avatar"><span class="dash-user-initials">${initials || 'U'}</span></div>`;
+
+    const linkedBadge = m.userId
+      ? `<span style="font-size:0.75rem;color:#0284c7;font-weight:600;display:block;">✓ Compte lié</span>`
+      : `<span style="font-size:0.75rem;color:#94a3b8;display:block;">Saisie manuelle</span>`;
+
+    const linkedinUrl = normalizeLinkedInUrl(m.linkedin);
+    const cleanDesc = (m.cleanDescription || m.description || "").replace(/<!--avatar:.+?-->/g, "").trim();
+
     tr.innerHTML = `
       <td>
         <strong>${m.roleLabel || "Membre"}</strong><br>
         <small>${catBadge}</small>
       </td>
       <td>
-        <strong>${m.prenom} ${m.nom}</strong>
+        <div class="dash-user-table-identity">
+          ${avatarEl}
+          <div class="dash-user-info">
+            <strong>${m.prenom} ${m.nom}</strong>
+            ${linkedBadge}
+          </div>
+        </div>
       </td>
       <td><a href="mailto:${m.email}" style="color:var(--blue)">${m.email || "—"}</a></td>
-      <td>${m.affiliation || "FSAN"}</td>
+      <td>${m.affiliation || "—"}</td>
       <td>
-        ${m.linkedin ? `<a href="${m.linkedin.startsWith('http') ? m.linkedin : 'https://www.linkedin.com/in/' + m.linkedin}" target="_blank" rel="noopener" style="color:var(--blue);font-weight:600">in/${m.linkedin.replace(/https?:\/\/.*linkedin\.com\/in\//, '').replace(/\/$/, '')}</a>` : '—'}
+        ${linkedinUrl ? `<a href="${linkedinUrl}" target="_blank" rel="noopener" style="color:var(--blue);font-weight:600">🔗 Profil LinkedIn</a>` : '—'}
       </td>
-      <td style="max-width:240px;font-size:0.83rem;color:#4b6178">${(m.description || '').substring(0, 85)}…</td>
+      <td style="max-width:240px;font-size:0.83rem;color:#4b6178">${cleanDesc.substring(0, 85)}${cleanDesc.length > 85 ? '…' : ''}</td>
       <td>${accessBadge}</td>
       <td>
         <div class="table-actions">
@@ -402,13 +428,13 @@ function renderSujetsTable() {
 
     tr.innerHTML = `
       <td>
-        <strong>${s.memberName || "Membre CIAA"}</strong><br>
+        <strong>${s.memberName || "—"}</strong><br>
         <small style="color:#7f8c8d"><code>${s.memberId || s.id}</code></small>
       </td>
       <td><strong>${s.title}</strong></td>
       <td style="max-width:280px;font-size:0.84rem;color:#4b6178">${(s.description || '').substring(0, 95)}…</td>
-      <td><span class="status-pill" style="background:#e8f4f8;color:var(--teal)">${s.category || "IA"}</span></td>
-      <td>${s.targetMaster || "SDSI & MIATE"}</td>
+      <td><span class="status-pill" style="background:#e8f4f8;color:var(--teal)">${s.category || "—"}</span></td>
+      <td>${s.targetMaster || "—"}</td>
       <td>${statusPill}</td>
       <td>
         <div class="table-actions">
@@ -470,7 +496,7 @@ function renderProjectsTable() {
       ? `<button class="btn-tbl featured-toggle active" onclick="handleToggleFeatured('${p.id}')" title="Retirer du Top 3">★ Top 3 (Actif)</button>`
       : `<button class="btn-tbl featured-toggle" onclick="handleToggleFeatured('${p.id}')" title="Promouvoir dans le Top 3 Accueil">☆ Mettre en Top 3</button>`;
 
-    const teamNames = (p.team || []).map(m => m.name).join(", ") || p.submitted_by || "Membre";
+    const teamNames = (p.team || []).map(m => m.name).join(", ") || p.submitted_by || "—";
 
     tr.innerHTML = `
       <td>
@@ -478,7 +504,7 @@ function renderProjectsTable() {
           ${p.image_url ? `<img src="${p.image_url}" style="width:48px;height:34px;border-radius:6px;object-fit:cover" alt="">` : ''}
           <div>
             <strong>${p.title}</strong><br>
-            <small style="color:#7f8c8d"><span class="status-pill" style="font-size:0.75rem">${p.category || 'IA'}</span></small>
+            <small style="color:#7f8c8d"><span class="status-pill" style="font-size:0.75rem">${p.category || '—'}</span></small>
           </div>
         </div>
       </td>
@@ -599,7 +625,7 @@ function renderDriveMembersTable() {
     tr.innerHTML = `
       <td><strong>${u.prenom} ${u.nom}</strong></td>
       <td><a href="mailto:${u.email}" style="color:var(--blue)">${u.email}</a></td>
-      <td>${u.master || "Master SDSI / MIATE"}</td>
+      <td>${u.master || "—"}</td>
       <td>${accessPill}</td>
       <td>
         <div class="table-actions">
@@ -663,7 +689,7 @@ function renderVideosTable() {
       <td><span class="status-pill" style="background:#eaf2fc;color:var(--navy)">${v.categoryName || (v.track ? v.track.toUpperCase() : "IA")}</span></td>
       <td><strong>${v.title}</strong></td>
       <td style="max-width:240px;font-size:0.83rem;color:#4b6178">${(v.description || '').substring(0, 80)}…</td>
-      <td>${v.duration || "15 min"}</td>
+      <td>${v.duration || "—"}</td>
       <td>
         <a href="https://www.youtube.com/watch?v=${v.youtubeId}" target="_blank" style="color:var(--blue);font-weight:600">
           ▶ ID: ${v.youtubeId}
@@ -733,8 +759,8 @@ function renderMessagesTable() {
       <td>${statusPill}</td>
       <td style="font-size:0.84rem;color:#64748b">${m.date || "Récemment"}</td>
       <td>
-        <strong>${m.senderName || "Membre"}</strong><br>
-        <small style="color:#7f8c8d">${m.senderRole || "Étudiant FSAN"}</small>
+        <strong>${m.senderName || "—"}</strong><br>
+        <small style="color:#7f8c8d">${m.senderRole || ""}</small>
       </td>
       <td>
         <a href="mailto:${m.senderEmail}" style="color:var(--teal);font-weight:600">${m.senderEmail || "—"}</a>
@@ -904,24 +930,173 @@ function populateSettingsForm() {
 // -------------------------------------------------------------
 // GESTION DES MODALES D'ÉDITION COMPLÈTE
 // -------------------------------------------------------------
+function populateBureauUserSelect(selectedUserId, currentMember) {
+  const select = document.getElementById("modal-bur-user-select");
+  if (!select) return;
+
+  const users = CIAA_STORE.getUsers();
+  select.innerHTML = '<option value="">-- Aucun compte personnel lié (Saisie manuelle) --</option>';
+
+  let matchingUserId = selectedUserId || currentMember?.userId;
+
+  users.forEach(u => {
+    const opt = document.createElement("option");
+    opt.value = u.id;
+    const roleBadge = u.role === "admin" ? " [Admin]" : (u.role === "prof_encadrant" ? " [Prof]" : "");
+    opt.textContent = `${u.prenom} ${u.nom} (${u.email}) - ${u.master || 'Membre'}${roleBadge}`;
+    select.appendChild(opt);
+
+    if (!matchingUserId && currentMember) {
+      if (currentMember.email && u.email && currentMember.email.toLowerCase() === u.email.toLowerCase()) {
+        matchingUserId = u.id;
+      } else if (
+        currentMember.prenom && currentMember.nom &&
+        u.prenom?.toLowerCase() === currentMember.prenom.toLowerCase() &&
+        u.nom?.toLowerCase() === currentMember.nom.toLowerCase()
+      ) {
+        matchingUserId = u.id;
+      }
+    }
+  });
+
+  if (matchingUserId) {
+    select.value = matchingUserId;
+  } else {
+    select.value = "";
+  }
+
+  updateBureauUserPreview(select.value);
+}
+
+function updateBureauUserPreview(userId) {
+  const preview = document.getElementById("modal-bur-user-preview");
+  const avatarImg = document.getElementById("modal-bur-user-avatar-img");
+  const avatarInitials = document.getElementById("modal-bur-user-avatar-initials");
+  const nameEl = document.getElementById("modal-bur-user-name");
+  const emailEl = document.getElementById("modal-bur-user-email");
+  const masterEl = document.getElementById("modal-bur-user-master");
+  const bioEl = document.getElementById("modal-bur-user-bio");
+  const hiddenAvatarUrl = document.getElementById("modal-bur-avatar-url");
+
+  if (!userId) {
+    if (preview) preview.style.display = "none";
+    if (hiddenAvatarUrl) hiddenAvatarUrl.value = "";
+    return;
+  }
+
+  const users = CIAA_STORE.getUsers();
+  const u = users.find(x => x.id === userId);
+  if (!u) {
+    if (preview) preview.style.display = "none";
+    if (hiddenAvatarUrl) hiddenAvatarUrl.value = "";
+    return;
+  }
+
+  if (preview) preview.style.display = "flex";
+  if (nameEl) nameEl.textContent = `${u.prenom} ${u.nom}`;
+  if (emailEl) emailEl.textContent = u.email || "";
+  if (masterEl) masterEl.textContent = u.master || "Filière non renseignée";
+  if (bioEl) bioEl.textContent = u.bio ? `« ${u.bio} »` : "Aucune bio renseignée";
+  if (hiddenAvatarUrl) hiddenAvatarUrl.value = u.imageUrl || "";
+
+  const initials = (u.prenom ? u.prenom[0] : "") + (u.nom ? u.nom[0] : "");
+  if (avatarInitials) avatarInitials.textContent = initials || "U";
+
+  if (avatarImg) {
+    if (u.imageUrl) {
+      avatarImg.src = u.imageUrl;
+      avatarImg.style.display = "block";
+      if (avatarInitials) avatarInitials.style.display = "none";
+    } else {
+      avatarImg.removeAttribute("src");
+      avatarImg.style.display = "none";
+      if (avatarInitials) avatarInitials.style.display = "block";
+    }
+  }
+}
+
+function syncBureauFieldsFromUser(userId) {
+  if (!userId) {
+    updateBureauUserPreview("");
+    return;
+  }
+  const users = CIAA_STORE.getUsers();
+  const u = users.find(x => x.id === userId);
+  if (!u) return;
+
+  const category = document.getElementById("modal-bur-category") ? document.getElementById("modal-bur-category").value : "bureau";
+  const prenomInput = document.getElementById("modal-bur-prenom");
+  const nomInput = document.getElementById("modal-bur-nom");
+  const emailInput = document.getElementById("modal-bur-email");
+  const affiliationInput = document.getElementById("modal-bur-affiliation");
+  const linkedinInput = document.getElementById("modal-bur-linkedin");
+  const descInput = document.getElementById("modal-bur-desc");
+  const hiddenAvatarUrl = document.getElementById("modal-bur-avatar-url");
+
+  if (prenomInput) prenomInput.value = u.prenom || "";
+  if (nomInput) nomInput.value = u.nom || "";
+  if (emailInput) emailInput.value = u.email || "";
+  if (affiliationInput) {
+    if (category === "encadrant") {
+      affiliationInput.value = u.master || "FSAN · Faculté des Sciences Appliquées";
+    } else {
+      affiliationInput.value = u.master || "Étudiant FSAN";
+    }
+  }
+  if (linkedinInput) {
+    linkedinInput.value = normalizeLinkedInUrl(u.linkedin || "");
+  }
+  if (descInput) {
+    descInput.value = u.bio || "";
+  }
+  if (hiddenAvatarUrl) {
+    hiddenAvatarUrl.value = u.imageUrl || "";
+  }
+
+  updateBureauUserPreview(userId);
+}
+
 function initEditModalsHandlers() {
   // 1. Modale Bureau
+  const userSelect = document.getElementById("modal-bur-user-select");
+  if (userSelect) {
+    userSelect.addEventListener("change", () => {
+      syncBureauFieldsFromUser(userSelect.value);
+    });
+  }
+
+  const btnSyncUser = document.getElementById("btn-sync-bur-user");
+  if (btnSyncUser) {
+    btnSyncUser.addEventListener("click", () => {
+      const curUid = document.getElementById("modal-bur-user-select")?.value;
+      if (!curUid) {
+        if (typeof ciaaAlert === "function") ciaaAlert("Veuillez d'abord sélectionner un compte personnel dans la liste déroulante.", "Aucun compte", "info");
+        return;
+      }
+      syncBureauFieldsFromUser(curUid);
+      if (typeof ciaaAlert === "function") ciaaAlert("Informations personnelles synchronisées avec succès depuis le compte !", "Synchronisation réussie", "success");
+    });
+  }
+
   const formBur = document.getElementById("form-modal-edit-bureau");
   if (formBur) {
     formBur.addEventListener("submit", async (e) => {
       e.preventDefault();
       const id = document.getElementById("modal-bur-id").value;
+      const userId = document.getElementById("modal-bur-user-select") ? (document.getElementById("modal-bur-user-select").value || null) : null;
       const prenom = document.getElementById("modal-bur-prenom").value.trim();
       const nom = document.getElementById("modal-bur-nom").value.trim();
       const roleLabel = document.getElementById("modal-bur-role-label").value.trim();
       const category = document.getElementById("modal-bur-category").value;
       const affiliation = document.getElementById("modal-bur-affiliation").value.trim();
       const email = document.getElementById("modal-bur-email").value.trim();
-      const linkedin = document.getElementById("modal-bur-linkedin").value.trim();
+      const linkedin = normalizeLinkedInUrl(document.getElementById("modal-bur-linkedin").value.trim());
       const canAccessDashboard = document.getElementById("modal-bur-access").value === "true";
       const description = document.getElementById("modal-bur-desc").value.trim();
+      const avatarUrl = document.getElementById("modal-bur-avatar-url") ? document.getElementById("modal-bur-avatar-url").value.trim() : null;
 
       const memberData = {
+        userId: userId || null,
         prenom,
         nom,
         roleLabel,
@@ -930,13 +1105,22 @@ function initEditModalsHandlers() {
         email,
         linkedin,
         canAccessDashboard,
-        description
+        description,
+        imageUrl: avatarUrl || null
       };
 
       if (id) {
         await CIAA_STORE.updateBureauMember(id, memberData);
       } else {
         await CIAA_STORE.addBureauMember(memberData);
+      }
+
+      if (userId && canAccessDashboard) {
+        try {
+          await CIAA_STORE.updateUser(userId, { canAccessDashboard: true });
+        } catch (e) {
+          console.warn("[dashboard] user access sync:", e);
+        }
       }
 
       closeEditBureauModal();
@@ -962,6 +1146,10 @@ function initEditModalsHandlers() {
       document.getElementById("modal-bur-linkedin").value = "";
       document.getElementById("modal-bur-access").value = "false";
       document.getElementById("modal-bur-desc").value = "";
+      if (document.getElementById("modal-bur-avatar-url")) {
+        document.getElementById("modal-bur-avatar-url").value = "";
+      }
+      populateBureauUserSelect("", null);
       document.getElementById("title-edit-bureau").textContent = "+ Ajouter / Assigner un Membre du Bureau";
 
       const modal = document.getElementById("modal-edit-bureau");
@@ -1129,7 +1317,7 @@ function initEditModalsHandlers() {
       const master = document.getElementById("modal-user-master").value.trim();
       const role = document.getElementById("modal-user-role").value;
       const status = document.getElementById("modal-user-status").value;
-      const linkedin = document.getElementById("modal-user-linkedin").value.trim();
+      const linkedin = normalizeLinkedInUrl(document.getElementById("modal-user-linkedin").value.trim());
       const bio = document.getElementById("modal-user-bio").value.trim();
 
       const canAccessDashboard = ["admin", "president", "vice_president", "prof_encadrant"].includes(role);
@@ -1174,9 +1362,15 @@ window.handleEditBureauModal = (id) => {
   document.getElementById("modal-bur-category").value = m.category || "bureau";
   document.getElementById("modal-bur-affiliation").value = m.affiliation || "";
   document.getElementById("modal-bur-email").value = m.email || "";
-  document.getElementById("modal-bur-linkedin").value = m.linkedin || "";
+  document.getElementById("modal-bur-linkedin").value = normalizeLinkedInUrl(m.linkedin || "");
   document.getElementById("modal-bur-access").value = m.canAccessDashboard ? "true" : "false";
-  document.getElementById("modal-bur-desc").value = m.description || "";
+  const cleanDesc = (m.cleanDescription || m.description || "").replace(/<!--avatar:.+?-->/g, "").trim();
+  document.getElementById("modal-bur-desc").value = cleanDesc;
+  if (document.getElementById("modal-bur-avatar-url")) {
+    document.getElementById("modal-bur-avatar-url").value = m.imageUrl || "";
+  }
+  populateBureauUserSelect(m.userId, m);
+
   document.getElementById("title-edit-bureau").textContent = `Modifier : ${m.roleLabel || 'Membre'}`;
 
   const modal = document.getElementById("modal-edit-bureau");
@@ -1297,7 +1491,7 @@ window.handleEditUserModal = (id) => {
   document.getElementById("modal-user-master").value = u.master || "Master SDSI";
   document.getElementById("modal-user-role").value = u.role || "member";
   document.getElementById("modal-user-status").value = u.status || "pending";
-  document.getElementById("modal-user-linkedin").value = u.linkedin || "";
+  document.getElementById("modal-user-linkedin").value = normalizeLinkedInUrl(u.linkedin || "");
   document.getElementById("modal-user-bio").value = u.bio || "";
 
   const titleEl = document.getElementById("title-edit-user");

@@ -286,7 +286,7 @@ const CIAA_STORE = (() => {
         master: changes.master,
         linkedin: changes.linkedin,
         bio: changes.bio,
-        image_url: changes.imageUrl,
+        image_url: changes.imageUrl !== undefined ? changes.imageUrl : changes.image_url,
         role: changes.role,
         status: changes.status,
         drive_access: changes.driveAccess,
@@ -526,14 +526,42 @@ const CIAA_STORE = (() => {
       tables.messages = tables.messages.filter(message => message.id !== id);
       return CIAA_STORE.getMessages();
     },
-    getBureauMembers: () => tables.bureau.map(member => ({
-      ...member,
-      roleKey: member.role_key,
-      roleLabel: member.role_label,
-      canAccessDashboard: member.can_access_dashboard
-    })),
+    getBureauMembers: () => tables.bureau.map(member => {
+      const linkedUser = (tables.users && (member.user_id || member.userId))
+        ? tables.users.find(u => u.id === (member.user_id || member.userId))
+        : (member.email && tables.users ? tables.users.find(u => u.email && u.email.toLowerCase() === member.email.toLowerCase()) : null);
+
+      const avatarMatch = String(member.description || "").match(/<!--avatar:(.+?)-->/);
+      const embeddedAvatar = avatarMatch ? avatarMatch[1] : null;
+
+      const effectiveImageUrl = linkedUser?.imageUrl || linkedUser?.image_url || embeddedAvatar || member.image_url || null;
+      const cleanDescription = String(member.description || "").replace(/<!--avatar:.+?-->/g, "").trim();
+
+      return {
+        ...member,
+        userId: member.user_id || member.userId || linkedUser?.id || null,
+        roleKey: member.role_key,
+        roleLabel: member.role_label,
+        canAccessDashboard: member.can_access_dashboard,
+        imageUrl: effectiveImageUrl,
+        cleanDescription: cleanDescription,
+        prenom: member.prenom || linkedUser?.prenom || "",
+        nom: member.nom || linkedUser?.nom || "",
+        affiliation: member.affiliation || linkedUser?.master || "",
+        email: member.email || linkedUser?.email || "",
+        linkedin: member.linkedin || linkedUser?.linkedin || "",
+        description: member.description
+      };
+    }),
     updateBureauMember: async (id, changes) => {
+      let descriptionToSave = changes.description !== undefined ? String(changes.description).replace(/<!--avatar:.+?-->/g, "").trim() : undefined;
+      const avatarToEmbed = changes.imageUrl !== undefined ? changes.imageUrl : (changes.avatarUrl || null);
+      if (descriptionToSave !== undefined && avatarToEmbed) {
+        descriptionToSave = `${descriptionToSave}\n<!--avatar:${avatarToEmbed}-->`;
+      }
+
       const fields = {
+        user_id: changes.userId !== undefined ? (changes.userId || null) : (changes.user_id !== undefined ? (changes.user_id || null) : undefined),
         prenom: changes.prenom,
         nom: changes.nom,
         role_key: changes.roleKey,
@@ -542,7 +570,7 @@ const CIAA_STORE = (() => {
         affiliation: changes.affiliation,
         email: changes.email,
         linkedin: changes.linkedin,
-        description: changes.description,
+        description: descriptionToSave !== undefined ? descriptionToSave : changes.description,
         can_access_dashboard: changes.canAccessDashboard,
         display_order: changes.displayOrder
       };
@@ -552,7 +580,14 @@ const CIAA_STORE = (() => {
       return CIAA_STORE.getBureauMembers();
     },
     addBureauMember: async member => {
+      let descriptionToSave = String(member.description || "").replace(/<!--avatar:.+?-->/g, "").trim();
+      const avatarToEmbed = member.imageUrl || member.avatarUrl || null;
+      if (avatarToEmbed) {
+        descriptionToSave = `${descriptionToSave}\n<!--avatar:${avatarToEmbed}-->`;
+      }
+
       const saved = await insert("bureau_members", {
+        user_id: member.userId || member.user_id || null,
         prenom: member.prenom,
         nom: member.nom,
         role_key: member.roleKey || `${member.category || "bureau"}_${Date.now()}`,
@@ -561,7 +596,7 @@ const CIAA_STORE = (() => {
         affiliation: member.affiliation,
         email: member.email,
         linkedin: member.linkedin || null,
-        description: member.description || null,
+        description: descriptionToSave || null,
         can_access_dashboard: Boolean(member.canAccessDashboard),
         display_order: tables.bureau.length + 1
       });
@@ -580,7 +615,8 @@ const CIAA_STORE = (() => {
       user.canAccessDashboard === true ||
       CIAA_STORE.getBureauMembers().some(member =>
         member.canAccessDashboard &&
-        ((member.email && member.email.toLowerCase() === user.email?.toLowerCase()) ||
+        (((member.userId || member.user_id) && (member.userId === user.id || member.user_id === user.id)) ||
+          (member.email && member.email.toLowerCase() === user.email?.toLowerCase()) ||
           (member.prenom?.toLowerCase() === user.prenom?.toLowerCase() &&
             member.nom?.toLowerCase() === user.nom?.toLowerCase()))
       )

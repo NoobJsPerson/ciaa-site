@@ -29,7 +29,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   if (nameEl) nameEl.textContent = `${user.prenom} ${user.nom}`;
   if (emailEl) emailEl.textContent = user.email;
-  if (masterEl) masterEl.textContent = user.master || "Étudiant FSAN";
+  if (masterEl) masterEl.textContent = user.master || "—";
   const setAvatar = (profile) => {
     if (avatarInitialsEl) {
       avatarInitialsEl.textContent = (profile.prenom?.[0] || "U") + (profile.nom?.[0] || "S");
@@ -44,7 +44,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   };
   setAvatar(user);
-  if (roleEl) roleEl.textContent = user.role === "admin" ? "Administrateur" : (user.roleLabel || "Membre du Club");
+  if (roleEl) roleEl.textContent = user.role === "admin" ? "Administrateur" : (user.roleLabel || "Membre");
 
   if (badgeProfileStatus) {
     badgeProfileStatus.textContent = user.status === "approved" ? "Compte Actif" : (user.status === "pending" ? "En attente" : "Inactif");
@@ -76,6 +76,14 @@ document.addEventListener("DOMContentLoaded", async () => {
     dashLink.hidden = !hasDashAccess;
   }
 
+  function normalizeLinkedInUrl(val) {
+    if (!val) return "";
+    const trimmed = String(val).trim();
+    if (!trimmed) return "";
+    if (trimmed.startsWith("http://") || trimmed.startsWith("https://")) return trimmed;
+    return `https://www.linkedin.com/in/${trimmed.replace(/^\/+/, "")}`;
+  }
+
   // 2. Affichage propre en lecture seule des informations
   const dispPrenomNom = document.getElementById("disp-prenom-nom");
   const dispEmail = document.getElementById("disp-email");
@@ -89,7 +97,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (dispMaster) dispMaster.textContent = u.master || "Non renseigné";
     if (dispLinkedin) {
       if (u.linkedin) {
-        dispLinkedin.innerHTML = `<a href="https://www.linkedin.com/in/${u.linkedin.replace(/https?:\/\/.*linkedin\.com\/in\//, '').replace(/\/$/, '')}" target="_blank" rel="noopener" style="color:var(--blue);font-weight:600">in/${u.linkedin}</a>`;
+        const fullUrl = normalizeLinkedInUrl(u.linkedin);
+        dispLinkedin.innerHTML = `<a href="${fullUrl}" target="_blank" rel="noopener noreferrer" style="color:var(--blue);font-weight:600">🔗 ${fullUrl}</a>`;
       } else {
         dispLinkedin.textContent = "Non renseigné";
       }
@@ -114,6 +123,78 @@ document.addEventListener("DOMContentLoaded", async () => {
   const avatarActions = document.getElementById("profile-avatar-actions");
   const btnDeleteAvatar = document.getElementById("btn-delete-profile-avatar");
   const btnCloseAvatarActions = document.getElementById("btn-close-profile-avatar-actions");
+
+  // Nouveaux éléments du formulaire pour la photo de profil
+  const editAvatarPreviewImg = document.getElementById("edit-avatar-preview-img");
+  const editAvatarPreviewInitials = document.getElementById("edit-avatar-preview-initials");
+  const editAvatarFile = document.getElementById("edit-avatar-file");
+  const editAvatarUrl = document.getElementById("edit-avatar-url");
+  const btnRemoveEditAvatar = document.getElementById("btn-remove-edit-avatar");
+  let pendingAvatarData = undefined;
+
+  function updateEditFormAvatar(imgUrl) {
+    const curU = CIAA_STORE.getCurrentUser() || user;
+    if (editAvatarPreviewInitials) {
+      editAvatarPreviewInitials.textContent = (curU.prenom?.[0] || "U") + (curU.nom?.[0] || "S");
+    }
+    if (imgUrl) {
+      if (editAvatarPreviewImg) {
+        editAvatarPreviewImg.src = imgUrl;
+        editAvatarPreviewImg.style.display = "block";
+      }
+      if (editAvatarPreviewInitials) editAvatarPreviewInitials.style.display = "none";
+      if (btnRemoveEditAvatar) btnRemoveEditAvatar.style.display = "inline-flex";
+      if (editAvatarUrl && !imgUrl.startsWith("data:")) editAvatarUrl.value = imgUrl;
+    } else {
+      if (editAvatarPreviewImg) {
+        editAvatarPreviewImg.removeAttribute("src");
+        editAvatarPreviewImg.style.display = "none";
+      }
+      if (editAvatarPreviewInitials) editAvatarPreviewInitials.style.display = "block";
+      if (btnRemoveEditAvatar) btnRemoveEditAvatar.style.display = "none";
+      if (editAvatarUrl) editAvatarUrl.value = "";
+    }
+  }
+
+  if (editAvatarFile) {
+    editAvatarFile.addEventListener("change", (e) => {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+      if (!file.type.startsWith("image/")) {
+        if (typeof ciaaAlert === "function") ciaaAlert("Veuillez sélectionner un fichier image valide.", "Format Invalide", "error");
+        return;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        if (typeof ciaaAlert === "function") ciaaAlert("L'image dépasse 5 Mo.", "Fichier trop lourd", "error");
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = (evt) => {
+        pendingAvatarData = evt.target.result;
+        updateEditFormAvatar(pendingAvatarData);
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  if (editAvatarUrl) {
+    editAvatarUrl.addEventListener("input", () => {
+      const val = editAvatarUrl.value.trim();
+      if (val) {
+        pendingAvatarData = val;
+        updateEditFormAvatar(val);
+      }
+    });
+  }
+
+  if (btnRemoveEditAvatar) {
+    btnRemoveEditAvatar.addEventListener("click", () => {
+      pendingAvatarData = null;
+      if (editAvatarFile) editAvatarFile.value = "";
+      updateEditFormAvatar(null);
+    });
+  }
+
   const avatarUploader = CIAA_IMAGE_UPLOAD.init({
     inputId: "profile-avatar-file",
     previewBoxId: "profile-avatar-large",
@@ -135,12 +216,13 @@ document.addEventListener("DOMContentLoaded", async () => {
       if (updatedUser?.imageUrl) avatarUploader.setBase64(updatedUser.imageUrl);
       else avatarUploader.reset();
       setAvatar(updatedUser);
+      updateEditFormAvatar(updatedUser?.imageUrl);
       if (btnDeleteAvatar) btnDeleteAvatar.hidden = !updatedUser?.imageUrl;
       CIAA_STORE.syncNavigation();
       closeAvatarActions();
       if (typeof ciaaAlert === "function") {
         await ciaaAlert(
-          imageUrl ? "Votre photo de profil a été mise à jour." : "Votre photo de profil a été supprimée.",
+          imageUrl ? "Votre photo de profil a été mise à jour avec succès." : "Votre photo de profil a été supprimée.",
           "Photo de profil actualisée",
           "success"
         );
@@ -196,8 +278,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (inputNom) inputNom.value = u.nom || "";
     if (inputEmail) inputEmail.value = u.email || "";
     if (inputMaster) inputMaster.value = u.master || "";
-    if (inputLinkedin) inputLinkedin.value = u.linkedin || "";
+    if (inputLinkedin) inputLinkedin.value = u.linkedin ? normalizeLinkedInUrl(u.linkedin) : "";
     if (inputBio) inputBio.value = u.bio || "";
+    pendingAvatarData = undefined;
+    updateEditFormAvatar(u.imageUrl);
   }
 
   if (btnToggleEdit) {
@@ -227,9 +311,15 @@ document.addEventListener("DOMContentLoaded", async () => {
         prenom: inputPrenom.value.trim(),
         nom: inputNom.value.trim(),
         master: inputMaster.value.trim(),
-        linkedin: inputLinkedin.value.trim(),
+        linkedin: normalizeLinkedInUrl(inputLinkedin.value.trim()),
         bio: inputBio.value.trim()
       };
+
+      if (pendingAvatarData !== undefined) {
+        updatedData.imageUrl = pendingAvatarData || null;
+      } else if (editAvatarUrl && editAvatarUrl.value.trim()) {
+        updatedData.imageUrl = editAvatarUrl.value.trim();
+      }
 
       try {
         await CIAA_STORE.updateUser(user.id, updatedData);
@@ -241,13 +331,14 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (masterEl) masterEl.textContent = updatedData.master;
         setAvatar(updatedUser);
         refreshDisplayCard(updatedUser);
+        CIAA_STORE.syncNavigation();
 
         // Rebasculer en mode affichage
         if (displayWrap) displayWrap.classList.remove("is-editing");
         if (formWrap) formWrap.classList.remove("is-editing");
 
         if (typeof ciaaAlert === "function") {
-          await ciaaAlert("Vos informations personnelles ont été enregistrées avec succès !", "Profil Actualisé", "success");
+          await ciaaAlert("Vos informations personnelles et photo de profil ont été enregistrées avec succès !", "Profil Actualisé", "success");
         } else if (editFeedback) {
           editFeedback.className = "profile-feedback-text success";
           editFeedback.textContent = "✓ Informations mises à jour avec succès !";

@@ -54,7 +54,8 @@ function renderGallery() {
     if (p.team && p.team.length > 0) {
       const members = p.team.map(m => {
         if (m.linkedin) {
-          return `<a href="https://www.linkedin.com/in/${encodeURIComponent(m.linkedin)}" target="_blank" rel="noopener noreferrer">${m.name}</a>`;
+          const lUrl = m.linkedin.startsWith("http") ? m.linkedin : `https://www.linkedin.com/in/${encodeURIComponent(m.linkedin)}`;
+          return `<a href="${lUrl}" target="_blank" rel="noopener noreferrer">${m.name}</a>`;
         }
         return `<span>${m.name}</span>`;
       }).join(", ");
@@ -123,7 +124,7 @@ function openProjectModal(project) {
     if (project.team && project.team.length > 0) {
       modalTeam.innerHTML = project.team.map(m => `
         <span style="display:inline-block;margin-right:12px">
-          👤 ${m.name} ${m.linkedin ? `<a href="https://www.linkedin.com/in/${encodeURIComponent(m.linkedin)}" target="_blank" style="color:var(--blue)">[LinkedIn]</a>` : ''}
+          👤 ${m.name} ${m.linkedin ? `<a href="${m.linkedin.startsWith('http') ? m.linkedin : 'https://www.linkedin.com/in/' + encodeURIComponent(m.linkedin)}" target="_blank" style="color:var(--blue)">[LinkedIn]</a>` : ''}
         </span>
       `).join("");
     } else {

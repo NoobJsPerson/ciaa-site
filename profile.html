@@ -43,10 +43,15 @@
               <span class="profile-avatar-overlay" aria-hidden="true">Modifier</span>
             </button>
             <div id="profile-avatar-actions" class="profile-avatar-actions" hidden>
-              <label class="profile-avatar-action" for="profile-avatar-file">Choisir une photo</label>
+              <label class="profile-avatar-action" for="profile-avatar-file">📷 Choisir une photo</label>
               <input id="profile-avatar-file" class="profile-image-file-input" type="file" accept="image/*" aria-label="Choisir une photo de profil">
-              <button id="btn-delete-profile-avatar" class="profile-avatar-action delete" type="button">Supprimer la photo</button>
+              <button id="btn-delete-profile-avatar" class="profile-avatar-action delete" type="button">🗑️ Supprimer la photo</button>
               <button id="btn-close-profile-avatar-actions" class="profile-avatar-actions-close" type="button">Fermer</button>
+            </div>
+            <div class="profile-avatar-btn-wrap" style="margin-top: 8px; text-align: center;">
+              <label for="profile-avatar-file" class="btn-avatar-pill" style="cursor: pointer;" title="Ajouter ou modifier votre photo de profil">
+                📷 Ajouter / Changer photo
+              </label>
             </div>
           </div>
           <div class="profile-header-details">
@@ -138,8 +143,32 @@
                 </div>
 
                 <div class="profile-form-group">
-                  <label for="edit-linkedin">Identifiant LinkedIn</label>
-                  <input id="edit-linkedin" placeholder="Ex: prenom-nom">
+                  <label for="edit-avatar-file">Photo de profil</label>
+                  <div class="profile-edit-avatar-container">
+                    <div id="edit-avatar-preview-box" class="profile-edit-avatar-preview">
+                      <img id="edit-avatar-preview-img" alt="Prévisualisation photo" style="display: none;">
+                      <span id="edit-avatar-preview-initials">US</span>
+                    </div>
+                    <div class="profile-edit-avatar-inputs">
+                      <div class="profile-edit-avatar-btn-row">
+                        <label for="edit-avatar-file" class="btn secondary btn-upload-avatar-file">
+                          📁 Choisir une photo depuis l'appareil
+                        </label>
+                        <input id="edit-avatar-file" type="file" accept="image/*" style="display: none;">
+                        <button id="btn-remove-edit-avatar" type="button" class="btn-tbl delete" style="display: none;">
+                          🗑️ Retirer la photo
+                        </button>
+                      </div>
+                      <input id="edit-avatar-url" type="url" placeholder="Ou collez l'URL directe d'une image (https://...)">
+                      <span class="profile-field-hint">Formats acceptés : JPG, PNG, WebP (max 5 Mo) ou URL directe.</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="profile-form-group">
+                  <label for="edit-linkedin">Lien du Profil LinkedIn (URL)</label>
+                  <input id="edit-linkedin" type="url" placeholder="https://www.linkedin.com/in/votre-profil">
+                  <span class="profile-field-hint">Collez l'URL de votre profil LinkedIn (ex: https://www.linkedin.com/in/prenom-nom).</span>
                 </div>
 
                 <div class="profile-form-group">

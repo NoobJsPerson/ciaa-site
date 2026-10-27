@@ -91,20 +91,27 @@ function renderDynBureau() {
 
   members.forEach(m => {
     const initials = (m.prenom ? m.prenom[0] : '') + (m.nom ? m.nom[0] : '');
-    const cleanLinkedin = (m.linkedin || '').replace(/https?:\/\/(www\.)?linkedin\.com\/in\//, '').replace(/\/$/, '');
-    const linkedinHref = m.linkedin ? (m.linkedin.startsWith("http") ? m.linkedin : `https://www.linkedin.com/in/${m.linkedin}`) : "https://www.linkedin.com";
+    const rawLinkedin = (m.linkedin || '').trim();
+    const linkedinHref = rawLinkedin ? (rawLinkedin.startsWith("http") ? rawLinkedin : `https://www.linkedin.com/in/${rawLinkedin.replace(/^\/+/, '')}`) : "";
+    const cleanDesc = (m.cleanDescription || m.description || '').replace(/<!--avatar:.+?-->/g, '').trim();
+
+    const avatarHtml = m.imageUrl
+      ? `<div class="member-avatar has-image" aria-label="${m.prenom} ${m.nom}"><img src="${m.imageUrl}" alt="${m.prenom} ${m.nom}"></div>`
+      : `<div class="member-avatar">${initials || 'CI'}</div>`;
 
     const card = document.createElement("article");
     card.className = "member-card";
     card.innerHTML = `
-      <div class="member-avatar">${initials || 'CI'}</div>
+      ${avatarHtml}
       <h3>${m.prenom} ${m.nom}</h3>
-      <div class="member-role">${m.roleLabel || 'Membre du Bureau'}</div>
-      <div class="member-master">${m.affiliation || 'Faculté des Sciences Appliquées de Nador'}</div>
-      <p class="member-desc">${m.description || ''}</p>
-      <a class="btn-linkedin-profile" href="${linkedinHref}" target="_blank" rel="noopener noreferrer">
-        <span>in</span> Profil LinkedIn
-      </a>
+      ${m.roleLabel ? `<div class="member-role">${m.roleLabel}</div>` : ''}
+      ${m.affiliation ? `<div class="member-master">${m.affiliation}</div>` : ''}
+      ${cleanDesc ? `<p class="member-desc">${cleanDesc}</p>` : ''}
+      ${linkedinHref ? `
+        <a class="btn-linkedin-profile" href="${linkedinHref}" target="_blank" rel="noopener noreferrer">
+          <span>in</span> Profil LinkedIn
+        </a>
+      ` : ''}
     `;
     container.appendChild(card);
   });
@@ -120,22 +127,28 @@ function renderDynFaculty() {
 
   encadrants.forEach(e => {
     const initials = (e.prenom ? e.prenom[0] : '') + (e.nom ? e.nom[0] : 'Pr');
-    const emailHref = e.email ? `mailto:${e.email}` : "mailto:contact.ciaa.fsan@gmail.com";
-    const cleanLinkedin = (e.linkedin || '').replace(/https?:\/\/(www\.)?linkedin\.com\/in\//, '').replace(/\/$/, '');
-    const linkedinHref = e.linkedin ? (e.linkedin.startsWith("http") ? e.linkedin : `https://www.linkedin.com/in/${e.linkedin}`) : "https://www.linkedin.com";
+    const emailHref = e.email ? `mailto:${e.email}` : "";
+    const rawLinkedin = (e.linkedin || '').trim();
+    const linkedinHref = rawLinkedin ? (rawLinkedin.startsWith("http") ? rawLinkedin : `https://www.linkedin.com/in/${rawLinkedin.replace(/^\/+/, '')}`) : "";
+    const cleanDesc = (e.cleanDescription || e.description || '').replace(/<!--avatar:.+?-->/g, '').trim();
+
+    const avatarHtml = e.imageUrl
+      ? `<div class="faculty-avatar has-image" aria-label="Pr. ${e.prenom} ${e.nom}"><img src="${e.imageUrl}" alt="Pr. ${e.prenom} ${e.nom}"></div>`
+      : `<div class="faculty-avatar">${initials || 'Pr'}</div>`;
+
+    const linksHtml = [];
+    if (emailHref) linksHtml.push(`<a href="${emailHref}">✉️ ${e.email}</a>`);
+    if (linkedinHref) linksHtml.push(`<a href="${linkedinHref}" target="_blank" rel="noopener">LinkedIn</a>`);
 
     const card = document.createElement("article");
     card.className = "faculty-card";
     card.innerHTML = `
-      <div class="faculty-avatar">${initials || 'Pr'}</div>
+      ${avatarHtml}
       <div class="faculty-info">
         <h3>Pr. ${e.prenom} ${e.nom}</h3>
-        <div class="faculty-role">${e.roleLabel || 'Professeur Encadrant · FSAN'}</div>
-        <p class="faculty-desc">${e.description || e.affiliation || 'Superviseur scientifique des activités et projets IA.'}</p>
-        <div class="faculty-links">
-          <a href="${emailHref}">✉️ Email Universitaire</a>
-          <a href="${linkedinHref}" target="_blank" rel="noopener">LinkedIn</a>
-        </div>
+        ${e.roleLabel ? `<div class="faculty-role">${e.roleLabel}</div>` : ''}
+        ${cleanDesc ? `<p class="faculty-desc">${cleanDesc}</p>` : ''}
+        ${linksHtml.length ? `<div class="faculty-links">${linksHtml.join('')}</div>` : ''}
       </div>
     `;
     container.appendChild(card);
