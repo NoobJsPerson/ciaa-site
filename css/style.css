@@ -141,6 +141,36 @@ nav {
   font-weight: 600;
 }
 
+.links .nav-profile-avatar,
+.links .nav-profile-avatar-initials {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  flex: 0 0 28px;
+}
+
+.links .nav-profile-avatar {
+  object-fit: cover;
+}
+
+.links .nav-profile-avatar-initials {
+  display: inline-grid;
+  place-items: center;
+  background: var(--cyan);
+  color: var(--navy);
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.links .nav-profile-avatar-initials[hidden] {
+  display: none;
+}
+
+.links a#profile-link {
+  align-items: center;
+  gap: 7px;
+}
+
 .links .cta {
   background: var(--navy);
   color: #fff !important;

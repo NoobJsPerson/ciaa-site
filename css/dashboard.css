@@ -147,6 +147,43 @@ body.dashboard-body {
   font-size: 0.9rem;
 }
 
+.dash-user-table-identity {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 180px;
+}
+
+.dash-user-table-avatar {
+  position: relative;
+  width: 42px;
+  height: 42px;
+  flex: 0 0 42px;
+  overflow: hidden;
+  border-radius: 50%;
+  background: var(--cyan);
+  color: var(--navy);
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  font-size: 0.85rem;
+}
+
+.dash-user-table-avatar img {
+  display: none;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.dash-user-table-avatar.has-image img {
+  display: block;
+}
+
+.dash-user-table-avatar.has-image .dash-user-initials {
+  display: none;
+}
+
 .dash-user-info {
   line-height: 1.2;
 }
@@ -418,6 +455,24 @@ table.dash-table tr:hover td {
   align-items: center;
   gap: 6px;
   flex-wrap: wrap;
+}
+
+.dash-user-photo-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+
+.dash-user-photo-label {
+  cursor: pointer;
+}
+
+.dash-user-photo-input:focus-visible + .dash-user-photo-label {
+  outline: 2px solid var(--cyan);
+  outline-offset: 2px;
 }
 
 .btn-tbl {

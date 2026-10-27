@@ -185,8 +185,16 @@ function renderUsersTable() {
     tr.innerHTML = `
       <td><code>${u.id}</code></td>
       <td>
-        <strong>${u.prenom} ${u.nom}</strong><br>
-        <small style="color:#7f8c8d">${roleBadge}</small>
+        <div class="dash-user-table-identity">
+          <div class="dash-user-table-avatar${u.imageUrl ? " has-image" : ""}">
+            <img class="dash-user-photo" alt="" aria-hidden="true">
+            <span class="dash-user-initials"></span>
+          </div>
+          <div>
+            <strong>${u.prenom} ${u.nom}</strong><br>
+            <small style="color:#7f8c8d">${roleBadge}</small>
+          </div>
+        </div>
       </td>
       <td><a href="mailto:${u.email}" style="color:var(--blue)">${u.email}</a></td>
       <td>${u.master || "Non renseigné"}</td>
@@ -194,6 +202,9 @@ function renderUsersTable() {
       <td>${u.created_at || "—"}</td>
       <td>
         <div class="table-actions">
+          <input id="dash-user-photo-input-${u.id}" class="dash-user-photo-input" type="file" accept="image/*" aria-label="Choisir ou remplacer la photo de profil">
+          <label class="btn-tbl edit dash-user-photo-label" for="dash-user-photo-input-${u.id}" title="Modifier la photo de profil">📷 Photo</label>
+          ${u.imageUrl ? `<button class="btn-tbl delete" onclick="handleRemoveUserPhoto('${u.id}')" title="Supprimer la photo de profil" aria-label="Supprimer la photo de profil">📷🗑️</button>` : ""}
           ${u.status === "pending" ? `
             <button class="btn-tbl accept" onclick="handleApproveUser('${u.id}')" title="Valider l'étudiant">✓ Accepter</button>
             <button class="btn-tbl reject" onclick="handleRejectUser('${u.id}')" title="Rejeter la candidature">✗ Rejeter</button>
@@ -206,8 +217,57 @@ function renderUsersTable() {
       </td>
     `;
     tbody.appendChild(tr);
+
+    const avatar = tr.querySelector(".dash-user-table-avatar");
+    const avatarImage = tr.querySelector(".dash-user-photo");
+    const avatarInitials = tr.querySelector(".dash-user-initials");
+    if (avatarInitials) {
+      avatarInitials.textContent = `${u.prenom?.[0] || "U"}${u.nom?.[0] || "S"}`;
+    }
+    if (u.imageUrl && avatarImage) {
+      avatarImage.src = u.imageUrl;
+      avatarImage.onerror = () => avatar?.classList.remove("has-image");
+    }
+
+    if (avatar) {
+      avatar.id = `dash-user-photo-avatar-${u.id}`;
+      if (avatarImage) avatarImage.id = `dash-user-photo-image-${u.id}`;
+    }
+    CIAA_IMAGE_UPLOAD.init({
+      inputId: `dash-user-photo-input-${u.id}`,
+      previewBoxId: `dash-user-photo-avatar-${u.id}`,
+      previewImgId: `dash-user-photo-image-${u.id}`,
+      onImageLoaded: imageUrl => saveDashboardUserPhoto(u.id, imageUrl)
+    });
   });
 }
+
+async function saveDashboardUserPhoto(id, imageUrl) {
+  try {
+    await CIAA_STORE.updateUser(id, { imageUrl });
+    renderUsersTable();
+    if (typeof ciaaAlert === "function") {
+      await ciaaAlert(
+        imageUrl ? "La photo de profil a été mise à jour." : "La photo de profil a été supprimée.",
+        "Photo de profil actualisée",
+        "success"
+      );
+    }
+  } catch (error) {
+    console.error("[dashboard] Impossible de mettre à jour la photo de profil :", error);
+    renderUsersTable();
+    if (typeof ciaaAlert === "function") {
+      await ciaaAlert(`Échec de la mise à jour de la photo : ${error.message}`, "Erreur", "error");
+    }
+  }
+}
+
+window.handleRemoveUserPhoto = async id => {
+  const confirmed = typeof ciaaConfirm === "function"
+    ? await ciaaConfirm("Supprimer la photo de profil de cet utilisateur ?", "Supprimer la photo")
+    : confirm("Supprimer la photo de profil de cet utilisateur ?");
+  if (confirmed) await saveDashboardUserPhoto(id, null);
+};
 
 window.handleApproveUser = async (id) => {
   await CIAA_STORE.updateUserStatus(id, "approved");

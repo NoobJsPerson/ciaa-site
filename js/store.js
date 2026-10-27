@@ -64,6 +64,7 @@ const CIAA_STORE = (() => {
   function mapUser(user) {
     return {
       ...user,
+      imageUrl: user.image_url ?? user.imageUrl,
       driveAccess: user.drive_access ?? user.driveAccess,
       canAccessDashboard: user.can_access_dashboard ?? user.canAccessDashboard
     };
@@ -285,6 +286,7 @@ const CIAA_STORE = (() => {
         master: changes.master,
         linkedin: changes.linkedin,
         bio: changes.bio,
+        image_url: changes.imageUrl,
         role: changes.role,
         status: changes.status,
         drive_access: changes.driveAccess,
@@ -593,6 +595,27 @@ const CIAA_STORE = (() => {
       toggles("#login-link, .nav-login-link", !currentUser);
       toggles("#signup-link, .nav-signup-link", !currentUser);
       toggles("#profile-link, .nav-profile-link", Boolean(currentUser));
+      document.querySelectorAll("#profile-link, .nav-profile-link").forEach(link => {
+        const avatar = link.querySelector(".nav-profile-avatar");
+        const initials = link.querySelector(".nav-profile-avatar-initials");
+        if (avatar) {
+          avatar.hidden = !currentUser?.imageUrl;
+          if (currentUser?.imageUrl) avatar.src = currentUser.imageUrl;
+          else avatar.removeAttribute("src");
+        }
+        if (initials) {
+          initials.hidden = Boolean(currentUser?.imageUrl);
+          initials.textContent = currentUser
+            ? `${currentUser.prenom?.[0] || "U"}${currentUser.nom?.[0] || "S"}`
+            : "";
+        }
+        if (avatar) {
+          avatar.onerror = () => {
+            avatar.hidden = true;
+            if (initials) initials.hidden = false;
+          };
+        }
+      });
       toggles("#dash-link, .nav-dash-link", Boolean(currentUser && hasDash));
       toggles("#logout-btn, .nav-logout-btn", Boolean(currentUser && !hasDash));
       if (profilePage) toggles("#profile-logout-btn, #btn-hero-logout", Boolean(currentUser));

@@ -20,6 +20,8 @@ document.addEventListener("DOMContentLoaded", async () => {
   const emailEl = document.getElementById("profile-display-email");
   const masterEl = document.getElementById("profile-display-master");
   const avatarEl = document.getElementById("profile-avatar-large");
+  const avatarImageEl = document.getElementById("profile-avatar-image");
+  const avatarInitialsEl = document.getElementById("profile-avatar-initials");
   const roleEl = document.getElementById("profile-display-role");
   const statusBanner = document.getElementById("profile-status-banner");
   const adminCard = document.getElementById("profile-admin-card");
@@ -28,7 +30,20 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (nameEl) nameEl.textContent = `${user.prenom} ${user.nom}`;
   if (emailEl) emailEl.textContent = user.email;
   if (masterEl) masterEl.textContent = user.master || "Étudiant FSAN";
-  if (avatarEl) avatarEl.textContent = (user.prenom[0] || "U") + (user.nom[0] || "S");
+  const setAvatar = (profile) => {
+    if (avatarInitialsEl) {
+      avatarInitialsEl.textContent = (profile.prenom?.[0] || "U") + (profile.nom?.[0] || "S");
+    }
+    if (avatarEl) avatarEl.classList.toggle("has-image", Boolean(profile.imageUrl));
+    if (avatarImageEl) {
+      if (profile.imageUrl) avatarImageEl.src = profile.imageUrl;
+      else avatarImageEl.removeAttribute("src");
+      avatarImageEl.onerror = () => {
+        avatarEl?.classList.remove("has-image");
+      };
+    }
+  };
+  setAvatar(user);
   if (roleEl) roleEl.textContent = user.role === "admin" ? "Administrateur" : (user.roleLabel || "Membre du Club");
 
   if (badgeProfileStatus) {
@@ -96,6 +111,85 @@ document.addEventListener("DOMContentLoaded", async () => {
   const inputMaster = document.getElementById("edit-master");
   const inputLinkedin = document.getElementById("edit-linkedin");
   const inputBio = document.getElementById("edit-bio");
+  const avatarActions = document.getElementById("profile-avatar-actions");
+  const btnDeleteAvatar = document.getElementById("btn-delete-profile-avatar");
+  const btnCloseAvatarActions = document.getElementById("btn-close-profile-avatar-actions");
+  const avatarUploader = CIAA_IMAGE_UPLOAD.init({
+    inputId: "profile-avatar-file",
+    previewBoxId: "profile-avatar-large",
+    previewImgId: "profile-avatar-image",
+    onImageLoaded: imageUrl => saveProfileImage(imageUrl)
+  });
+
+  function closeAvatarActions() {
+    if (avatarActions) avatarActions.hidden = true;
+    if (avatarEl) avatarEl.setAttribute("aria-expanded", "false");
+  }
+
+  async function saveProfileImage(imageUrl) {
+    try {
+      await CIAA_STORE.updateUser(user.id, { imageUrl });
+      const updatedUser = CIAA_STORE.getCurrentUser();
+      const avatarInput = document.getElementById("profile-avatar-file");
+      if (avatarInput) avatarInput.value = "";
+      if (updatedUser?.imageUrl) avatarUploader.setBase64(updatedUser.imageUrl);
+      else avatarUploader.reset();
+      setAvatar(updatedUser);
+      if (btnDeleteAvatar) btnDeleteAvatar.hidden = !updatedUser?.imageUrl;
+      CIAA_STORE.syncNavigation();
+      closeAvatarActions();
+      if (typeof ciaaAlert === "function") {
+        await ciaaAlert(
+          imageUrl ? "Votre photo de profil a été mise à jour." : "Votre photo de profil a été supprimée.",
+          "Photo de profil actualisée",
+          "success"
+        );
+      }
+    } catch (error) {
+      const currentProfile = CIAA_STORE.getCurrentUser() || user;
+      setAvatar(currentProfile);
+      if (typeof ciaaAlert === "function") {
+        await ciaaAlert(`Échec de la mise à jour de la photo : ${error.message}`, "Erreur", "error");
+      } else {
+        console.error("[profile] Impossible de mettre à jour la photo :", error);
+      }
+    }
+  }
+
+  if (btnDeleteAvatar) {
+    btnDeleteAvatar.hidden = !user.imageUrl;
+    btnDeleteAvatar.addEventListener("click", async () => {
+      const confirmed = typeof ciaaConfirm === "function"
+        ? await ciaaConfirm("Supprimer votre photo de profil ?", "Supprimer la photo")
+        : confirm("Supprimer votre photo de profil ?");
+      if (confirmed) await saveProfileImage(null);
+    });
+  }
+
+  if (avatarEl) {
+    avatarEl.addEventListener("click", () => {
+      if (!avatarActions) return;
+      avatarActions.hidden = !avatarActions.hidden;
+      avatarEl.setAttribute("aria-expanded", String(!avatarActions.hidden));
+    });
+  }
+
+  if (btnCloseAvatarActions) {
+    btnCloseAvatarActions.addEventListener("click", closeAvatarActions);
+  }
+
+  document.addEventListener("click", event => {
+    if (avatarActions && !avatarActions.hidden && !event.target.closest(".profile-avatar-control")) {
+      closeAvatarActions();
+    }
+  });
+
+  document.addEventListener("keydown", event => {
+    if (event.key === "Escape" && avatarActions && !avatarActions.hidden) {
+      closeAvatarActions();
+      avatarEl?.focus();
+    }
+  });
 
   function populateEditForm(u) {
     if (inputPrenom) inputPrenom.value = u.prenom || "";
@@ -108,7 +202,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   if (btnToggleEdit) {
     btnToggleEdit.addEventListener("click", () => {
-      populateEditForm(CIAA_STORE.getCurrentUser() || user);
+      const currentProfile = CIAA_STORE.getCurrentUser() || user;
+      populateEditForm(currentProfile);
       if (displayWrap) displayWrap.classList.add("is-editing");
       if (formWrap) formWrap.classList.add("is-editing");
     });
@@ -136,26 +231,33 @@ document.addEventListener("DOMContentLoaded", async () => {
         bio: inputBio.value.trim()
       };
 
-      await CIAA_STORE.updateUser(user.id, updatedData);
-      const updatedUser = { ...user, ...updatedData };
-      CIAA_STORE.setCurrentUser(updatedUser);
+      try {
+        await CIAA_STORE.updateUser(user.id, updatedData);
+        const updatedUser = { ...CIAA_STORE.getCurrentUser(), ...updatedData };
+        CIAA_STORE.setCurrentUser(updatedUser);
 
-      // Mettre à jour l'en-tête et la carte d'affichage
-      if (nameEl) nameEl.textContent = `${updatedData.prenom} ${updatedData.nom}`;
-      if (masterEl) masterEl.textContent = updatedData.master;
-      if (avatarEl) avatarEl.textContent = (updatedData.prenom[0] || "U") + (updatedData.nom[0] || "S");
-      refreshDisplayCard(updatedUser);
+        // Mettre à jour l'en-tête et la carte d'affichage
+        if (nameEl) nameEl.textContent = `${updatedData.prenom} ${updatedData.nom}`;
+        if (masterEl) masterEl.textContent = updatedData.master;
+        setAvatar(updatedUser);
+        refreshDisplayCard(updatedUser);
 
-      // Rebasculer en mode affichage
-      if (displayWrap) displayWrap.classList.remove("is-editing");
-      if (formWrap) formWrap.classList.remove("is-editing");
+        // Rebasculer en mode affichage
+        if (displayWrap) displayWrap.classList.remove("is-editing");
+        if (formWrap) formWrap.classList.remove("is-editing");
 
-      if (typeof ciaaAlert === "function") {
-        await ciaaAlert("Vos informations personnelles ont été enregistrées avec succès !", "Profil Actualisé", "success");
-      } else if (editFeedback) {
-        editFeedback.className = "profile-feedback-text success";
-        editFeedback.textContent = "✓ Informations mises à jour avec succès !";
-        setTimeout(() => { editFeedback.textContent = ""; }, 3500);
+        if (typeof ciaaAlert === "function") {
+          await ciaaAlert("Vos informations personnelles ont été enregistrées avec succès !", "Profil Actualisé", "success");
+        } else if (editFeedback) {
+          editFeedback.className = "profile-feedback-text success";
+          editFeedback.textContent = "✓ Informations mises à jour avec succès !";
+          setTimeout(() => { editFeedback.textContent = ""; }, 3500);
+        }
+      } catch (error) {
+        if (editFeedback) {
+          editFeedback.className = "profile-feedback-text error";
+          editFeedback.textContent = `Échec de l'enregistrement : ${error.message}`;
+        }
       }
     });
   }

@@ -99,7 +99,7 @@ directement et uniquement de la clé primaire.
 
 Schéma Relationnel :
 * USERS (id [PK], email [UNIQUE], password_hash, prenom, nom, master, role,
-  status, linkedin, bio, drive_access, can_access_dashboard, created_at, updated_at)
+  status, linkedin, bio, image_url, drive_access, can_access_dashboard, created_at, updated_at)
 * BUREAU_MEMBERS (id [PK], user_id [FK nullable], prenom, nom, role_key [UNIQUE],
   role_label, category, affiliation, email, linkedin, description, can_access_dashboard,
   display_order, created_at, updated_at)
@@ -140,6 +140,7 @@ role                  VARCHAR(50)      NON       Rôle ('member', 'president', '
 status                VARCHAR(50)      NON       Statut ('pending', 'approved', 'rejected')
 linkedin              VARCHAR(255)     OUI       Identifiant ou lien LinkedIn
 bio                   TEXT             OUI       Bio & compétences techniques
+image_url             TEXT             OUI       Photo de profil (URL ou Base64)
 drive_access          BOOLEAN          NON       Autorisation d'accès aux Drives
 can_access_dashboard  BOOLEAN          NON       Droit d'accès au tableau de bord
 created_at            TIMESTAMPTZ      NON       Date d'inscription

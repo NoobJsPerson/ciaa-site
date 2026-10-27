@@ -37,6 +37,7 @@ erDiagram
         string master
         string role
         string status
+        text image_url
         boolean drive_access
         boolean can_access_dashboard
     }
@@ -69,7 +70,7 @@ erDiagram
 
 ## 2. Modèle Logique des Données (MLD Normalisé 3NF)
 
-1. **`users`** (`id` [PK], `email` [UK], `prenom`, `nom`, `master`, `role`, `status`, `linkedin`, `bio`, `drive_access`, `can_access_dashboard`, `created_at`, `updated_at`)
+1. **`users`** (`id` [PK], `email` [UK], `prenom`, `nom`, `master`, `role`, `status`, `linkedin`, `bio`, `image_url`, `drive_access`, `can_access_dashboard`, `created_at`, `updated_at`)
 2. **`bureau_members`** (`id` [PK], `user_id` [FK nullable], `role_key` [UK], `role_label`, `category`, `prenom`, `nom`, `affiliation`, `email`, `linkedin`, `description`, `can_access_dashboard`, `display_order`, `created_at`, `updated_at`)
 3. **`projects`** (`id` [PK], `submitted_by` [FK nullable], `title`, `category`, `description`, `link`, `image_url`, `tags`, `state`, `featured`, `views_count`, `created_at`, `updated_at`)
 4. **`project_members`** (`id` [PK], `project_id` [FK], `user_id` [FK nullable], `name`, `linkedin`, `role_in_team`, `created_at`)

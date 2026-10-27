@@ -36,7 +36,19 @@
     <div class="profile-hero">
       <div class="wrap">
         <div class="profile-header-card">
-          <div id="profile-avatar-large" class="profile-avatar-large">US</div>
+          <div class="profile-avatar-control">
+            <button id="profile-avatar-large" class="profile-avatar-large" type="button" aria-label="Modifier la photo de profil" aria-expanded="false" aria-controls="profile-avatar-actions">
+              <img id="profile-avatar-image" alt="" aria-hidden="true">
+              <span id="profile-avatar-initials">US</span>
+              <span class="profile-avatar-overlay" aria-hidden="true">Modifier</span>
+            </button>
+            <div id="profile-avatar-actions" class="profile-avatar-actions" hidden>
+              <label class="profile-avatar-action" for="profile-avatar-file">Choisir une photo</label>
+              <input id="profile-avatar-file" class="profile-image-file-input" type="file" accept="image/*" aria-label="Choisir une photo de profil">
+              <button id="btn-delete-profile-avatar" class="profile-avatar-action delete" type="button">Supprimer la photo</button>
+              <button id="btn-close-profile-avatar-actions" class="profile-avatar-actions-close" type="button">Fermer</button>
+            </div>
+          </div>
           <div class="profile-header-details">
             <h1 id="profile-display-name">Étudiant CIAA</h1>
             <p id="profile-display-email">etudiant@ump.ac.ma</p>
@@ -198,6 +210,7 @@
   <script src="js/supabase-client.js"></script>
   <script src="js/store.js"></script>
   <script src="js/dialog.js"></script>
+  <script src="js/upload-helper.js"></script>
   <script src="js/profile.js"></script>
 </body>
 </html>

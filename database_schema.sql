@@ -43,6 +43,7 @@ CREATE TABLE users (
     status VARCHAR(50) NOT NULL DEFAULT 'pending',
     linkedin VARCHAR(255),
     bio TEXT,
+    image_url TEXT,
     drive_access BOOLEAN NOT NULL DEFAULT FALSE,
     can_access_dashboard BOOLEAN NOT NULL DEFAULT FALSE,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -94,6 +95,7 @@ CREATE TABLE projects (
     views_count INT NOT NULL DEFAULT 0,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+	image_url character varying null,
 
     CONSTRAINT chk_project_state CHECK (state IN (-1, 0, 1)),
     CONSTRAINT chk_project_category CHECK (category IN ('ml', 'dl', 'cv', 'nlp', 'robotics', 'edge_ai', 'data'))
