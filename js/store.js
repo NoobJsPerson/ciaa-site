@@ -615,10 +615,7 @@ const CIAA_STORE = (() => {
       user.canAccessDashboard === true ||
       CIAA_STORE.getBureauMembers().some(member =>
         member.canAccessDashboard &&
-        (((member.userId || member.user_id) && (member.userId === user.id || member.user_id === user.id)) ||
-          (member.email && member.email.toLowerCase() === user.email?.toLowerCase()) ||
-          (member.prenom?.toLowerCase() === user.prenom?.toLowerCase() &&
-            member.nom?.toLowerCase() === user.nom?.toLowerCase()))
+        ((member.userId || member.user_id) && (member.userId === user.id || member.user_id === user.id))
       )
     )),
     syncNavigation: () => {
